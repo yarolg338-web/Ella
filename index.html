@@ -1,204 +1,651 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Un pequeño juego</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Un pequeño juego</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
 
-<style>
-body{
-    margin:0;
-    background:#111;
-    color:#fff;
-    font-family:Arial;
-    overflow:hidden;
-}
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #111;
+      font-family: Arial, sans-serif;
+    }
 
-canvas{
-    display:block;
-}
+    #gameCanvas {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(to bottom, #8fd3ff 0%, #eaf7ff 45%, #8e6c53 45%, #5c4333 100%);
+    }
 
-#start, #surprise, #letter{
-    position:absolute;
-    inset:0;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    flex-direction:column;
-    background:#111;
-}
+    .screen {
+      position: fixed;
+      inset: 0;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      text-align: center;
+      padding: 24px;
+      z-index: 10;
+      background: rgba(15, 15, 15, 0.92);
+      color: #fff;
+    }
 
-#surprise, #letter{
-    display:none;
-}
+    .screen.active {
+      display: flex;
+    }
 
-button{
-    padding:12px 25px;
-    background:#c19a6b;
-    border:none;
-    color:white;
-    border-radius:10px;
-    margin-top:15px;
-}
+    h1, h2 {
+      margin-bottom: 14px;
+    }
 
-img{
-    max-width:100%;
-}
-</style>
+    p {
+      margin-bottom: 18px;
+      line-height: 1.5;
+      max-width: 340px;
+    }
+
+    button {
+      border: none;
+      padding: 14px 24px;
+      border-radius: 999px;
+      background: #c89a6b;
+      color: #fff;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    #hud {
+      position: fixed;
+      top: 12px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 5;
+      color: #fff;
+      font-weight: bold;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+      pointer-events: none;
+    }
+
+    #letterScreen img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .envelope {
+      width: 220px;
+      height: 150px;
+      position: relative;
+      margin-bottom: 18px;
+      cursor: pointer;
+    }
+
+    .env-body {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 110px;
+      background: #d8b48a;
+      border-radius: 0 0 14px 14px;
+    }
+
+    .env-top {
+      position: absolute;
+      top: 18px;
+      left: 0;
+      width: 0;
+      height: 0;
+      border-left: 110px solid transparent;
+      border-right: 110px solid transparent;
+      border-bottom: 72px solid #c89a6b;
+    }
+
+    .seal {
+      position: absolute;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #a32626;
+      left: 50%;
+      top: 74px;
+      transform: translateX(-50%);
+      z-index: 2;
+    }
+  </style>
 </head>
-
 <body>
+  <canvas id="gameCanvas"></canvas>
 
-<div id="start">
-    <h2>¿Jugamos?</h2>
-    <button onclick="startGame()">Empezar</button>
-</div>
+  <div id="hud">
+    <div id="scoreText">Puntos: 0</div>
+    <div id="goalText">Meta: 120</div>
+  </div>
 
-<canvas id="game"></canvas>
+  <div id="startScreen" class="screen active">
+    <h1>¿Jugamos?</h1>
+    <p>Desliza a los lados para cambiar de carril. Arriba para saltar. Abajo para agacharte.</p>
+    <button id="startBtn">Empezar</button>
+  </div>
 
-<div id="surprise">
+  <div id="gameOverScreen" class="screen">
+    <h2>Casi...</h2>
+    <p>Inténtalo otra vez.</p>
+    <button id="retryBtn">Reintentar</button>
+  </div>
+
+  <div id="surpriseScreen" class="screen">
+    <div class="envelope" id="envelope">
+      <div class="env-top"></div>
+      <div class="env-body"></div>
+      <div class="seal"></div>
+    </div>
     <h2>Tienes algo para abrir</h2>
-    <button onclick="openLetter()">Abrir</button>
-</div>
+    <p>Toca el sobre o el botón.</p>
+    <button id="openBtn">Abrir</button>
+  </div>
 
-<div id="letter">
-    <img src="carta.jpg">
-</div>
+  <div id="letterScreen" class="screen">
+    <img src="carta.jpg" alt="Carta sorpresa">
+  </div>
 
-<script>
-let canvas = document.getElementById("game");
-let ctx = canvas.getContext("2d");
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+    const startScreen = document.getElementById("startScreen");
+    const gameOverScreen = document.getElementById("gameOverScreen");
+    const surpriseScreen = document.getElementById("surpriseScreen");
+    const letterScreen = document.getElementById("letterScreen");
 
-let lanes = [canvas.width/4, canvas.width/2, canvas.width*3/4];
-let player = {lane:1, y:canvas.height-120, vy:0, jumping:false};
+    const startBtn = document.getElementById("startBtn");
+    const retryBtn = document.getElementById("retryBtn");
+    const openBtn = document.getElementById("openBtn");
+    const envelope = document.getElementById("envelope");
 
-let obstacles = [];
-let speed = 6;
-let score = 0;
+    const scoreText = document.getElementById("scoreText");
+    const goalText = document.getElementById("goalText");
 
-function startGame(){
-    document.getElementById("start").style.display="none";
-    gameLoop();
-}
+    let W, H;
+    let running = false;
+    let animationId = null;
 
-function spawnObstacle(){
-    let lane = Math.floor(Math.random()*3);
-    obstacles.push({lane:lane, y:-50});
-}
+    const GOAL = 120;
+    let score = 0;
+    let distance = 0;
+    let speed = 8;
 
-function update(){
-    if(Math.random()<0.03) spawnObstacle();
+    const laneCount = 3;
+    let lanes = [];
 
-    obstacles.forEach(o=> o.y += speed);
+    const player = {
+      lane: 1,
+      targetLane: 1,
+      x: 0,
+      y: 0,
+      width: 42,
+      height: 68,
+      baseHeight: 68,
+      jumpVy: 0,
+      isJumping: false,
+      isSliding: false,
+      slideTimer: 0,
+      color: "#ff4f81"
+    };
 
-    if(player.jumping){
-        player.vy += 0.8;
-        player.y += player.vy;
+    let obstacles = [];
+    let coins = [];
+    let spawnTimer = 0;
+    let coinTimer = 0;
+    let roadOffset = 0;
 
-        if(player.y >= canvas.height-120){
-            player.y = canvas.height-120;
-            player.jumping=false;
-        }
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      W = canvas.width;
+      H = canvas.height;
+
+      lanes = [W * 0.28, W * 0.5, W * 0.72];
+      player.x = lanes[player.lane];
+      player.y = H - 155;
     }
 
-    obstacles.forEach(o=>{
-        if(o.y > canvas.height-140 &&
-           o.lane === player.lane &&
-           !player.jumping){
-            gameOver();
+    window.addEventListener("resize", resize);
+    resize();
+
+    function showOnly(screen) {
+      [startScreen, gameOverScreen, surpriseScreen, letterScreen].forEach(s => s.classList.remove("active"));
+      if (screen) screen.classList.add("active");
+    }
+
+    function resetGame() {
+      score = 0;
+      distance = 0;
+      speed = 8;
+      obstacles = [];
+      coins = [];
+      spawnTimer = 0;
+      coinTimer = 0;
+      roadOffset = 0;
+
+      player.lane = 1;
+      player.targetLane = 1;
+      player.x = lanes[1];
+      player.y = H - 155;
+      player.width = 42;
+      player.height = player.baseHeight;
+      player.jumpVy = 0;
+      player.isJumping = false;
+      player.isSliding = false;
+      player.slideTimer = 0;
+
+      updateHud();
+    }
+
+    function updateHud() {
+      scoreText.textContent = `Puntos: ${score}`;
+      goalText.textContent = `Meta: ${GOAL}`;
+    }
+
+    function startGame() {
+      resetGame();
+      showOnly(null);
+      running = true;
+      cancelAnimationFrame(animationId);
+      loop();
+    }
+
+    function endGame(win = false) {
+      running = false;
+      cancelAnimationFrame(animationId);
+
+      if (win) {
+        showOnly(surpriseScreen);
+      } else {
+        showOnly(gameOverScreen);
+      }
+    }
+
+    function moveLeft() {
+      if (!running) return;
+      if (player.targetLane > 0) player.targetLane--;
+    }
+
+    function moveRight() {
+      if (!running) return;
+      if (player.targetLane < 2) player.targetLane++;
+    }
+
+    function jump() {
+      if (!running) return;
+      if (!player.isJumping) {
+        player.isJumping = true;
+        player.jumpVy = -18;
+      }
+    }
+
+    function slide() {
+      if (!running) return;
+      if (!player.isSliding && !player.isJumping) {
+        player.isSliding = true;
+        player.slideTimer = 26;
+        player.height = 38;
+      }
+    }
+
+    function spawnObstacle() {
+      const lane = Math.floor(Math.random() * laneCount);
+      const type = Math.random() < 0.5 ? "low" : "high";
+
+      if (type === "low") {
+        obstacles.push({
+          lane,
+          z: -80,
+          width: 54,
+          height: 60,
+          type: "low",
+          color: "#d9534f"
+        });
+      } else {
+        obstacles.push({
+          lane,
+          z: -80,
+          width: 62,
+          height: 90,
+          type: "high",
+          color: "#5bc0de"
+        });
+      }
+    }
+
+    function spawnCoinRow() {
+      const lane = Math.floor(Math.random() * laneCount);
+      for (let i = 0; i < 4; i++) {
+        coins.push({
+          lane,
+          z: -80 - i * 90,
+          collected: false
+        });
+      }
+    }
+
+    function updatePlayer() {
+      const targetX = lanes[player.targetLane];
+      player.x += (targetX - player.x) * 0.24;
+
+      if (Math.abs(player.x - targetX) < 1) {
+        player.x = targetX;
+        player.lane = player.targetLane;
+      }
+
+      if (player.isJumping) {
+        player.jumpVy += 0.95;
+        player.y += player.jumpVy;
+
+        const floorY = H - 155;
+        if (player.y >= floorY) {
+          player.y = floorY;
+          player.jumpVy = 0;
+          player.isJumping = false;
         }
+      }
+
+      if (player.isSliding) {
+        player.slideTimer--;
+        if (player.slideTimer <= 0) {
+          player.isSliding = false;
+          player.height = player.baseHeight;
+        }
+      }
+    }
+
+    function projectY(z) {
+      return z;
+    }
+
+    function updateWorld() {
+      spawnTimer++;
+      coinTimer++;
+
+      if (spawnTimer > Math.max(36, 74 - Math.floor(score / 8))) {
+        spawnObstacle();
+        spawnTimer = 0;
+      }
+
+      if (coinTimer > 90) {
+        spawnCoinRow();
+        coinTimer = 0;
+      }
+
+      obstacles.forEach(o => o.z += speed);
+      coins.forEach(c => c.z += speed);
+
+      obstacles = obstacles.filter(o => o.z < H + 120);
+      coins = coins.filter(c => c.z < H + 80 && !c.collected);
+
+      distance += speed * 0.08;
+
+      if (Math.floor(distance) > score) {
+        score = Math.floor(distance);
+        updateHud();
+
+        if (score % 20 === 0) {
+          speed += 0.35;
+        }
+
+        if (score >= GOAL) {
+          endGame(true);
+        }
+      }
+    }
+
+    function collidesWithObstacle(o) {
+      const obsY = projectY(o.z);
+      const playerTop = player.y + (player.baseHeight - player.height);
+      const playerBottom = playerTop + player.height;
+      const playerLeft = player.x - player.width / 2;
+      const playerRight = player.x + player.width / 2;
+
+      const obsLeft = lanes[o.lane] - o.width / 2;
+      const obsRight = lanes[o.lane] + o.width / 2;
+      const obsTop = obsY - o.height;
+      const obsBottom = obsY;
+
+      const overlap =
+        playerRight > obsLeft &&
+        playerLeft < obsRight &&
+        playerBottom > obsTop &&
+        playerTop < obsBottom;
+
+      if (!overlap) return false;
+
+      if (o.type === "low" && player.isJumping) return false;
+      if (o.type === "high" && player.isSliding) return false;
+
+      return true;
+    }
+
+    function collectCoin(c) {
+      const cy = projectY(c.z);
+      const cx = lanes[c.lane];
+      const dx = Math.abs(player.x - cx);
+      const dy = Math.abs((player.y + 20) - cy);
+
+      if (dx < 30 && dy < 40) {
+        c.collected = true;
+        score += 2;
+        updateHud();
+      }
+    }
+
+    function checkCollisions() {
+      for (const o of obstacles) {
+        if (collidesWithObstacle(o)) {
+          endGame(false);
+          return;
+        }
+      }
+
+      for (const c of coins) {
+        if (!c.collected) collectCoin(c);
+      }
+    }
+
+    function drawBackground() {
+      ctx.clearRect(0, 0, W, H);
+
+      const sky = ctx.createLinearGradient(0, 0, 0, H);
+      sky.addColorStop(0, "#86d6ff");
+      sky.addColorStop(0.5, "#e9f7ff");
+      sky.addColorStop(0.5, "#7b5b46");
+      sky.addColorStop(1, "#4d382d");
+      ctx.fillStyle = sky;
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.fillStyle = "#d5c2b0";
+      ctx.fillRect(0, H * 0.45, W, H * 0.55);
+
+      ctx.fillStyle = "#5a5a5a";
+      ctx.beginPath();
+      ctx.moveTo(W * 0.16, H);
+      ctx.lineTo(W * 0.84, H);
+      ctx.lineTo(W * 0.64, H * 0.46);
+      ctx.lineTo(W * 0.36, H * 0.46);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.strokeStyle = "#e8e8e8";
+      ctx.lineWidth = 4;
+
+      roadOffset += speed * 0.9;
+      if (roadOffset > 40) roadOffset = 0;
+
+      for (let y = H; y > H * 0.46; y -= 40) {
+        const yy = y + roadOffset;
+        ctx.beginPath();
+        ctx.moveTo(W * 0.5, yy);
+        ctx.lineTo(W * 0.5, yy - 18);
+        ctx.stroke();
+      }
+
+      ctx.strokeStyle = "rgba(255,255,255,0.25)";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(W * 0.38, H);
+      ctx.lineTo(W * 0.45, H * 0.46);
+      ctx.moveTo(W * 0.62, H);
+      ctx.lineTo(W * 0.55, H * 0.46);
+      ctx.stroke();
+    }
+
+    function drawPlayer() {
+      const px = player.x;
+      const py = player.y + (player.baseHeight - player.height);
+
+      ctx.save();
+
+      ctx.fillStyle = "#2f1d14";
+      ctx.beginPath();
+      ctx.arc(px, py + 10, 12, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = player.color;
+      ctx.fillRect(px - 16, py + 20, 32, player.height - 22);
+
+      ctx.strokeStyle = "#ffd7b1";
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(px - 10, py + player.height - 2);
+      ctx.lineTo(px - 14, py + player.height + 14);
+      ctx.moveTo(px + 10, py + player.height - 2);
+      ctx.lineTo(px + 14, py + player.height + 14);
+
+      ctx.moveTo(px - 16, py + 30);
+      ctx.lineTo(px - 28, py + 48);
+      ctx.moveTo(px + 16, py + 30);
+      ctx.lineTo(px + 28, py + 48);
+      ctx.stroke();
+
+      ctx.restore();
+    }
+
+    function drawObstacle(o) {
+      const x = lanes[o.lane];
+      const y = projectY(o.z);
+
+      ctx.save();
+      ctx.fillStyle = o.color;
+
+      if (o.type === "low") {
+        ctx.fillRect(x - o.width / 2, y - o.height, o.width, o.height);
+      } else {
+        ctx.fillRect(x - o.width / 2, y - o.height, o.width, 24);
+        ctx.fillRect(x - o.width / 2 + 10, y - o.height + 24, 12, 66);
+        ctx.fillRect(x + o.width / 2 - 22, y - o.height + 24, 12, 66);
+      }
+
+      ctx.restore();
+    }
+
+    function drawCoin(c) {
+      const x = lanes[c.lane];
+      const y = projectY(c.z);
+
+      ctx.save();
+      ctx.fillStyle = "#ffcc33";
+      ctx.beginPath();
+      ctx.arc(x, y - 22, 12, 0, Math.PI * 2);
+      ctx.fill();
+
+      ctx.fillStyle = "#ff668a";
+      ctx.beginPath();
+      ctx.moveTo(x, y - 25);
+      ctx.bezierCurveTo(x - 12, y - 38, x - 22, y - 20, x, y - 8);
+      ctx.bezierCurveTo(x + 22, y - 20, x + 12, y - 38, x, y - 25);
+      ctx.fill();
+
+      ctx.restore();
+    }
+
+    function drawWorld() {
+      drawBackground();
+
+      const allObjects = [
+        ...obstacles.map(o => ({ kind: "obstacle", obj: o, y: o.z })),
+        ...coins.map(c => ({ kind: "coin", obj: c, y: c.z }))
+      ].sort((a, b) => a.y - b.y);
+
+      for (const item of allObjects) {
+        if (item.kind === "obstacle") drawObstacle(item.obj);
+        else drawCoin(item.obj);
+      }
+
+      drawPlayer();
+    }
+
+    function loop() {
+      if (!running) return;
+
+      updatePlayer();
+      updateWorld();
+      checkCollisions();
+      drawWorld();
+
+      animationId = requestAnimationFrame(loop);
+    }
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    canvas.addEventListener("touchstart", e => {
+      if (!running) return;
+      const t = e.touches[0];
+      touchStartX = t.clientX;
+      touchStartY = t.clientY;
+      e.preventDefault();
+    }, { passive: false });
+
+    canvas.addEventListener("touchend", e => {
+      if (!running) return;
+      const t = e.changedTouches[0];
+      const dx = t.clientX - touchStartX;
+      const dy = t.clientY - touchStartY;
+
+      if (Math.abs(dx) > Math.abs(dy)) {
+        if (dx > 35) moveRight();
+        else if (dx < -35) moveLeft();
+      } else {
+        if (dy < -35) jump();
+        else if (dy > 35) slide();
+        else jump();
+      }
     });
 
-    obstacles = obstacles.filter(o=> o.y < canvas.height);
+    startBtn.addEventListener("click", startGame);
+    retryBtn.addEventListener("click", startGame);
 
-    score++;
-
-    if(score > 500){
-        winGame();
+    function openLetter() {
+      showOnly(letterScreen);
     }
-}
 
-function draw(){
-    ctx.fillStyle="#222";
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    // lanes
-    ctx.strokeStyle="#555";
-    ctx.beginPath();
-    ctx.moveTo(canvas.width/3,0);
-    ctx.lineTo(canvas.width/3,canvas.height);
-    ctx.moveTo(canvas.width*2/3,0);
-    ctx.lineTo(canvas.width*2/3,canvas.height);
-    ctx.stroke();
-
-    // player
-    ctx.fillStyle="#c19a6b";
-    ctx.fillRect(lanes[player.lane]-20, player.y, 40, 40);
-
-    // obstacles
-    ctx.fillStyle="red";
-    obstacles.forEach(o=>{
-        ctx.fillRect(lanes[o.lane]-20, o.y, 40, 40);
-    });
-}
-
-function gameLoop(){
-    update();
-    draw();
-    requestAnimationFrame(gameLoop);
-}
-
-function jump(){
-    if(!player.jumping){
-        player.jumping=true;
-        player.vy=-15;
-    }
-}
-
-function moveLeft(){
-    if(player.lane > 0) player.lane--;
-}
-
-function moveRight(){
-    if(player.lane < 2) player.lane++;
-}
-
-// TOUCH CONTROLS
-let startX;
-
-canvas.addEventListener("touchstart", e=>{
-    startX = e.touches[0].clientX;
-});
-
-canvas.addEventListener("touchend", e=>{
-    let endX = e.changedTouches[0].clientX;
-    let diff = endX - startX;
-
-    if(Math.abs(diff) > 50){
-        if(diff > 0) moveRight();
-        else moveLeft();
-    } else {
-        jump();
-    }
-});
-
-function gameOver(){
-    alert("Intenta otra vez");
-    location.reload();
-}
-
-function winGame(){
-    document.getElementById("surprise").style.display="flex";
-}
-
-function openLetter(){
-    document.getElementById("surprise").style.display="none";
-    document.getElementById("letter").style.display="flex";
-}
-</script>
-
+    openBtn.addEventListener("click", openLetter);
+    envelope.addEventListener("click", openLetter);
+  </script>
 </body>
 </html>
