@@ -1,11 +1,8 @@
-<meta name='viewport' content='width=device-width, initial-scale=1'/><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
-  />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>Un pequeño reto</title>
   <style>
     * {
@@ -36,8 +33,7 @@
       height: 100%;
       position: relative;
       overflow: hidden;
-      background:
-        linear-gradient(to top, #2f251e 0%, #1b1613 35%, #101010 100%);
+      background: linear-gradient(to top, #2f251e 0%, #1b1613 35%, #101010 100%);
     }
 
     .screen {
@@ -64,7 +60,6 @@
     #startScreen h1 {
       margin: 0 0 14px;
       font-size: 2rem;
-      letter-spacing: 0.5px;
       color: #f3dfc1;
     }
 
@@ -111,7 +106,6 @@
       margin-top: 8px;
       color: #d9c1a0;
       font-size: 0.95rem;
-      opacity: 0.95;
       text-align: center;
       padding: 0 18px;
       z-index: 3;
@@ -134,7 +128,6 @@
       z-index: 50;
       text-align: center;
       padding: 24px;
-      pointer-events: auto;
     }
 
     #overlayMessage .box {
@@ -144,8 +137,6 @@
       border-radius: 18px;
       max-width: 320px;
       box-shadow: 0 18px 50px rgba(0,0,0,0.35);
-      position: relative;
-      z-index: 60;
     }
 
     #overlayMessage h2 {
@@ -159,89 +150,111 @@
       line-height: 1.5;
     }
 
-    #letterScreen {
+    /* Pantalla sorpresa */
+    #surpriseScreen {
       display: none;
-      overflow-y: auto;
-      padding: 26px 18px 36px;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
       background:
         radial-gradient(circle at top, rgba(255, 220, 170, 0.10), transparent 30%),
         linear-gradient(to bottom, #2f241d, #191311);
+      padding: 20px;
+      text-align: center;
+    }
+
+    #surpriseScreen.active {
+      display: flex;
+      animation: fadeIn 1s ease;
+    }
+
+    .envelope {
+      width: 230px;
+      height: 160px;
+      position: relative;
+      margin-bottom: 20px;
+      cursor: pointer;
+      transition: transform 0.25s ease;
+    }
+
+    .envelope:active {
+      transform: scale(0.98);
+    }
+
+    .envelope-body {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 120px;
+      background: #d7b78f;
+      border-radius: 0 0 12px 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+      border: 1px solid rgba(90, 55, 30, 0.35);
+    }
+
+    .envelope-flap {
+      position: absolute;
+      top: 18px;
+      width: 0;
+      height: 0;
+      border-left: 115px solid transparent;
+      border-right: 115px solid transparent;
+      border-bottom: 75px solid #c79e72;
+      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25));
+    }
+
+    .seal {
+      position: absolute;
+      left: 50%;
+      top: 78px;
+      transform: translateX(-50%);
+      width: 34px;
+      height: 34px;
+      background: #8f1f1f;
+      border-radius: 50%;
+      box-shadow: inset 0 2px 4px rgba(255,255,255,0.15);
+      z-index: 3;
+    }
+
+    #surpriseScreen h2 {
+      margin: 0 0 8px;
+      color: #f3dfc1;
+      font-weight: normal;
+    }
+
+    #surpriseScreen p {
+      margin: 0 0 18px;
+      color: #d8c3a4;
+      max-width: 300px;
+      line-height: 1.5;
+    }
+
+    /* Pantalla de carta */
+    #letterScreen {
+      display: none;
+      background: #111;
+      overflow: auto;
+      padding: 0;
+      justify-content: center;
+      align-items: flex-start;
     }
 
     #letterScreen.active {
+      display: flex;
+      animation: fadeIn 0.8s ease;
+    }
+
+    .letter-image {
+      width: 100%;
+      max-width: 720px;
+      height: auto;
       display: block;
-      animation: fadeIn 1.4s ease;
-    }
-
-    .paper {
-      width: min(100%, 700px);
       margin: 0 auto;
-      background:
-        linear-gradient(rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
-        #e4cfad;
-      color: #4a2e1f;
-      border-radius: 18px;
-      padding: 28px 22px 34px;
-      box-shadow:
-        0 18px 50px rgba(0,0,0,0.42),
-        inset 0 0 60px rgba(120, 76, 42, 0.12);
-      border: 1px solid rgba(95, 58, 33, 0.15);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .paper::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background:
-        radial-gradient(circle at 10% 10%, rgba(130, 84, 51, 0.10), transparent 18%),
-        radial-gradient(circle at 85% 15%, rgba(130, 84, 51, 0.08), transparent 18%),
-        radial-gradient(circle at 50% 100%, rgba(130, 84, 51, 0.08), transparent 20%);
-      opacity: 0.8;
-    }
-
-    .paper h2 {
-      position: relative;
-      margin: 0 0 18px;
-      text-align: center;
-      font-size: 2rem;
-      font-weight: normal;
-      color: #5c3421;
-    }
-
-    .paper p {
-      position: relative;
-      margin: 0 0 16px;
-      font-size: 1.15rem;
-      line-height: 1.85;
-      white-space: pre-line;
-    }
-
-    .signature {
-      margin-top: 24px;
-      text-align: right;
-      font-style: italic;
-      color: #6a3d28;
-    }
-
-    .typeLine {
-      opacity: 0;
-      transform: translateY(12px);
-      animation: revealLine 0.9s ease forwards;
-    }
-
-    @keyframes revealLine {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
     }
 
     @keyframes fadeIn {
       from { opacity: 0; }
-      to   { opacity: 1; }
+      to { opacity: 1; }
     }
   </style>
 </head>
@@ -263,42 +276,45 @@
 
       <div id="overlayMessage">
         <div class="box">
-          <h2 id="overlayTitle">Uy...</h2>
-          <p id="overlayText">Inténtalo otra vez.</p>
+          <h2>Casi...</h2>
+          <p>Inténtalo otra vez.</p>
           <button id="overlayBtn" class="btn" type="button">Reintentar</button>
         </div>
       </div>
     </section>
 
-    <section id="letterScreen">
-      <div class="paper">
-        <h2>Quiero que sepas algo…</h2>
-        <div id="letterContent"></div>
-        <p class="signature">Con cariño ❤️</p>
+    <section id="surpriseScreen" class="screen">
+      <div class="envelope" id="openLetter">
+        <div class="envelope-flap"></div>
+        <div class="envelope-body"></div>
+        <div class="seal"></div>
       </div>
+      <h2>Tienes algo para abrir</h2>
+      <p>Toca la carta para verla.</p>
+      <button class="btn" id="openBtn">Abrir</button>
+    </section>
+
+    <section id="letterScreen" class="screen">
+      <img src="carta.jpg" alt="Carta romántica" class="letter-image" />
     </section>
   </div>
 
   <script>
     const startScreen = document.getElementById("startScreen");
     const gameScreen = document.getElementById("gameScreen");
+    const surpriseScreen = document.getElementById("surpriseScreen");
     const letterScreen = document.getElementById("letterScreen");
 
     const startBtn = document.getElementById("startBtn");
     const scoreLabel = document.getElementById("scoreLabel");
     const goalLabel = document.getElementById("goalLabel");
     const overlay = document.getElementById("overlayMessage");
-    const overlayTitle = document.getElementById("overlayTitle");
-    const overlayText = document.getElementById("overlayText");
     const overlayBtn = document.getElementById("overlayBtn");
-    const letterContent = document.getElementById("letterContent");
+    const openLetter = document.getElementById("openLetter");
+    const openBtn = document.getElementById("openBtn");
 
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-
-    let w = 0;
-    let h = 0;
-    let groundY = 0;
 
     let animationId = null;
     let running = false;
@@ -308,6 +324,7 @@
     const GOAL = 20;
     let score = 0;
     let gameSpeed = 5.5;
+    let groundY = 0;
 
     const runner = {
       x: 70,
@@ -324,30 +341,25 @@
     let obstacleTimer = 0;
     let nextObstacleIn = 90;
 
-    const fullLetter = [
-      "No sabía muy bien cómo decirte esto de una forma distinta, así que preferí que llegaras aquí poco a poco.",
-      "Quiero que sepas que valoro muchísimo tu amistad. De verdad me gusta compartir contigo, hablar contigo, verte y sentir tu presencia cerca.",
-      "Tienes algo que me transmite paz, ternura y una energía muy bonita. Eres de esas personas que se vuelven especiales sin hacer esfuerzo.",
-      "Y siendo completamente sincero contigo… también me gustas. Me atraes. Hay algo en ti que me mueve por dentro y que no quería seguir guardándome.",
-      "No te digo esto para presionarte ni para cambiar lo bonito que existe entre nosotros. Te lo digo porque quería ser real contigo y porque eres importante para mí.",
-      "Pase lo que pase, quería que supieras que ocupas un lugar muy especial en mi vida, y que esto nació desde lo más bonito que siento por ti."
-    ];
-
     function resizeCanvas() {
-      w = window.innerWidth;
-      h = window.innerHeight;
-      canvas.width = w;
-      canvas.height = h - 70;
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight - 70;
       groundY = canvas.height - 90;
       runner.y = groundY - runner.height;
     }
 
     window.addEventListener("resize", resizeCanvas);
 
-    function startGame() {
+    function showScreen(screen) {
       startScreen.classList.remove("active");
+      gameScreen.classList.remove("active");
+      surpriseScreen.classList.remove("active");
       letterScreen.classList.remove("active");
-      gameScreen.classList.add("active");
+      screen.classList.add("active");
+    }
+
+    function startGame() {
+      showScreen(gameScreen);
       restartGame();
     }
 
@@ -357,13 +369,10 @@
       obstacles = [];
       obstacleTimer = 0;
       nextObstacleIn = 80 + Math.random() * 40;
-
       runner.vy = 0;
       runner.grounded = true;
-
       scoreLabel.textContent = "Puntos: 0";
       goalLabel.textContent = "Meta: " + GOAL;
-
       gameOver = false;
       won = false;
     }
@@ -405,9 +414,7 @@
 
     function update() {
       obstacleTimer++;
-      if (obstacleTimer >= nextObstacleIn) {
-        spawnObstacle();
-      }
+      if (obstacleTimer >= nextObstacleIn) spawnObstacle();
 
       runner.vy += runner.gravity;
       runner.y += runner.vy;
@@ -428,9 +435,7 @@
           score++;
           scoreLabel.textContent = "Puntos: " + score;
 
-          if (score % 5 === 0) {
-            gameSpeed += 0.4;
-          }
+          if (score % 5 === 0) gameSpeed += 0.4;
 
           if (score >= GOAL) {
             winGame();
@@ -482,8 +487,6 @@
       const x = runner.x;
       const y = runner.y;
 
-      ctx.save();
-
       ctx.fillStyle = "#f2d8b4";
       ctx.beginPath();
       ctx.arc(x + 22, y + 12, 9, 0, Math.PI * 2);
@@ -509,8 +512,6 @@
       ctx.beginPath();
       ctx.arc(x + 22, y + 9, 9, Math.PI, 0);
       ctx.fill();
-
-      ctx.restore();
     }
 
     function drawObstacles() {
@@ -540,9 +541,6 @@
       running = false;
       gameOver = true;
       cancelAnimationFrame(animationId);
-
-      overlayTitle.textContent = "Casi...";
-      overlayText.textContent = "Toca el botón y vuelve a intentarlo.";
       overlay.style.display = "flex";
     }
 
@@ -550,24 +548,13 @@
       running = false;
       won = true;
       cancelAnimationFrame(animationId);
-      setTimeout(showLetter, 700);
+      setTimeout(() => {
+        showScreen(surpriseScreen);
+      }, 700);
     }
 
-    function showLetter() {
-      gameScreen.classList.remove("active");
-      letterScreen.classList.add("active");
-      renderLetterAnimated(fullLetter);
-    }
-
-    function renderLetterAnimated(lines) {
-      letterContent.innerHTML = "";
-      lines.forEach((line, index) => {
-        const p = document.createElement("p");
-        p.className = "typeLine";
-        p.style.animationDelay = `${index * 1.1}s`;
-        p.textContent = line;
-        letterContent.appendChild(p);
-      });
+    function revealLetter() {
+      showScreen(letterScreen);
     }
 
     startBtn.addEventListener("click", startGame);
@@ -596,6 +583,19 @@
       if (overlay.style.display === "flex") return;
       jump();
     });
+
+    openLetter.addEventListener("click", revealLetter);
+    openBtn.addEventListener("click", revealLetter);
+
+    openLetter.addEventListener("touchstart", function(e) {
+      e.preventDefault();
+      revealLetter();
+    }, { passive: false });
+
+    openBtn.addEventListener("touchstart", function(e) {
+      e.preventDefault();
+      revealLetter();
+    }, { passive: false });
 
     resizeCanvas();
   </script>
