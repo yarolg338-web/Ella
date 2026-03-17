@@ -1,603 +1,204 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Un pequeño reto</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Un pequeño juego</title>
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: Georgia, serif;
-      background: #111;
-      color: #f4eadb;
-    }
+<style>
+body{
+    margin:0;
+    background:#111;
+    color:#fff;
+    font-family:Arial;
+    overflow:hidden;
+}
 
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
+canvas{
+    display:block;
+}
 
-    #app {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(to top, #2f251e 0%, #1b1613 35%, #101010 100%);
-    }
+#start, #surprise, #letter{
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    background:#111;
+}
 
-    .screen {
-      position: absolute;
-      inset: 0;
-      display: none;
-    }
+#surprise, #letter{
+    display:none;
+}
 
-    .screen.active {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
+button{
+    padding:12px 25px;
+    background:#c19a6b;
+    border:none;
+    color:white;
+    border-radius:10px;
+    margin-top:15px;
+}
 
-    #startScreen {
-      padding: 28px;
-      text-align: center;
-      background:
-        radial-gradient(circle at top, rgba(255, 215, 170, 0.08), transparent 35%),
-        linear-gradient(to bottom, #15110e, #0d0d0d);
-    }
-
-    #startScreen h1 {
-      margin: 0 0 14px;
-      font-size: 2rem;
-      color: #f3dfc1;
-    }
-
-    #startScreen p {
-      margin: 0 0 24px;
-      max-width: 320px;
-      line-height: 1.5;
-      color: #d8c3a4;
-      font-size: 1rem;
-    }
-
-    .btn {
-      border: none;
-      border-radius: 999px;
-      padding: 14px 28px;
-      font-size: 1rem;
-      font-family: inherit;
-      background: linear-gradient(135deg, #c49a6c, #8f6743);
-      color: #fffaf3;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
-      cursor: pointer;
-      position: relative;
-      z-index: 20;
-    }
-
-    #gameScreen {
-      background:
-        linear-gradient(to top, rgba(0,0,0,0.18), rgba(0,0,0,0.04)),
-        linear-gradient(to top, #3a2d24 0%, #241c18 40%, #171311 100%);
-      justify-content: flex-start;
-    }
-
-    #hud {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 14px 16px 0;
-      color: #f0dcc0;
-      font-size: 0.95rem;
-      z-index: 3;
-    }
-
-    #hint {
-      margin-top: 8px;
-      color: #d9c1a0;
-      font-size: 0.95rem;
-      text-align: center;
-      padding: 0 18px;
-      z-index: 3;
-    }
-
-    #gameCanvas {
-      width: 100%;
-      height: calc(100% - 70px);
-      display: block;
-      touch-action: none;
-    }
-
-    #overlayMessage {
-      position: absolute;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(10, 10, 10, 0.42);
-      z-index: 50;
-      text-align: center;
-      padding: 24px;
-    }
-
-    #overlayMessage .box {
-      background: rgba(25, 19, 16, 0.96);
-      border: 1px solid rgba(230, 204, 172, 0.18);
-      padding: 22px 18px;
-      border-radius: 18px;
-      max-width: 320px;
-      box-shadow: 0 18px 50px rgba(0,0,0,0.35);
-    }
-
-    #overlayMessage h2 {
-      margin: 0 0 10px;
-      color: #f1dec3;
-    }
-
-    #overlayMessage p {
-      margin: 0 0 16px;
-      color: #dbc6a8;
-      line-height: 1.5;
-    }
-
-    /* Pantalla sorpresa */
-    #surpriseScreen {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      background:
-        radial-gradient(circle at top, rgba(255, 220, 170, 0.10), transparent 30%),
-        linear-gradient(to bottom, #2f241d, #191311);
-      padding: 20px;
-      text-align: center;
-    }
-
-    #surpriseScreen.active {
-      display: flex;
-      animation: fadeIn 1s ease;
-    }
-
-    .envelope {
-      width: 230px;
-      height: 160px;
-      position: relative;
-      margin-bottom: 20px;
-      cursor: pointer;
-      transition: transform 0.25s ease;
-    }
-
-    .envelope:active {
-      transform: scale(0.98);
-    }
-
-    .envelope-body {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 120px;
-      background: #d7b78f;
-      border-radius: 0 0 12px 12px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-      border: 1px solid rgba(90, 55, 30, 0.35);
-    }
-
-    .envelope-flap {
-      position: absolute;
-      top: 18px;
-      width: 0;
-      height: 0;
-      border-left: 115px solid transparent;
-      border-right: 115px solid transparent;
-      border-bottom: 75px solid #c79e72;
-      filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25));
-    }
-
-    .seal {
-      position: absolute;
-      left: 50%;
-      top: 78px;
-      transform: translateX(-50%);
-      width: 34px;
-      height: 34px;
-      background: #8f1f1f;
-      border-radius: 50%;
-      box-shadow: inset 0 2px 4px rgba(255,255,255,0.15);
-      z-index: 3;
-    }
-
-    #surpriseScreen h2 {
-      margin: 0 0 8px;
-      color: #f3dfc1;
-      font-weight: normal;
-    }
-
-    #surpriseScreen p {
-      margin: 0 0 18px;
-      color: #d8c3a4;
-      max-width: 300px;
-      line-height: 1.5;
-    }
-
-    /* Pantalla de carta */
-    #letterScreen {
-      display: none;
-      background: #111;
-      overflow: auto;
-      padding: 0;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    #letterScreen.active {
-      display: flex;
-      animation: fadeIn 0.8s ease;
-    }
-
-    .letter-image {
-      width: 100%;
-      max-width: 720px;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-  </style>
+img{
+    max-width:100%;
+}
+</style>
 </head>
+
 <body>
-  <div id="app">
-    <section id="startScreen" class="screen active">
-      <h1>¿Jugamos?</h1>
-      <p>Solo toca la pantalla para saltar y llegar al final.</p>
-      <button id="startBtn" class="btn">Empezar</button>
-    </section>
 
-    <section id="gameScreen" class="screen">
-      <div id="hud">
-        <div id="scoreLabel">Puntos: 0</div>
-        <div id="goalLabel">Meta: 20</div>
-      </div>
-      <div id="hint">Toca cualquier parte de la pantalla para saltar</div>
-      <canvas id="gameCanvas"></canvas>
+<div id="start">
+    <h2>¿Jugamos?</h2>
+    <button onclick="startGame()">Empezar</button>
+</div>
 
-      <div id="overlayMessage">
-        <div class="box">
-          <h2>Casi...</h2>
-          <p>Inténtalo otra vez.</p>
-          <button id="overlayBtn" class="btn" type="button">Reintentar</button>
-        </div>
-      </div>
-    </section>
+<canvas id="game"></canvas>
 
-    <section id="surpriseScreen" class="screen">
-      <div class="envelope" id="openLetter">
-        <div class="envelope-flap"></div>
-        <div class="envelope-body"></div>
-        <div class="seal"></div>
-      </div>
-      <h2>Tienes algo para abrir</h2>
-      <p>Toca la carta para verla.</p>
-      <button class="btn" id="openBtn">Abrir</button>
-    </section>
+<div id="surprise">
+    <h2>Tienes algo para abrir</h2>
+    <button onclick="openLetter()">Abrir</button>
+</div>
 
-    <section id="letterScreen" class="screen">
-      <img src="carta.jpg" alt="Carta romántica" class="letter-image" />
-    </section>
-  </div>
+<div id="letter">
+    <img src="carta.jpg">
+</div>
 
-  <script>
-    const startScreen = document.getElementById("startScreen");
-    const gameScreen = document.getElementById("gameScreen");
-    const surpriseScreen = document.getElementById("surpriseScreen");
-    const letterScreen = document.getElementById("letterScreen");
+<script>
+let canvas = document.getElementById("game");
+let ctx = canvas.getContext("2d");
 
-    const startBtn = document.getElementById("startBtn");
-    const scoreLabel = document.getElementById("scoreLabel");
-    const goalLabel = document.getElementById("goalLabel");
-    const overlay = document.getElementById("overlayMessage");
-    const overlayBtn = document.getElementById("overlayBtn");
-    const openLetter = document.getElementById("openLetter");
-    const openBtn = document.getElementById("openBtn");
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
 
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
+let lanes = [canvas.width/4, canvas.width/2, canvas.width*3/4];
+let player = {lane:1, y:canvas.height-120, vy:0, jumping:false};
 
-    let animationId = null;
-    let running = false;
-    let gameOver = false;
-    let won = false;
+let obstacles = [];
+let speed = 6;
+let score = 0;
 
-    const GOAL = 20;
-    let score = 0;
-    let gameSpeed = 5.5;
-    let groundY = 0;
+function startGame(){
+    document.getElementById("start").style.display="none";
+    gameLoop();
+}
 
-    const runner = {
-      x: 70,
-      y: 0,
-      width: 42,
-      height: 58,
-      vy: 0,
-      gravity: 0.85,
-      jumpPower: -13.5,
-      grounded: true
-    };
+function spawnObstacle(){
+    let lane = Math.floor(Math.random()*3);
+    obstacles.push({lane:lane, y:-50});
+}
 
-    let obstacles = [];
-    let obstacleTimer = 0;
-    let nextObstacleIn = 90;
+function update(){
+    if(Math.random()<0.03) spawnObstacle();
 
-    function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight - 70;
-      groundY = canvas.height - 90;
-      runner.y = groundY - runner.height;
-    }
+    obstacles.forEach(o=> o.y += speed);
 
-    window.addEventListener("resize", resizeCanvas);
+    if(player.jumping){
+        player.vy += 0.8;
+        player.y += player.vy;
 
-    function showScreen(screen) {
-      startScreen.classList.remove("active");
-      gameScreen.classList.remove("active");
-      surpriseScreen.classList.remove("active");
-      letterScreen.classList.remove("active");
-      screen.classList.add("active");
-    }
-
-    function startGame() {
-      showScreen(gameScreen);
-      restartGame();
-    }
-
-    function resetGameState() {
-      score = 0;
-      gameSpeed = 5.5;
-      obstacles = [];
-      obstacleTimer = 0;
-      nextObstacleIn = 80 + Math.random() * 40;
-      runner.vy = 0;
-      runner.grounded = true;
-      scoreLabel.textContent = "Puntos: 0";
-      goalLabel.textContent = "Meta: " + GOAL;
-      gameOver = false;
-      won = false;
-    }
-
-    function restartGame() {
-      cancelAnimationFrame(animationId);
-      running = false;
-      overlay.style.display = "none";
-      resizeCanvas();
-      resetGameState();
-      running = true;
-      animationId = requestAnimationFrame(loop);
-    }
-
-    function jump() {
-      if (!running || gameOver || won) return;
-      if (overlay.style.display === "flex") return;
-
-      if (runner.grounded) {
-        runner.vy = runner.jumpPower;
-        runner.grounded = false;
-      }
-    }
-
-    function spawnObstacle() {
-      const height = 36 + Math.random() * 38;
-      const width = 20 + Math.random() * 18;
-
-      obstacles.push({
-        x: canvas.width + 20,
-        y: groundY - height + 6,
-        width,
-        height
-      });
-
-      obstacleTimer = 0;
-      nextObstacleIn = Math.max(55, 90 - score * 1.3) + Math.random() * 35;
-    }
-
-    function update() {
-      obstacleTimer++;
-      if (obstacleTimer >= nextObstacleIn) spawnObstacle();
-
-      runner.vy += runner.gravity;
-      runner.y += runner.vy;
-
-      const floor = groundY - runner.height;
-      if (runner.y >= floor) {
-        runner.y = floor;
-        runner.vy = 0;
-        runner.grounded = true;
-      }
-
-      for (let i = obstacles.length - 1; i >= 0; i--) {
-        const obs = obstacles[i];
-        obs.x -= gameSpeed;
-
-        if (obs.x + obs.width < 0) {
-          obstacles.splice(i, 1);
-          score++;
-          scoreLabel.textContent = "Puntos: " + score;
-
-          if (score % 5 === 0) gameSpeed += 0.4;
-
-          if (score >= GOAL) {
-            winGame();
-            return;
-          }
-        } else if (isColliding(runner, obs)) {
-          loseGame();
-          return;
+        if(player.y >= canvas.height-120){
+            player.y = canvas.height-120;
+            player.jumping=false;
         }
-      }
     }
 
-    function isColliding(a, b) {
-      const ax = a.x + 6;
-      const ay = a.y + 6;
-      const aw = a.width - 12;
-      const ah = a.height - 8;
-
-      return (
-        ax < b.x + b.width &&
-        ax + aw > b.x &&
-        ay < b.y + b.height &&
-        ay + ah > b.y
-      );
-    }
-
-    function drawBackground() {
-      const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      sky.addColorStop(0, "#1c1714");
-      sky.addColorStop(1, "#3a2d24");
-      ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = "rgba(255, 219, 171, 0.08)";
-      ctx.beginPath();
-      ctx.arc(canvas.width - 80, 80, 42, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "#5a4538";
-      ctx.fillRect(0, groundY + 4, canvas.width, canvas.height - groundY);
-
-      ctx.fillStyle = "#7a5d49";
-      for (let i = 0; i < canvas.width; i += 24) {
-        ctx.fillRect(i, groundY + 8, 12, 3);
-      }
-    }
-
-    function drawRunner() {
-      const x = runner.x;
-      const y = runner.y;
-
-      ctx.fillStyle = "#f2d8b4";
-      ctx.beginPath();
-      ctx.arc(x + 22, y + 12, 9, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "#b4835f";
-      ctx.fillRect(x + 14, y + 22, 16, 20);
-
-      ctx.strokeStyle = "#e8c39e";
-      ctx.lineWidth = 4;
-      ctx.beginPath();
-      ctx.moveTo(x + 18, y + 43);
-      ctx.lineTo(x + 14, y + 58);
-      ctx.moveTo(x + 26, y + 43);
-      ctx.lineTo(x + 30, y + 58);
-      ctx.moveTo(x + 14, y + 28);
-      ctx.lineTo(x + 7, y + 40);
-      ctx.moveTo(x + 30, y + 28);
-      ctx.lineTo(x + 38, y + 40);
-      ctx.stroke();
-
-      ctx.fillStyle = "#6b3f2a";
-      ctx.beginPath();
-      ctx.arc(x + 22, y + 9, 9, Math.PI, 0);
-      ctx.fill();
-    }
-
-    function drawObstacles() {
-      obstacles.forEach(obs => {
-        ctx.fillStyle = "#8a4f3b";
-        ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
-
-        ctx.fillStyle = "#b77861";
-        ctx.fillRect(obs.x + 3, obs.y + 3, obs.width - 6, 6);
-      });
-    }
-
-    function draw() {
-      drawBackground();
-      drawRunner();
-      drawObstacles();
-    }
-
-    function loop() {
-      if (!running) return;
-      update();
-      draw();
-      animationId = requestAnimationFrame(loop);
-    }
-
-    function loseGame() {
-      running = false;
-      gameOver = true;
-      cancelAnimationFrame(animationId);
-      overlay.style.display = "flex";
-    }
-
-    function winGame() {
-      running = false;
-      won = true;
-      cancelAnimationFrame(animationId);
-      setTimeout(() => {
-        showScreen(surpriseScreen);
-      }, 700);
-    }
-
-    function revealLetter() {
-      showScreen(letterScreen);
-    }
-
-    startBtn.addEventListener("click", startGame);
-
-    overlayBtn.addEventListener("click", function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      restartGame();
+    obstacles.forEach(o=>{
+        if(o.y > canvas.height-140 &&
+           o.lane === player.lane &&
+           !player.jumping){
+            gameOver();
+        }
     });
 
-    overlayBtn.addEventListener("touchstart", function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      restartGame();
-    }, { passive: false });
+    obstacles = obstacles.filter(o=> o.y < canvas.height);
 
-    canvas.addEventListener("touchstart", function(e) {
-      if (!gameScreen.classList.contains("active")) return;
-      if (overlay.style.display === "flex") return;
-      e.preventDefault();
-      jump();
-    }, { passive: false });
+    score++;
 
-    canvas.addEventListener("mousedown", function() {
-      if (!gameScreen.classList.contains("active")) return;
-      if (overlay.style.display === "flex") return;
-      jump();
+    if(score > 500){
+        winGame();
+    }
+}
+
+function draw(){
+    ctx.fillStyle="#222";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    // lanes
+    ctx.strokeStyle="#555";
+    ctx.beginPath();
+    ctx.moveTo(canvas.width/3,0);
+    ctx.lineTo(canvas.width/3,canvas.height);
+    ctx.moveTo(canvas.width*2/3,0);
+    ctx.lineTo(canvas.width*2/3,canvas.height);
+    ctx.stroke();
+
+    // player
+    ctx.fillStyle="#c19a6b";
+    ctx.fillRect(lanes[player.lane]-20, player.y, 40, 40);
+
+    // obstacles
+    ctx.fillStyle="red";
+    obstacles.forEach(o=>{
+        ctx.fillRect(lanes[o.lane]-20, o.y, 40, 40);
     });
+}
 
-    openLetter.addEventListener("click", revealLetter);
-    openBtn.addEventListener("click", revealLetter);
+function gameLoop(){
+    update();
+    draw();
+    requestAnimationFrame(gameLoop);
+}
 
-    openLetter.addEventListener("touchstart", function(e) {
-      e.preventDefault();
-      revealLetter();
-    }, { passive: false });
+function jump(){
+    if(!player.jumping){
+        player.jumping=true;
+        player.vy=-15;
+    }
+}
 
-    openBtn.addEventListener("touchstart", function(e) {
-      e.preventDefault();
-      revealLetter();
-    }, { passive: false });
+function moveLeft(){
+    if(player.lane > 0) player.lane--;
+}
 
-    resizeCanvas();
-  </script>
+function moveRight(){
+    if(player.lane < 2) player.lane++;
+}
+
+// TOUCH CONTROLS
+let startX;
+
+canvas.addEventListener("touchstart", e=>{
+    startX = e.touches[0].clientX;
+});
+
+canvas.addEventListener("touchend", e=>{
+    let endX = e.changedTouches[0].clientX;
+    let diff = endX - startX;
+
+    if(Math.abs(diff) > 50){
+        if(diff > 0) moveRight();
+        else moveLeft();
+    } else {
+        jump();
+    }
+});
+
+function gameOver(){
+    alert("Intenta otra vez");
+    location.reload();
+}
+
+function winGame(){
+    document.getElementById("surprise").style.display="flex";
+}
+
+function openLetter(){
+    document.getElementById("surprise").style.display="none";
+    document.getElementById("letter").style.display="flex";
+}
+</script>
+
 </body>
 </html>
