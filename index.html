@@ -3,824 +3,922 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Un pequeño reto</title>
+  <title>Mini reto</title>
   <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
+    :root{
+      --bg1:#1a120f;
+      --bg2:#2b1d18;
+      --gold:#e7c08c;
+      --gold2:#c7925d;
+      --cream:#f8ead5;
+      --brown:#6a3f2b;
+      --brown2:#8d5840;
+      --danger:#a14545;
+      --shadow:0 12px 28px rgba(0,0,0,.35);
     }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: Georgia, serif;
-      background: #0f0b09;
-      color: #f4eadb;
+    *{
+      box-sizing:border-box;
+      -webkit-tap-highlight-color:transparent;
+      user-select:none;
+      -webkit-user-select:none;
     }
 
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: center;
+    html,body{
+      margin:0;
+      width:100%;
+      height:100%;
+      overflow:hidden;
+      background:#111;
+      font-family:Georgia, serif;
+      color:var(--cream);
     }
 
-    #app {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      overflow: hidden;
-      background: linear-gradient(to top, #2e221c 0%, #171210 45%, #0e0b0a 100%);
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
     }
 
-    .screen {
-      position: absolute;
-      inset: 0;
-      display: none;
-    }
-
-    .screen.active {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-    }
-
-    #startScreen {
-      padding: 28px;
-      text-align: center;
+    #app{
+      width:100%;
+      height:100%;
+      position:relative;
+      overflow:hidden;
       background:
-        radial-gradient(circle at 50% 10%, rgba(255, 220, 170, 0.12), transparent 30%),
-        linear-gradient(to bottom, #17120f, #0d0b0a);
+        radial-gradient(circle at 20% 10%, rgba(255,220,180,.08), transparent 22%),
+        radial-gradient(circle at 80% 15%, rgba(255,220,180,.06), transparent 18%),
+        linear-gradient(to bottom, #2d1f19 0%, #1a1311 55%, #120f0e 100%);
     }
 
-    #startScreen h1 {
-      margin: 0 0 14px;
-      font-size: 2rem;
-      color: #f3dfc1;
-      text-shadow: 0 2px 10px rgba(0,0,0,0.35);
+    .screen{
+      position:absolute;
+      inset:0;
+      display:none;
     }
 
-    #startScreen p {
-      margin: 0 0 24px;
-      max-width: 320px;
-      line-height: 1.5;
-      color: #d8c3a4;
-      font-size: 1rem;
+    .screen.active{
+      display:flex;
     }
 
-    .btn {
-      border: none;
-      border-radius: 999px;
-      padding: 14px 28px;
-      font-size: 1rem;
-      font-family: inherit;
-      background: linear-gradient(135deg, #cfa06d, #8f6743);
-      color: #fffaf3;
-      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
-      cursor: pointer;
-      position: relative;
-      z-index: 30;
+    .centered{
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:24px;
     }
 
-    #gameScreen {
-      justify-content: flex-start;
+    h1,h2,p{
+      margin:0;
+    }
+
+    #startScreen h1{
+      font-size:2.2rem;
+      color:var(--gold);
+      margin-bottom:14px;
+      text-shadow:0 2px 8px rgba(0,0,0,.28);
+    }
+
+    #startScreen p{
+      max-width:330px;
+      line-height:1.55;
+      color:#e8d4b9;
+      margin-bottom:22px;
+      font-size:1rem;
+    }
+
+    .btn{
+      border:none;
+      border-radius:999px;
+      padding:14px 26px;
+      font:inherit;
+      color:#fff9f1;
+      font-size:1rem;
+      background:linear-gradient(135deg, var(--gold2), #9a643f);
+      box-shadow:var(--shadow);
+      cursor:pointer;
+    }
+
+    .btn:active{
+      transform:scale(.98);
+    }
+
+    #gameScreen{
+      flex-direction:column;
+      justify-content:flex-start;
+    }
+
+    #hud{
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      z-index:5;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:12px 14px 0;
+      color:#f1dec5;
+      font-size:.95rem;
+      pointer-events:none;
+    }
+
+    #hint{
+      position:absolute;
+      top:38px;
+      left:0;
+      right:0;
+      z-index:5;
+      text-align:center;
+      color:#dbc2a0;
+      font-size:.92rem;
+      opacity:.95;
+      pointer-events:none;
+    }
+
+    #gameCanvas{
+      width:100%;
+      height:100%;
+      display:block;
+      touch-action:none;
+    }
+
+    #overlay{
+      position:absolute;
+      inset:0;
+      background:rgba(8,8,8,.46);
+      z-index:20;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    #overlay .box{
+      width:min(92vw,330px);
+      background:rgba(24,18,16,.96);
+      border:1px solid rgba(255,231,200,.12);
+      border-radius:20px;
+      box-shadow:0 18px 50px rgba(0,0,0,.38);
+      padding:22px 18px;
+      text-align:center;
+    }
+
+    #overlay h2{
+      color:var(--gold);
+      margin-bottom:8px;
+      font-weight:normal;
+    }
+
+    #overlay p{
+      color:#e1ccb0;
+      line-height:1.5;
+      margin-bottom:16px;
+    }
+
+    #surpriseScreen{
       background:
-        linear-gradient(to top, rgba(0,0,0,0.20), rgba(0,0,0,0.05)),
-        linear-gradient(to top, #3d2d25 0%, #251c18 45%, #151110 100%);
+        radial-gradient(circle at 50% 0%, rgba(255,220,180,.08), transparent 28%),
+        linear-gradient(to bottom, #2c1f1a, #161210);
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:24px;
+      animation:fadeIn .8s ease;
     }
 
-    #hud {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      padding: 14px 16px 0;
-      color: #f0dcc0;
-      font-size: 0.97rem;
-      z-index: 3;
-      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+    .envelope-wrap{
+      position:relative;
+      width:250px;
+      height:190px;
+      margin-bottom:20px;
+      cursor:pointer;
+      filter:drop-shadow(0 12px 24px rgba(0,0,0,.35));
     }
 
-    #hint {
-      margin-top: 8px;
-      color: #d9c1a0;
-      font-size: 0.95rem;
-      text-align: center;
-      padding: 0 18px;
-      z-index: 3;
-      opacity: 0.95;
+    .envelope{
+      position:absolute;
+      inset:0;
     }
 
-    #gameCanvas {
-      width: 100%;
-      height: calc(100% - 70px);
-      display: block;
-      touch-action: none;
+    .env-back{
+      position:absolute;
+      bottom:18px;
+      left:0;
+      right:0;
+      margin:auto;
+      width:230px;
+      height:128px;
+      background:linear-gradient(180deg, #d8b48d, #c99d70);
+      border-radius:0 0 16px 16px;
+      border:1px solid rgba(97,59,34,.22);
     }
 
-    #overlayMessage {
-      position: absolute;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      background: rgba(8, 7, 7, 0.50);
-      z-index: 50;
-      text-align: center;
-      padding: 24px;
-      backdrop-filter: blur(3px);
+    .env-front{
+      position:absolute;
+      bottom:18px;
+      left:0;
+      right:0;
+      margin:auto;
+      width:230px;
+      height:128px;
+      clip-path:polygon(0 0,100% 0,100% 100%,0 100%,0 0,50% 58%,100% 0);
+      background:linear-gradient(180deg, #d1a679, #bd8b60);
+      border-radius:0 0 16px 16px;
+      opacity:.96;
     }
 
-    #overlayMessage .box {
-      background: rgba(28, 21, 18, 0.97);
-      border: 1px solid rgba(230, 204, 172, 0.16);
-      padding: 22px 18px;
-      border-radius: 20px;
-      max-width: 320px;
-      box-shadow: 0 18px 50px rgba(0,0,0,0.40);
+    .env-flap{
+      position:absolute;
+      left:50%;
+      top:18px;
+      transform:translateX(-50%);
+      width:0;
+      height:0;
+      border-left:115px solid transparent;
+      border-right:115px solid transparent;
+      border-bottom:80px solid #c69869;
+      transform-origin:center top;
+      transition:transform .7s ease;
+      z-index:3;
     }
 
-    #overlayMessage h2 {
-      margin: 0 0 10px;
-      color: #f1dec3;
-      font-weight: normal;
+    .seal{
+      position:absolute;
+      top:88px;
+      left:50%;
+      transform:translateX(-50%);
+      width:38px;
+      height:38px;
+      border-radius:50%;
+      background:radial-gradient(circle at 30% 30%, #b64242, #7f1c1c 70%);
+      z-index:4;
+      box-shadow:inset 0 2px 4px rgba(255,255,255,.12);
     }
 
-    #overlayMessage p {
-      margin: 0 0 16px;
-      color: #dbc6a8;
-      line-height: 1.5;
+    .letter-peek{
+      position:absolute;
+      left:50%;
+      bottom:45px;
+      transform:translateX(-50%);
+      width:178px;
+      height:96px;
+      background:linear-gradient(180deg, #f0ddbf, #e3cfae);
+      border-radius:10px;
+      z-index:2;
+      transition:transform .7s ease, opacity .7s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#6b432e;
+      font-size:1.1rem;
+      box-shadow:0 4px 10px rgba(0,0,0,.15);
     }
 
-    #surpriseScreen {
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      background:
-        radial-gradient(circle at 50% 15%, rgba(255, 227, 184, 0.12), transparent 28%),
-        linear-gradient(to bottom, #2f241d, #191311);
-      padding: 20px;
-      text-align: center;
+    .envelope-wrap.open .env-flap{
+      transform:translateX(-50%) rotateX(180deg);
     }
 
-    #surpriseScreen.active {
-      display: flex;
-      animation: fadeIn 0.9s ease;
+    .envelope-wrap.open .letter-peek{
+      transform:translateX(-50%) translateY(-26px);
     }
 
-    .envelope {
-      width: 240px;
-      height: 170px;
-      position: relative;
-      margin-bottom: 22px;
-      cursor: pointer;
-      transition: transform 0.22s ease;
-      filter: drop-shadow(0 10px 25px rgba(0,0,0,0.35));
+    #surpriseScreen h2{
+      color:var(--gold);
+      margin-bottom:8px;
+      font-weight:normal;
     }
 
-    .envelope:active {
-      transform: scale(0.98);
+    #surpriseScreen p{
+      max-width:320px;
+      color:#e3ceb2;
+      line-height:1.55;
+      margin-bottom:16px;
     }
 
-    .envelope-body {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 125px;
-      background: linear-gradient(to bottom, #dfbe94, #cfa476);
-      border-radius: 0 0 14px 14px;
-      border: 1px solid rgba(90, 55, 30, 0.35);
-      overflow: hidden;
+    #letterScreen{
+      background:#0e0c0b;
+      align-items:flex-start;
+      justify-content:center;
+      overflow:auto;
+      animation:fadeIn .7s ease;
     }
 
-    .envelope-body::before,
-    .envelope-body::after {
-      content: "";
-      position: absolute;
-      top: 0;
-      width: 50%;
-      height: 100%;
-      background: rgba(145, 94, 61, 0.10);
+    .letter-image{
+      width:100%;
+      max-width:760px;
+      height:auto;
+      display:block;
+      margin:0 auto;
     }
 
-    .envelope-body::before {
-      left: 0;
-      clip-path: polygon(0 0, 100% 50%, 0 100%);
+    .small{
+      font-size:.88rem;
+      opacity:.85;
     }
 
-    .envelope-body::after {
-      right: 0;
-      clip-path: polygon(100% 0, 0 50%, 100% 100%);
+    @keyframes fadeIn{
+      from{opacity:0}
+      to{opacity:1}
     }
 
-    .envelope-flap {
-      position: absolute;
-      top: 18px;
-      width: 0;
-      height: 0;
-      border-left: 120px solid transparent;
-      border-right: 120px solid transparent;
-      border-bottom: 78px solid #c79e72;
-      transform-origin: top center;
-      animation: flapIdle 2.5s ease-in-out infinite;
+    @keyframes pulse{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-4px)}
     }
 
-    .seal {
-      position: absolute;
-      left: 50%;
-      top: 84px;
-      transform: translateX(-50%);
-      width: 36px;
-      height: 36px;
-      background: radial-gradient(circle at 30% 30%, #b92a2a, #7d1616);
-      border-radius: 50%;
-      box-shadow: inset 0 2px 5px rgba(255,255,255,0.12);
-      z-index: 3;
-    }
-
-    #surpriseScreen h2 {
-      margin: 0 0 8px;
-      color: #f3dfc1;
-      font-weight: normal;
-    }
-
-    #surpriseScreen p {
-      margin: 0 0 18px;
-      color: #d8c3a4;
-      max-width: 300px;
-      line-height: 1.5;
-    }
-
-    #letterScreen {
-      display: none;
-      background: #110d0b;
-      overflow: auto;
-      padding: 0;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    #letterScreen.active {
-      display: flex;
-      animation: fadeIn 0.8s ease;
-    }
-
-    .letter-wrap {
-      width: 100%;
-      min-height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 14px 0 24px;
-      background:
-        radial-gradient(circle at top, rgba(255, 219, 171, 0.06), transparent 25%),
-        linear-gradient(to bottom, #1a1411, #0f0b09);
-    }
-
-    .letter-image {
-      width: 100%;
-      max-width: 760px;
-      height: auto;
-      display: block;
-      margin: 0 auto;
-      box-shadow: 0 12px 40px rgba(0,0,0,0.35);
-    }
-
-    .sparkle {
-      position: absolute;
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: rgba(255, 230, 190, 0.7);
-      animation: sparkle 2.8s linear infinite;
-      pointer-events: none;
-    }
-
-    @keyframes sparkle {
-      0%   { transform: translateY(0) scale(0.7); opacity: 0; }
-      20%  { opacity: 1; }
-      100% { transform: translateY(-80px) scale(1.3); opacity: 0; }
-    }
-
-    @keyframes flapIdle {
-      0%,100% { transform: rotateX(0deg); }
-      50%     { transform: rotateX(10deg); }
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
+    .pulse{
+      animation:pulse 1.8s infinite ease-in-out;
     }
   </style>
 </head>
 <body>
   <div id="app">
-    <section id="startScreen" class="screen active">
-      <h1>¿Jugamos?</h1>
-      <p>Solo toca la pantalla para saltar y llegar al final.</p>
-      <button id="startBtn" class="btn">Empezar</button>
+    <section id="startScreen" class="screen active centered">
+      <h1>¿Lista para jugar?</h1>
+      <p>Solo toca la pantalla para saltar. Supera el reto y descubre qué hay al final.</p>
+      <button class="btn" id="startBtn">Empezar</button>
+      <p class="small" style="margin-top:14px;">Activa el sonido de tu teléfono</p>
     </section>
 
     <section id="gameScreen" class="screen">
       <div id="hud">
-        <div id="scoreLabel">Puntos: 0</div>
-        <div id="goalLabel">Meta: 18</div>
+        <div id="scoreText">Puntos: 0</div>
+        <div id="goalText">Meta: 25</div>
       </div>
       <div id="hint">Toca la pantalla para saltar</div>
       <canvas id="gameCanvas"></canvas>
 
-      <div id="overlayMessage">
+      <div id="overlay">
         <div class="box">
-          <h2>Casi...</h2>
-          <p>Una vez más.</p>
-          <button id="overlayBtn" class="btn" type="button">Reintentar</button>
+          <h2 id="overlayTitle">Casi...</h2>
+          <p id="overlayMsg">Inténtalo de nuevo.</p>
+          <button class="btn" id="retryBtn">Reintentar</button>
         </div>
       </div>
     </section>
 
-    <section id="surpriseScreen" class="screen">
-      <div class="envelope" id="openLetter">
-        <div class="envelope-flap"></div>
-        <div class="envelope-body"></div>
-        <div class="seal"></div>
+    <section id="surpriseScreen" class="screen centered">
+      <div id="envelopeWrap" class="envelope-wrap pulse">
+        <div class="envelope">
+          <div class="letter-peek">Abrir</div>
+          <div class="env-back"></div>
+          <div class="env-flap"></div>
+          <div class="env-front"></div>
+          <div class="seal"></div>
+        </div>
       </div>
       <h2>Tienes algo para abrir</h2>
-      <p>Toca el sobre.</p>
+      <p>Toca la carta para descubrir la sorpresa.</p>
       <button class="btn" id="openBtn">Abrir</button>
     </section>
 
     <section id="letterScreen" class="screen">
-      <div class="letter-wrap">
-        <img src="carta.jpg" alt="Carta" class="letter-image" />
-      </div>
+      <img src="carta.jpg" alt="Carta" class="letter-image">
     </section>
   </div>
 
   <script>
-    const startScreen = document.getElementById("startScreen");
-    const gameScreen = document.getElementById("gameScreen");
-    const surpriseScreen = document.getElementById("surpriseScreen");
-    const letterScreen = document.getElementById("letterScreen");
+    const GOAL = 25;
 
-    const startBtn = document.getElementById("startBtn");
-    const scoreLabel = document.getElementById("scoreLabel");
-    const goalLabel = document.getElementById("goalLabel");
-    const overlay = document.getElementById("overlayMessage");
-    const overlayBtn = document.getElementById("overlayBtn");
-    const openLetter = document.getElementById("openLetter");
-    const openBtn = document.getElementById("openBtn");
+    const startScreen = document.getElementById('startScreen');
+    const gameScreen = document.getElementById('gameScreen');
+    const surpriseScreen = document.getElementById('surpriseScreen');
+    const letterScreen = document.getElementById('letterScreen');
 
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
+    const startBtn = document.getElementById('startBtn');
+    const retryBtn = document.getElementById('retryBtn');
+    const openBtn = document.getElementById('openBtn');
+    const envelopeWrap = document.getElementById('envelopeWrap');
 
-    let animationId = null;
+    const overlay = document.getElementById('overlay');
+    const overlayTitle = document.getElementById('overlayTitle');
+    const overlayMsg = document.getElementById('overlayMsg');
+
+    const scoreText = document.getElementById('scoreText');
+    const goalText = document.getElementById('goalText');
+    goalText.textContent = `Meta: ${GOAL}`;
+
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    let W = 0;
+    let H = 0;
+    let groundY = 0;
+
     let running = false;
     let gameOver = false;
     let won = false;
-
-    const GOAL = 18;
     let score = 0;
-    let gameSpeed = 6.0;
-    let groundY = 0;
+    let speed = 6;
+    let animationId = 0;
+    let spawnTimer = 0;
+    let nextSpawn = 85;
+    let lastTime = 0;
+
+    const particles = [];
+    const obstacles = [];
+    const clouds = [];
+    const stars = [];
 
     const runner = {
-      x: 70,
+      x: 78,
       y: 0,
-      width: 46,
-      height: 64,
+      w: 38,
+      h: 58,
       vy: 0,
-      gravity: 0.88,
-      jumpPower: -14,
+      gravity: 0.85,
+      jump: -14,
       grounded: true,
-      bob: 0
+      frame: 0
     };
 
-    let obstacles = [];
-    let obstacleTimer = 0;
-    let nextObstacleIn = 85;
-
+    // ---------- Audio ----------
     let audioCtx = null;
-    let audioReady = false;
 
-    function initAudio() {
-      if (audioReady) return;
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) return;
-      audioCtx = new Ctx();
-      audioReady = true;
-    }
-
-    function resumeAudio() {
-      if (audioCtx && audioCtx.state === "suspended") {
-        audioCtx.resume();
+    function ensureAudio() {
+      if (!audioCtx) {
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContextClass();
       }
+      if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    function playTone(freq, duration, type = "sine", volume = 0.03, when = 0) {
+    function beep(freq = 440, duration = 0.08, type = 'sine', volume = 0.03, slideTo = null) {
       if (!audioCtx) return;
+      const now = audioCtx.currentTime;
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
 
       osc.type = type;
-      osc.frequency.setValueAtTime(freq, audioCtx.currentTime + when);
+      osc.frequency.setValueAtTime(freq, now);
+      if (slideTo) osc.frequency.exponentialRampToValueAtTime(slideTo, now + duration);
 
-      gain.gain.setValueAtTime(0.0001, audioCtx.currentTime + when);
-      gain.gain.exponentialRampToValueAtTime(volume, audioCtx.currentTime + when + 0.01);
-      gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + when + duration);
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(volume, now + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
 
       osc.connect(gain);
       gain.connect(audioCtx.destination);
 
-      osc.start(audioCtx.currentTime + when);
-      osc.stop(audioCtx.currentTime + when + duration + 0.02);
+      osc.start(now);
+      osc.stop(now + duration);
     }
 
-    function soundJump() {
-      playTone(420, 0.08, "triangle", 0.03);
-      playTone(620, 0.06, "triangle", 0.02, 0.05);
+    function playJump() {
+      beep(520, 0.07, 'triangle', 0.04, 700);
     }
 
-    function soundPoint() {
-      playTone(700, 0.05, "sine", 0.02);
+    function playScore() {
+      beep(700, 0.05, 'sine', 0.03, 880);
     }
 
-    function soundLose() {
-      playTone(250, 0.10, "sawtooth", 0.035);
-      playTone(170, 0.18, "sawtooth", 0.03, 0.08);
+    function playHit() {
+      beep(170, 0.18, 'sawtooth', 0.05, 90);
+      setTimeout(() => beep(120, 0.12, 'square', 0.035, 80), 45);
     }
 
-    function soundWin() {
-      playTone(520, 0.09, "triangle", 0.03);
-      playTone(660, 0.09, "triangle", 0.03, 0.09);
-      playTone(820, 0.15, "triangle", 0.03, 0.18);
+    function playWin() {
+      const notes = [523, 659, 784, 1047];
+      notes.forEach((n, i) => {
+        setTimeout(() => beep(n, 0.16, 'triangle', 0.04, n * 1.08), i * 110);
+      });
     }
 
-    function soundOpen() {
-      playTone(540, 0.05, "sine", 0.025);
-      playTone(720, 0.07, "sine", 0.02, 0.05);
+    function playOpen() {
+      beep(660, 0.08, 'triangle', 0.035, 880);
+      setTimeout(() => beep(880, 0.12, 'sine', 0.03, 990), 70);
     }
 
+    // ---------- Setup ----------
     function resizeCanvas() {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight - 70;
-      groundY = canvas.height - 95;
-      runner.y = groundY - runner.height;
+      W = window.innerWidth;
+      H = window.innerHeight;
+      canvas.width = W * devicePixelRatio;
+      canvas.height = H * devicePixelRatio;
+      canvas.style.width = W + 'px';
+      canvas.style.height = H + 'px';
+      ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+
+      groundY = H - 110;
+      runner.y = groundY - runner.h;
+
+      createSkyElements();
     }
 
-    window.addEventListener("resize", resizeCanvas);
+    function createSkyElements() {
+      clouds.length = 0;
+      stars.length = 0;
+
+      for (let i = 0; i < 4; i++) {
+        clouds.push({
+          x: Math.random() * W,
+          y: 40 + Math.random() * 120,
+          w: 80 + Math.random() * 70,
+          h: 24 + Math.random() * 18,
+          speed: 0.2 + Math.random() * 0.35
+        });
+      }
+
+      for (let i = 0; i < 28; i++) {
+        stars.push({
+          x: Math.random() * W,
+          y: Math.random() * (H * 0.45),
+          r: Math.random() * 1.7,
+          a: 0.2 + Math.random() * 0.5
+        });
+      }
+    }
+
+    window.addEventListener('resize', resizeCanvas);
 
     function showScreen(screen) {
-      startScreen.classList.remove("active");
-      gameScreen.classList.remove("active");
-      surpriseScreen.classList.remove("active");
-      letterScreen.classList.remove("active");
-      screen.classList.add("active");
+      [startScreen, gameScreen, surpriseScreen, letterScreen].forEach(s => s.classList.remove('active'));
+      screen.classList.add('active');
+    }
+
+    function resetGame() {
+      cancelAnimationFrame(animationId);
+      running = false;
+      gameOver = false;
+      won = false;
+      score = 0;
+      speed = 6;
+      spawnTimer = 0;
+      nextSpawn = 80 + Math.random() * 30;
+      obstacles.length = 0;
+      particles.length = 0;
+      overlay.style.display = 'none';
+
+      runner.vy = 0;
+      runner.grounded = true;
+      runner.frame = 0;
+      runner.y = groundY - runner.h;
+
+      scoreText.textContent = 'Puntos: 0';
     }
 
     function startGame() {
-      initAudio();
-      resumeAudio();
+      ensureAudio();
       showScreen(gameScreen);
-      restartGame();
-    }
-
-    function resetGameState() {
-      score = 0;
-      gameSpeed = 6.0;
-      obstacles = [];
-      obstacleTimer = 0;
-      nextObstacleIn = 75 + Math.random() * 35;
-      runner.vy = 0;
-      runner.grounded = true;
-      runner.bob = 0;
-      scoreLabel.textContent = "Puntos: 0";
-      goalLabel.textContent = "Meta: " + GOAL;
-      gameOver = false;
-      won = false;
+      resetGame();
+      running = true;
+      lastTime = performance.now();
+      animationId = requestAnimationFrame(loop);
     }
 
     function restartGame() {
-      cancelAnimationFrame(animationId);
-      running = false;
-      overlay.style.display = "none";
-      resizeCanvas();
-      resetGameState();
+      ensureAudio();
+      resetGame();
       running = true;
+      lastTime = performance.now();
       animationId = requestAnimationFrame(loop);
     }
 
     function jump() {
       if (!running || gameOver || won) return;
-      if (overlay.style.display === "flex") return;
+      if (overlay.style.display === 'flex') return;
 
       if (runner.grounded) {
-        runner.vy = runner.jumpPower;
+        runner.vy = runner.jump;
         runner.grounded = false;
-        soundJump();
+        playJump();
+        for (let i = 0; i < 6; i++) {
+          particles.push({
+            x: runner.x + 8,
+            y: groundY + 2,
+            vx: -1 - Math.random() * 2,
+            vy: -1 - Math.random() * 1.5,
+            size: 2 + Math.random() * 3,
+            life: 18 + Math.random() * 8,
+            color: 'rgba(226,190,150,0.8)'
+          });
+        }
       }
     }
 
+    // ---------- Obstacles ----------
     function spawnObstacle() {
-      const kinds = ["thorn", "rock"];
-      const kind = kinds[Math.floor(Math.random() * kinds.length)];
+      const type = Math.random() < 0.6 ? 'rock' : 'pillar';
+      const obs = {
+        type,
+        x: W + 30,
+        y: 0,
+        w: type === 'rock' ? 24 + Math.random() * 16 : 18 + Math.random() * 12,
+        h: type === 'rock' ? 26 + Math.random() * 20 : 44 + Math.random() * 30
+      };
+      obs.y = groundY - obs.h + 10;
+      obstacles.push(obs);
 
-      let width, height;
-      if (kind === "thorn") {
-        width = 22 + Math.random() * 10;
-        height = 34 + Math.random() * 28;
-      } else {
-        width = 28 + Math.random() * 18;
-        height = 24 + Math.random() * 14;
-      }
-
-      obstacles.push({
-        kind,
-        x: canvas.width + 25,
-        y: groundY - height + 8,
-        width,
-        height
-      });
-
-      obstacleTimer = 0;
-      nextObstacleIn = Math.max(48, 82 - score * 1.1) + Math.random() * 28;
+      spawnTimer = 0;
+      nextSpawn = Math.max(52, 88 - score * 0.8) + Math.random() * 28;
     }
 
     function update() {
-      obstacleTimer++;
-      runner.bob += 0.12;
-
-      if (obstacleTimer >= nextObstacleIn) spawnObstacle();
+      spawnTimer++;
+      if (spawnTimer >= nextSpawn) spawnObstacle();
 
       runner.vy += runner.gravity;
       runner.y += runner.vy;
 
-      const floor = groundY - runner.height;
+      const floor = groundY - runner.h;
       if (runner.y >= floor) {
         runner.y = floor;
         runner.vy = 0;
+        if (!runner.grounded) {
+          for (let i = 0; i < 5; i++) {
+            particles.push({
+              x: runner.x + 10,
+              y: groundY + 2,
+              vx: -0.5 - Math.random() * 1.4,
+              vy: -0.3 - Math.random() * 1.3,
+              size: 2 + Math.random() * 2,
+              life: 14 + Math.random() * 8,
+              color: 'rgba(220,190,150,0.6)'
+            });
+          }
+        }
         runner.grounded = true;
       }
 
-      for (let i = obstacles.length - 1; i >= 0; i--) {
-        const obs = obstacles[i];
-        obs.x -= gameSpeed;
+      runner.frame += 0.18;
 
-        if (obs.x + obs.width < 0) {
+      for (let i = obstacles.length - 1; i >= 0; i--) {
+        const o = obstacles[i];
+        o.x -= speed;
+
+        if (o.x + o.w < 0) {
           obstacles.splice(i, 1);
           score++;
-          scoreLabel.textContent = "Puntos: " + score;
-          soundPoint();
+          scoreText.textContent = `Puntos: ${score}`;
+          playScore();
 
-          if (score % 4 === 0) gameSpeed += 0.35;
+          if (score % 5 === 0) speed += 0.45;
 
           if (score >= GOAL) {
             winGame();
             return;
           }
-        } else if (isColliding(runner, obs)) {
+        } else if (collide(runner, o)) {
           loseGame();
           return;
         }
       }
-    }
 
-    function isColliding(a, b) {
-      const ax = a.x + 8;
-      const ay = a.y + 8;
-      const aw = a.width - 16;
-      const ah = a.height - 10;
-
-      return (
-        ax < b.x + b.width &&
-        ax + aw > b.x &&
-        ay < b.y + b.height &&
-        ay + ah > b.y
-      );
-    }
-
-    function drawBackground() {
-      const sky = ctx.createLinearGradient(0, 0, 0, canvas.height);
-      sky.addColorStop(0, "#191310");
-      sky.addColorStop(0.55, "#2d211c");
-      sky.addColorStop(1, "#4a372c");
-      ctx.fillStyle = sky;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = "rgba(255, 221, 174, 0.10)";
-      ctx.beginPath();
-      ctx.arc(canvas.width - 90, 90, 50, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "rgba(0,0,0,0.10)";
-      ctx.fillRect(0, groundY - 35, canvas.width, 40);
-
-      ctx.fillStyle = "#5a4436";
-      ctx.beginPath();
-      ctx.moveTo(0, groundY - 16);
-      for (let i = 0; i <= canvas.width; i += 36) {
-        ctx.lineTo(i, groundY - 16 + Math.sin(i * 0.02) * 4);
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.05;
+        p.life--;
+        if (p.life <= 0) particles.splice(i, 1);
       }
-      ctx.lineTo(canvas.width, canvas.height);
-      ctx.lineTo(0, canvas.height);
-      ctx.closePath();
-      ctx.fill();
 
-      ctx.fillStyle = "#6f5643";
-      ctx.fillRect(0, groundY + 6, canvas.width, canvas.height - groundY);
-
-      for (let i = 0; i < canvas.width; i += 24) {
-        ctx.fillStyle = i % 48 === 0 ? "#896a54" : "#7a5d49";
-        ctx.fillRect(i, groundY + 10, 13, 3);
-      }
-    }
-
-    function drawRunner() {
-      const x = runner.x;
-      const y = runner.y + (runner.grounded ? Math.sin(runner.bob) * 1.5 : 0);
-
-      ctx.save();
-
-      ctx.fillStyle = "rgba(0,0,0,0.18)";
-      ctx.beginPath();
-      ctx.ellipse(x + 24, groundY + 6, 20, 6, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "#f2d8b4";
-      ctx.beginPath();
-      ctx.arc(x + 22, y + 12, 9, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "#6b3f2a";
-      ctx.beginPath();
-      ctx.arc(x + 22, y + 9, 9, Math.PI, 0);
-      ctx.fill();
-
-      ctx.fillStyle = "#b4835f";
-      ctx.beginPath();
-      ctx.roundRect(x + 13, y + 22, 18, 23, 8);
-      ctx.fill();
-
-      ctx.strokeStyle = "#e8c39e";
-      ctx.lineWidth = 4;
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      ctx.moveTo(x + 18, y + 45);
-      ctx.lineTo(x + 14, y + 60);
-      ctx.moveTo(x + 27, y + 45);
-      ctx.lineTo(x + 31, y + 60);
-
-      ctx.moveTo(x + 14, y + 29);
-      ctx.lineTo(x + 7, y + 40);
-      ctx.moveTo(x + 30, y + 29);
-      ctx.lineTo(x + 38, y + 38);
-      ctx.stroke();
-
-      ctx.fillStyle = "#9d6d4f";
-      ctx.beginPath();
-      ctx.moveTo(x + 13, y + 24);
-      ctx.lineTo(x + 22, y + 18);
-      ctx.lineTo(x + 31, y + 24);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.restore();
-    }
-
-    function drawObstacles() {
-      obstacles.forEach(obs => {
-        if (obs.kind === "thorn") {
-          ctx.fillStyle = "#7e4334";
-          ctx.beginPath();
-          ctx.moveTo(obs.x, obs.y + obs.height);
-          ctx.lineTo(obs.x + obs.width * 0.3, obs.y);
-          ctx.lineTo(obs.x + obs.width * 0.6, obs.y + obs.height);
-          ctx.lineTo(obs.x + obs.width * 0.9, obs.y + 4);
-          ctx.lineTo(obs.x + obs.width, obs.y + obs.height);
-          ctx.closePath();
-          ctx.fill();
-
-          ctx.fillStyle = "#a95f49";
-          ctx.fillRect(obs.x + 3, obs.y + obs.height - 7, obs.width - 6, 4);
-        } else {
-          ctx.fillStyle = "#7d5a46";
-          ctx.beginPath();
-          ctx.roundRect(obs.x, obs.y, obs.width, obs.height, 8);
-          ctx.fill();
-
-          ctx.fillStyle = "#9f7860";
-          ctx.fillRect(obs.x + 4, obs.y + 5, obs.width - 8, 5);
+      clouds.forEach(c => {
+        c.x -= c.speed;
+        if (c.x + c.w < -20) {
+          c.x = W + Math.random() * 50;
+          c.y = 30 + Math.random() * 120;
         }
       });
     }
 
-    function drawParticles() {
-      for (let i = 0; i < 3; i++) {
-        const px = (performance.now() * 0.03 + i * 130) % canvas.width;
-        const py = 80 + i * 45 + Math.sin(performance.now() * 0.001 + i) * 10;
-        ctx.fillStyle = "rgba(255, 233, 199, 0.08)";
+    function collide(a, b) {
+      const ax = a.x + 6;
+      const ay = a.y + 6;
+      const aw = a.w - 12;
+      const ah = a.h - 8;
+      return ax < b.x + b.w && ax + aw > b.x && ay < b.y + b.h && ay + ah > b.y;
+    }
+
+    // ---------- Draw ----------
+    function drawSky() {
+      const g = ctx.createLinearGradient(0, 0, 0, H);
+      g.addColorStop(0, '#2c1d18');
+      g.addColorStop(0.55, '#1b1412');
+      g.addColorStop(1, '#120f0e');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.fillStyle = 'rgba(250,220,180,0.08)';
+      ctx.beginPath();
+      ctx.arc(W - 80, 85, 42, 0, Math.PI * 2);
+      ctx.fill();
+
+      stars.forEach(s => {
+        ctx.fillStyle = `rgba(255,238,214,${s.a})`;
         ctx.beginPath();
-        ctx.arc(px, py, 2.5, 0, Math.PI * 2);
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
         ctx.fill();
+      });
+
+      clouds.forEach(c => {
+        ctx.fillStyle = 'rgba(255,230,200,0.05)';
+        ctx.beginPath();
+        ctx.ellipse(c.x, c.y, c.w * 0.32, c.h * 0.55, 0, 0, Math.PI * 2);
+        ctx.ellipse(c.x + c.w * 0.18, c.y - 4, c.w * 0.24, c.h * 0.48, 0, 0, Math.PI * 2);
+        ctx.ellipse(c.x - c.w * 0.18, c.y + 2, c.w * 0.22, c.h * 0.45, 0, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    }
+
+    function drawGround() {
+      ctx.fillStyle = '#4a342a';
+      ctx.fillRect(0, groundY + 4, W, H - groundY);
+
+      ctx.fillStyle = '#705241';
+      for (let i = 0; i < W; i += 24) {
+        ctx.fillRect((i - (performance.now() * 0.08 % 24)), groundY + 10, 12, 3);
+      }
+
+      ctx.fillStyle = 'rgba(255,230,190,0.08)';
+      ctx.fillRect(0, groundY + 2, W, 2);
+    }
+
+    function drawRunner() {
+      const x = runner.x;
+      const y = runner.y;
+      const bounce = runner.grounded ? Math.sin(runner.frame * 2.5) * 1.5 : 0;
+
+      // sombra
+      ctx.fillStyle = 'rgba(0,0,0,0.22)';
+      ctx.beginPath();
+      ctx.ellipse(x + 20, groundY + 12, 18, 6, 0, 0, Math.PI * 2);
+      ctx.fill();
+
+      // cabeza
+      ctx.fillStyle = '#f2d8b4';
+      ctx.beginPath();
+      ctx.arc(x + 21, y + 12 + bounce, 9, 0, Math.PI * 2);
+      ctx.fill();
+
+      // cabello
+      ctx.fillStyle = '#6b3f2a';
+      ctx.beginPath();
+      ctx.arc(x + 21, y + 10 + bounce, 9, Math.PI, 0);
+      ctx.fill();
+
+      // cuerpo
+      ctx.fillStyle = '#c58b6f';
+      ctx.fillRect(x + 14, y + 22 + bounce, 16, 20);
+
+      // vestido
+      ctx.fillStyle = '#d2a07e';
+      ctx.beginPath();
+      ctx.moveTo(x + 14, y + 42 + bounce);
+      ctx.lineTo(x + 30, y + 42 + bounce);
+      ctx.lineTo(x + 35, y + 54 + bounce);
+      ctx.lineTo(x + 9, y + 54 + bounce);
+      ctx.closePath();
+      ctx.fill();
+
+      // piernas y brazos
+      ctx.strokeStyle = '#e9c7a5';
+      ctx.lineWidth = 4;
+      ctx.lineCap = 'round';
+      ctx.beginPath();
+      if (runner.grounded) {
+        const leg = Math.sin(runner.frame * 5) * 4;
+        ctx.moveTo(x + 17, y + 52 + bounce);
+        ctx.lineTo(x + 14 - leg * 0.3, y + 59 + bounce);
+        ctx.moveTo(x + 27, y + 52 + bounce);
+        ctx.lineTo(x + 31 + leg * 0.3, y + 59 + bounce);
+
+        ctx.moveTo(x + 15, y + 28 + bounce);
+        ctx.lineTo(x + 9 + leg * 0.3, y + 38 + bounce);
+        ctx.moveTo(x + 29, y + 28 + bounce);
+        ctx.lineTo(x + 35 - leg * 0.3, y + 38 + bounce);
+      } else {
+        ctx.moveTo(x + 17, y + 52 + bounce);
+        ctx.lineTo(x + 12, y + 58 + bounce);
+        ctx.moveTo(x + 27, y + 52 + bounce);
+        ctx.lineTo(x + 31, y + 57 + bounce);
+
+        ctx.moveTo(x + 15, y + 28 + bounce);
+        ctx.lineTo(x + 8, y + 22 + bounce);
+        ctx.moveTo(x + 29, y + 28 + bounce);
+        ctx.lineTo(x + 35, y + 24 + bounce);
+      }
+      ctx.stroke();
+    }
+
+    function drawObstacle(o) {
+      if (o.type === 'rock') {
+        ctx.fillStyle = '#8a5b47';
+        ctx.beginPath();
+        ctx.moveTo(o.x, o.y + o.h);
+        ctx.lineTo(o.x + 6, o.y + 6);
+        ctx.lineTo(o.x + o.w - 5, o.y);
+        ctx.lineTo(o.x + o.w, o.y + o.h);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = 'rgba(255,230,190,0.08)';
+        ctx.fillRect(o.x + 5, o.y + 6, o.w - 10, 4);
+      } else {
+        ctx.fillStyle = '#8b4f3c';
+        ctx.fillRect(o.x, o.y, o.w, o.h);
+        ctx.fillStyle = '#b87760';
+        ctx.fillRect(o.x + 2, o.y + 4, o.w - 4, 6);
       }
     }
 
-    function draw() {
-      drawBackground();
-      drawParticles();
-      drawRunner();
-      drawObstacles();
+    function drawParticles() {
+      particles.forEach(p => {
+        ctx.fillStyle = p.color;
+        ctx.fillRect(p.x, p.y, p.size, p.size);
+      });
     }
 
-    function loop() {
+    function draw() {
+      drawSky();
+      drawGround();
+      obstacles.forEach(drawObstacle);
+      drawParticles();
+      drawRunner();
+    }
+
+    function loop(ts) {
       if (!running) return;
-      update();
+      const dt = ts - lastTime;
+      lastTime = ts;
+
+      update(dt);
       draw();
       animationId = requestAnimationFrame(loop);
     }
 
+    // ---------- End states ----------
     function loseGame() {
       running = false;
       gameOver = true;
       cancelAnimationFrame(animationId);
-      soundLose();
-      overlay.style.display = "flex";
+      playHit();
+
+      overlayTitle.textContent = 'Casi...';
+      overlayMsg.textContent = 'Te faltó muy poco. Inténtalo otra vez.';
+      overlay.style.display = 'flex';
     }
 
     function winGame() {
       running = false;
       won = true;
       cancelAnimationFrame(animationId);
-      soundWin();
+      playWin();
+
       setTimeout(() => {
         showScreen(surpriseScreen);
-        createSparkles();
-      }, 800);
+      }, 650);
     }
 
     function revealLetter() {
-      soundOpen();
-      showScreen(letterScreen);
+      playOpen();
+      envelopeWrap.classList.add('open');
+      setTimeout(() => {
+        showScreen(letterScreen);
+      }, 700);
     }
 
-    function createSparkles() {
-      document.querySelectorAll(".sparkle").forEach(el => el.remove());
-      for (let i = 0; i < 14; i++) {
-        const s = document.createElement("div");
-        s.className = "sparkle";
-        s.style.left = (window.innerWidth / 2 - 100 + Math.random() * 200) + "px";
-        s.style.top = (window.innerHeight / 2 + 20 + Math.random() * 70) + "px";
-        s.style.animationDelay = (Math.random() * 1.5) + "s";
-        surpriseScreen.appendChild(s);
-      }
-    }
+    // ---------- Events ----------
+    startBtn.addEventListener('click', startGame);
 
-    startBtn.addEventListener("click", startGame);
-
-    overlayBtn.addEventListener("click", function(e) {
+    retryBtn.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      resumeAudio();
       restartGame();
     });
 
-    overlayBtn.addEventListener("touchstart", function(e) {
+    retryBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      resumeAudio();
       restartGame();
-    }, { passive: false });
+    }, { passive:false });
 
-    canvas.addEventListener("touchstart", function(e) {
-      if (!gameScreen.classList.contains("active")) return;
-      if (overlay.style.display === "flex") return;
+    function tryJumpFromCanvas(e) {
+      if (!gameScreen.classList.contains('active')) return;
+      if (overlay.style.display === 'flex') return;
       e.preventDefault();
-      resumeAudio();
+      ensureAudio();
       jump();
-    }, { passive: false });
+    }
 
-    canvas.addEventListener("mousedown", function() {
-      if (!gameScreen.classList.contains("active")) return;
-      if (overlay.style.display === "flex") return;
-      resumeAudio();
-      jump();
-    });
+    canvas.addEventListener('touchstart', tryJumpFromCanvas, { passive:false });
+    canvas.addEventListener('mousedown', tryJumpFromCanvas);
 
-    openLetter.addEventListener("click", revealLetter);
-    openBtn.addEventListener("click", revealLetter);
+    openBtn.addEventListener('click', revealLetter);
+    envelopeWrap.addEventListener('click', revealLetter);
 
-    openLetter.addEventListener("touchstart", function(e) {
+    openBtn.addEventListener('touchstart', (e) => {
       e.preventDefault();
       revealLetter();
-    }, { passive: false });
+    }, { passive:false });
 
-    openBtn.addEventListener("touchstart", function(e) {
+    envelopeWrap.addEventListener('touchstart', (e) => {
       e.preventDefault();
       revealLetter();
-    }, { passive: false });
+    }, { passive:false });
 
     resizeCanvas();
   </script>
