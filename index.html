@@ -39,16 +39,18 @@
     let started = false;
     let gameOver = false;
     let score = 0;
+    let hiScore = 0;
     let speed = 8;
     let gravity = 0.95;
     let obstacleTimer = 0;
     let nextObstacle = 85;
+    let groundOffset = 0;
 
     const dino = {
       x: 70,
       y: 0,
-      w: 44,
-      h: 48,
+      w: 56,
+      h: 60,
       vy: 0,
       jumpPower: -16,
       grounded: true,
@@ -84,9 +86,11 @@
       speed = 8;
       obstacleTimer = 0;
       nextObstacle = 75 + Math.random() * 40;
+      groundOffset = 0;
       obstacles.length = 0;
       dino.vy = 0;
       dino.grounded = true;
+      dino.runFrame = 0;
       dino.y = groundY - dino.h;
     }
 
@@ -94,10 +98,12 @@
       if (!started) {
         resetGame();
       }
+
       if (gameOver) {
         resetGame();
         return;
       }
+
       if (dino.grounded) {
         dino.vy = dino.jumpPower;
         dino.grounded = false;
@@ -109,12 +115,18 @@
       const obs = {
         x: canvas.width + 20,
         y: 0,
-        w: tall ? 20 : 32,
-        h: tall ? 48 : 36,
+        w: tall ? 20 : 34,
+        h: tall ? 50 : 36,
         tall
       };
       obs.y = groundY - obs.h;
       obstacles.push(obs);
+    }
+
+    function setGameOver() {
+      gameOver = true;
+      hiScore = Math.max(hiScore, score);
+      dino.vy = 0;
     }
 
     function update() {
@@ -130,6 +142,7 @@
       }
 
       dino.runFrame += 0.22;
+      groundOffset += speed;
 
       obstacleTimer++;
       if (obstacleTimer >= nextObstacle) {
@@ -162,14 +175,15 @@
 
     function checkCollision() {
       for (const obs of obstacles) {
-        const pad = 6;
+        const pad = 8;
         if (
           dino.x + pad < obs.x + obs.w &&
           dino.x + dino.w - pad > obs.x &&
           dino.y + pad < obs.y + obs.h &&
           dino.y + dino.h - pad > obs.y
         ) {
-          gameOver = true;
+          setGameOver();
+          return;
         }
       }
     }
@@ -187,10 +201,9 @@
       ctx.lineTo(canvas.width, groundY);
       ctx.stroke();
 
-      for (let i = 0; i < canvas.width; i += 28) {
-        const move = (performance.now() * 0.18) % 28;
+      for (let i = 0; i < canvas.width + 28; i += 28) {
         ctx.fillStyle = "#666";
-        ctx.fillRect(i - move, groundY + 12, 10, 2);
+        ctx.fillRect(i - (groundOffset % 28), groundY + 12, 10, 2);
       }
     }
 
@@ -212,43 +225,57 @@
     function drawDino() {
       const x = dino.x;
       const y = dino.y;
-      const legSwing = dino.grounded ? Math.sin(dino.runFrame) * 4 : 0;
+      const legSwing = !gameOver && dino.grounded ? Math.sin(dino.runFrame) * 4 : 0;
 
       ctx.fillStyle = "#555";
 
       // cola
-      ctx.fillRect(x - 4, y + 24, 12, 6);
-      ctx.fillRect(x - 10, y + 20, 8, 6);
+      ctx.fillRect(x - 10, y + 30, 14, 6);
+      ctx.fillRect(x - 16, y + 26, 8, 6);
+      ctx.fillRect(x - 22, y + 22, 8, 6);
 
       // cuerpo
-      ctx.fillRect(x + 8, y + 14, 24, 24);
+      ctx.fillRect(x + 4, y + 20, 28, 24);
+
+      // panza
+      ctx.fillRect(x + 8, y + 40, 20, 6);
 
       // cuello
-      ctx.fillRect(x + 18, y + 6, 10, 12);
+      ctx.fillRect(x + 22, y + 10, 10, 14);
 
-      // cabeza
-      ctx.fillRect(x + 20, y, 18, 18);
+      // cabeza grande
+      ctx.fillRect(x + 24, y, 20, 18);
 
       // hocico
-      ctx.fillRect(x + 34, y + 8, 12, 8);
+      ctx.fillRect(x + 40, y + 8, 14, 8);
 
-      // brazo
-      ctx.fillRect(x + 24, y + 22, 6, 10);
+      // mandíbula
+      ctx.fillRect(x + 42, y + 14, 10, 4);
+
+      // brazo pequeño
+      ctx.fillRect(x + 24, y + 26, 5, 10);
+      ctx.fillRect(x + 27, y + 32, 6, 4);
 
       // ojo
       ctx.fillStyle = "#f7f7f7";
-      ctx.fillRect(x + 27, y + 4, 3, 3);
+      ctx.fillRect(x + 30, y + 4, 3, 3);
 
+      // boca
       ctx.fillStyle = "#555";
+      ctx.fillRect(x + 44, y + 12, 8, 2);
 
       // piernas
       if (dino.grounded) {
-        ctx.fillRect(x + 12, y + 38, 6, 10 + legSwing);
-        ctx.fillRect(x + 24, y + 38, 6, 10 - legSwing);
+        ctx.fillRect(x + 10, y + 44, 7, 14 + legSwing);
+        ctx.fillRect(x + 22, y + 44, 7, 14 - legSwing);
       } else {
-        ctx.fillRect(x + 12, y + 38, 6, 10);
-        ctx.fillRect(x + 24, y + 38, 6, 10);
+        ctx.fillRect(x + 10, y + 44, 7, 14);
+        ctx.fillRect(x + 22, y + 44, 7, 14);
       }
+
+      // pies
+      ctx.fillRect(x + 8, y + 56 + legSwing, 10, 4);
+      ctx.fillRect(x + 20, y + 56 - legSwing, 10, 4);
     }
 
     function drawObstacle(obs) {
@@ -268,7 +295,8 @@
     function drawUI() {
       ctx.fillStyle = "#555";
       ctx.font = "20px Arial";
-      ctx.fillText("HI " + String(score).padStart(5, "0"), canvas.width - 130, 35);
+      ctx.fillText("HI " + String(hiScore).padStart(5, "0"), canvas.width - 240, 35);
+      ctx.fillText(String(score).padStart(5, "0"), canvas.width - 110, 35);
 
       if (!started) {
         ctx.textAlign = "center";
@@ -285,6 +313,17 @@
         ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 20);
         ctx.font = "18px Arial";
         ctx.fillText("Toca o presiona espacio para reiniciar", canvas.width / 2, canvas.height / 2 + 15);
+
+        // X de game over tipo clásico
+        ctx.lineWidth = 4;
+        ctx.strokeStyle = "#555";
+        ctx.beginPath();
+        ctx.moveTo(canvas.width / 2 - 55, canvas.height / 2 - 65);
+        ctx.lineTo(canvas.width / 2 - 35, canvas.height / 2 - 45);
+        ctx.moveTo(canvas.width / 2 - 35, canvas.height / 2 - 65);
+        ctx.lineTo(canvas.width / 2 - 55, canvas.height / 2 - 45);
+        ctx.stroke();
+
         ctx.textAlign = "left";
       }
     }
