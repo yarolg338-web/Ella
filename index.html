@@ -12,65 +12,64 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --primary: #010409;
-            --accent: #22d3ee;
-            --emerald: #10b981;
+            --primary-dark: #010409;
+            --accent-cyan: #22d3ee;
             --bg-card: rgba(13, 17, 23, 0.98);
         }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--primary);
+            background-color: var(--primary-dark);
             color: #f1f5f9;
             margin: 0;
             padding: 0;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
-            overflow-x: hidden;
         }
 
-        /* Lógica de Escalado para PC vs Móvil */
-        .viewport-adapter {
+        /* Contenedor Adaptativo Inteligente */
+        .master-container {
             width: 100%;
             display: flex;
-            flex-direction: column;
-            align-items: center;
             justify-content: center;
-            transition: all 0.5s ease;
+            align-items: center;
+            padding: 20px;
+            transition: all 0.4s ease;
         }
 
-        /* Clase aplicada por JS si es PC */
-        .is-pc .viewport-adapter {
-            transform: scale(0.8); /* Aleja la vista en computadoras */
+        /* Estilo para PC: Zoom out automático para ver todo */
+        .is-pc .master-container {
+            transform: scale(0.9);
             transform-origin: center center;
         }
 
-        /* Clase aplicada por JS si es Móvil */
-        .is-mobile .viewport-adapter {
-            transform: scale(1);
+        /* Estilo para Móvil: Pantalla completa */
+        .is-mobile .master-container {
             padding: 10px;
+            transform: scale(1);
         }
 
-        .main-stage {
+        .glass-canvas {
             background: var(--bg-card);
             backdrop-filter: blur(30px);
             border: 1px solid rgba(255, 255, 255, 0.15);
             box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 1);
             width: 100%;
-            max-width: 1150px;
-            height: 780px;
+            max-width: 1100px;
+            min-height: 700px; /* Asegura un tamaño mínimo profesional */
             position: relative;
             display: flex;
             flex-direction: column;
+            border-radius: 3.5rem;
             overflow: hidden;
         }
 
         @media (max-width: 1023px) {
-            .main-stage {
-                height: auto;
-                min-height: 95vh;
+            .glass-canvas {
+                border-radius: 2rem;
+                min-height: 90vh;
             }
         }
 
@@ -79,93 +78,93 @@
             flex: 1;
             padding: 3rem;
             flex-direction: column;
-            animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            overflow-y: auto;
+            animation: fadeInSlide 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .slide.active {
             display: flex;
         }
 
-        /* Interlineado mejorado para tildes */
-        .premium-header {
+        /* Títulos con interlineado corregido para tildes */
+        .header-premium {
             line-height: 1.7 !important;
             letter-spacing: -0.01em;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(30px); }
+        @keyframes fadeInSlide {
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Animaciones Chatbot */
-        @keyframes waving {
+        /* Animación Chatbot */
+        @keyframes wavingBot {
             0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(15deg); }
-            75% { transform: rotate(-15deg); }
+            20% { transform: rotate(12deg); }
+            80% { transform: rotate(-12deg); }
         }
-        .bot-wave { animation: waving 2s infinite ease-in-out; transform-origin: bottom center; }
+        .bot-wave { animation: wavingBot 2s infinite ease-in-out; transform-origin: bottom center; }
 
-        @keyframes floatBot {
+        .bot-float { animation: floating 3.5s infinite ease-in-out; }
+        @keyframes floating {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-15px); }
+            50% { transform: translateY(-12px); }
         }
-        .bot-float { animation: floatBot 4s infinite ease-in-out; }
 
-        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
         .custom-scroll::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.4); border-radius: 10px; }
 
-        .bg-gradient-mesh {
-            background: radial-gradient(circle at 10% 10%, rgba(34, 211, 238, 0.12) 0%, transparent 45%),
-                        radial-gradient(circle at 90% 90%, rgba(16, 185, 129, 0.08) 0%, transparent 45%),
+        .bg-mesh {
+            background: radial-gradient(circle at 10% 10%, rgba(34, 211, 238, 0.12) 0%, transparent 40%),
+                        radial-gradient(circle at 90% 90%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
                         #010409;
         }
     </style>
 </head>
-<body class="bg-gradient-mesh">
+<body class="bg-mesh">
 
-    <!-- Barra de Progreso Elite -->
-    <div class="fixed top-0 left-0 w-full h-1.5 bg-black z-[100]">
+    <!-- Barra de Progreso Superior -->
+    <div class="fixed top-0 left-0 w-full h-1.5 bg-black z-[150]">
         <div id="progress-bar" class="h-full bg-gradient-to-r from-cyan-400 to-emerald-500 transition-all duration-700 shadow-[0_0_15px_rgba(34,211,238,0.7)]" style="width: 0%"></div>
     </div>
 
-    <div class="viewport-adapter" id="viewport">
-        <!-- Contenedor Principal -->
-        <main id="main-container" class="main-stage rounded-[3rem] md:rounded-[4rem]">
+    <div class="master-container" id="master-container">
+        <!-- Canvas de la Presentación -->
+        <main id="main-canvas" class="glass-canvas">
             
             <!-- SLIDE 1: PORTADA -->
-            <div class="slide active items-center justify-center text-center space-y-6" data-title="Portada Institucional">
-                <div class="space-y-2">
-                    <h3 class="text-cyan-400 font-extrabold tracking-[0.6em] text-sm md:text-xl uppercase">Universidad Simón Bolívar</h3>
-                    <div class="w-32 h-1 bg-cyan-500 mx-auto rounded-full"></div>
+            <div class="slide active items-center justify-center text-center space-y-6" data-title="Portada">
+                <div class="space-y-1">
+                    <h3 class="text-cyan-400 font-black tracking-[0.5em] text-sm md:text-lg uppercase">Universidad Simón Bolívar</h3>
+                    <div class="w-32 h-1 bg-cyan-500 mx-auto rounded-full shadow-[0_0_10px_rgba(34,211,238,0.5)]"></div>
                     <p class="text-slate-500 text-[10px] font-black uppercase tracking-widest pt-1">Gerencia Tecnológica de la Industria</p>
                 </div>
                 
-                <div class="relative py-4 bot-float">
-                    <div class="absolute -top-10 -right-20 bg-cyan-500 text-slate-950 font-black px-8 py-3 rounded-[2rem] rounded-bl-none shadow-2xl text-2xl animate-pulse">¡Hola!</div>
+                <!-- Chatbot Interactivo -->
+                <div class="relative py-2 bot-float">
+                    <div class="absolute -top-10 -right-20 bg-cyan-500 text-slate-950 font-black px-8 py-3 rounded-2xl rounded-bl-none shadow-2xl text-2xl animate-pulse">¡Hola!</div>
                     <div class="p-8 bg-cyan-500/10 rounded-full border-2 border-cyan-500/30">
                         <i class="fa-solid fa-robot text-8xl text-cyan-400 bot-wave"></i>
                     </div>
                 </div>
 
                 <div class="space-y-4">
-                    <h1 class="premium-header text-5xl md:text-7xl font-black text-white leading-tight">Plan Estratégico de<br><span class="text-cyan-400">Transformación Digital</span></h1>
-                    <p class="text-2xl text-slate-300 font-light italic">IA para la Excelencia en el Servicio al Cliente</p>
+                    <h1 class="header-premium text-4xl md:text-6xl font-black text-white leading-tight">Plan Estratégico de<br><span class="text-cyan-400">Transformación Digital</span></h1>
+                    <p class="text-xl text-slate-300 font-light italic">IA para la Excelencia en el Servicio al Cliente</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl text-left bg-black/50 p-8 rounded-[3rem] border border-white/10 shadow-2xl">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-4xl text-left bg-black/50 p-8 rounded-[2.5rem] border border-white/10 shadow-2xl mt-4">
                     <div class="flex items-center gap-5">
-                        <div class="p-4 bg-cyan-500/20 rounded-2xl"><i class="fa-solid fa-user-graduate text-cyan-400 text-xl"></i></div>
+                        <div class="p-4 bg-cyan-500/20 rounded-2xl shadow-lg"><i class="fa-solid fa-user-graduate text-cyan-400 text-xl"></i></div>
                         <div>
                             <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest">Estudiante</p>
-                            <p class="text-white font-bold text-lg uppercase tracking-tighter">Yarolt Francisco Gonzalez Vasquez</p>
+                            <p class="text-white font-bold text-base uppercase leading-tight">Yarolt Francisco<br>Gonzalez Vasquez</p>
                         </div>
                     </div>
-                    <div class="flex items-center gap-5">
-                        <div class="p-4 bg-cyan-500/20 rounded-2xl"><i class="fa-solid fa-id-badge text-cyan-400 text-xl"></i></div>
+                    <div class="flex items-center gap-5 border-l border-white/5 pl-4">
+                        <div class="p-4 bg-cyan-500/20 rounded-2xl shadow-lg"><i class="fa-solid fa-chalkboard-user text-cyan-400 text-xl"></i></div>
                         <div>
                             <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest">Docente</p>
-                            <p class="text-white font-bold text-lg uppercase tracking-tighter">Jorge Alberto Camargo Barbosa</p>
+                            <p class="text-white font-bold text-base uppercase leading-tight">Jorge Alberto<br>Camargo Barbosa</p>
                         </div>
                     </div>
                 </div>
@@ -174,32 +173,20 @@
             <!-- SLIDE 2: INTRODUCCIÓN -->
             <div class="slide flex-col space-y-8" data-title="Introducción">
                 <div class="flex items-center gap-5">
-                    <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20 shadow-lg"><i class="fa-solid fa-book-open text-cyan-400 text-3xl"></i></div>
+                    <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-book-open text-cyan-400 text-3xl"></i></div>
                     <h2 class="text-4xl font-black text-white tracking-tighter">Introducción Estratégica</h2>
                 </div>
                 <div class="flex-1 custom-scroll pr-4 space-y-10">
-                    <div class="p-10 bg-slate-900/80 rounded-[3rem] border border-white/5 relative">
+                    <div class="p-10 bg-slate-900/80 rounded-[3rem] border border-white/10 shadow-inner relative overflow-hidden">
                         <i class="fa-solid fa-quote-left text-cyan-500/10 text-8xl absolute top-4 left-6"></i>
-                        <p class="text-xl md:text-2xl leading-relaxed text-slate-200 font-light px-8">
+                        <p class="text-xl md:text-2xl leading-relaxed text-slate-200 font-light px-8 relative z-10">
                             TechSolutions S.A.S. evoluciona hacia la Industria 4.0. La gestión manual ha llegado a un techo operativo. Este plan propone la IA como el motor central que optimiza el capital humano y reduce la fricción operativa de forma inmediata.
                         </p>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                        <div class="p-8 bg-black/60 rounded-3xl border border-cyan-500/20 text-center flex flex-col items-center">
-                            <i class="fa-solid fa-rocket text-cyan-500 text-3xl mb-4"></i>
-                            <p class="text-3xl font-black text-white">+300%</p>
-                            <p class="text-[10px] uppercase text-slate-500 font-black mt-2 tracking-widest">Escalabilidad</p>
-                        </div>
-                        <div class="p-8 bg-black/60 rounded-3xl border-emerald-500/20 text-center flex flex-col items-center">
-                            <i class="fa-solid fa-chart-line text-emerald-500 text-3xl mb-4"></i>
-                            <p class="text-3xl font-black text-white">92%</p>
-                            <p class="text-[10px] uppercase text-slate-500 font-black mt-2 tracking-widest">Eficiencia</p>
-                        </div>
-                        <div class="p-8 bg-black/60 rounded-3xl border-indigo-500/20 text-center flex flex-col items-center">
-                            <i class="fa-solid fa-microchip text-indigo-500 text-3xl mb-4"></i>
-                            <p class="text-3xl font-black text-white">IA</p>
-                            <p class="text-[10px] uppercase text-slate-500 font-black mt-2 tracking-widest">Core Digital</p>
-                        </div>
+                        <div class="p-8 bg-black/60 rounded-3xl border border-cyan-500/20 text-center space-y-3 shadow-xl"><i class="fa-solid fa-rocket text-cyan-500 text-4xl"></i><p class="text-3xl font-black text-white">+300%</p><p class="text-[10px] uppercase font-bold text-slate-500">Escalabilidad</p></div>
+                        <div class="p-8 bg-black/60 rounded-3xl border-emerald-500/20 text-center space-y-3 shadow-xl"><i class="fa-solid fa-chart-line text-emerald-500 text-4xl"></i><p class="text-3xl font-black text-white">92%</p><p class="text-[10px] uppercase font-bold text-slate-500">Eficiencia</p></div>
+                        <div class="p-8 bg-black/60 rounded-3xl border-indigo-500/20 text-center space-y-3 shadow-xl"><i class="fa-solid fa-shield-halved text-indigo-400 text-4xl"></i><p class="text-3xl font-black text-white">100%</p><p class="text-[10px] uppercase font-bold text-slate-500">Seguridad</p></div>
                     </div>
                 </div>
             </div>
@@ -208,36 +195,36 @@
             <div class="slide flex-col space-y-8" data-title="La Empresa">
                 <div class="flex items-center gap-5">
                     <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-building text-cyan-400 text-3xl"></i></div>
-                    <h2 class="text-4xl font-black text-white tracking-tighter">TechSolutions S.A.S.</h2>
+                    <h2 class="text-4xl font-black text-white tracking-tighter">Empresa: TechSolutions</h2>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 flex-1 items-center">
-                    <div class="p-12 bg-slate-900 rounded-[3.5rem] border border-white/10 space-y-8 shadow-2xl relative overflow-hidden">
-                        <i class="fa-solid fa-server text-cyan-500/5 text-[20rem] absolute -right-20 -bottom-20"></i>
-                        <h4 class="text-cyan-400 font-black uppercase text-[10px] tracking-[0.6em]">Misión</h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 flex-1 items-center">
+                    <div class="p-12 bg-slate-900 rounded-[3.5rem] border border-white/10 space-y-6 shadow-2xl relative overflow-hidden">
+                        <i class="fa-solid fa-server text-cyan-500/5 text-[15rem] absolute -right-20 -bottom-20"></i>
+                        <h4 class="text-cyan-400 font-black text-xs uppercase tracking-widest border-b border-white/5 pb-2">Contexto Corporativo</h4>
                         <p class="text-2xl text-slate-100 font-light leading-relaxed">Soporte tecnológico especializado para el segmento PYME en Colombia, asegurando la continuidad de sus operaciones digitales.</p>
                     </div>
-                    <div class="grid grid-cols-1 gap-6">
-                        <div class="p-6 bg-slate-800/60 rounded-2xl flex items-center gap-6 border-l-8 border-cyan-500 shadow-xl group hover:bg-slate-900"><i class="fa-solid fa-network-wired text-cyan-400 text-3xl"></i> <span class="text-lg font-bold">Servicios IT B2B</span></div>
-                        <div class="p-6 bg-slate-800/60 rounded-2xl flex items-center gap-6 border-l-8 border-emerald-500 shadow-xl group hover:bg-slate-900"><i class="fa-solid fa-shield-halved text-emerald-400 text-3xl"></i> <span class="text-lg font-bold">Seguridad Nube</span></div>
+                    <div class="space-y-4">
+                        <div class="p-6 bg-slate-800/60 rounded-2xl flex items-center gap-6 border-l-8 border-cyan-500 shadow-xl group hover:bg-slate-900 transition-all"><i class="fa-solid fa-network-wired text-cyan-400 text-2xl group-hover:scale-110 transition-transform"></i> <span class="font-bold">Servicios IT B2B</span></div>
+                        <div class="p-6 bg-slate-800/60 rounded-2xl flex items-center gap-6 border-l-8 border-emerald-500 shadow-xl group hover:bg-slate-900 transition-all"><i class="fa-solid fa-cloud-arrow-up text-emerald-400 text-2xl group-hover:scale-110 transition-transform"></i> <span class="font-bold">Seguridad Cloud</span></div>
+                        <div class="p-6 bg-slate-800/60 rounded-2xl flex items-center gap-6 border-l-8 border-indigo-500 shadow-xl group hover:bg-slate-900 transition-all"><i class="fa-solid fa-map-location-dot text-indigo-400 text-2xl group-hover:scale-110 transition-transform"></i> <span class="font-bold">Alcance Nacional</span></div>
                     </div>
                 </div>
             </div>
 
             <!-- SLIDE 4: PROBLEMA ACTUAL -->
-            <div class="slide flex-col space-y-8" data-title="Problema Actual">
+            <div class="slide flex-col space-y-8" data-title="El Problema">
                 <div class="flex items-center gap-5">
-                    <div class="p-4 bg-red-500/10 rounded-2xl border border-red-500/20"><i class="fa-solid fa-circle-exclamation text-red-400 text-3xl"></i></div>
-                    <h2 class="text-4xl font-black text-white tracking-tighter">Situación Crítica</h2>
+                    <div class="p-4 bg-red-500/10 rounded-2xl border border-red-500/20"><i class="fa-solid fa-triangle-exclamation text-red-400 text-3xl"></i></div>
+                    <h2 class="text-4xl font-black text-white tracking-tighter">Situación Actual</h2>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1 items-center">
-                    <div class="md:col-span-7 p-12 bg-red-500/5 rounded-[3.5rem] border border-red-500/20 text-slate-200 text-2xl leading-relaxed italic shadow-2xl">
-                        "El 70% de las solicitudes diarias son consultas informativas Nivel 0 gestionadas manualmente por ingenieros. Esto eleva el costo por interacción y genera latencias de hasta 4.5 horas."
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1 items-center overflow-y-auto custom-scroll pr-4">
+                    <div class="md:col-span-8 p-12 bg-red-500/5 rounded-[3.5rem] border border-red-500/20 text-slate-200 text-2xl leading-relaxed shadow-xl">
+                        El 70% de las solicitudes diarias son consultas informativas Nivel 0 gestionadas manualmente. Esto eleva los costos operativos y genera demoras críticas de hasta 4.5 horas.
                     </div>
-                    <div class="md:col-span-5 p-12 bg-slate-900 rounded-[3.5rem] border-2 border-red-500/30 text-center shadow-2xl relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 p-4 bg-red-500 text-slate-950 font-black text-xs uppercase tracking-widest">Crítico</div>
-                        <i class="fa-solid fa-hourglass-empty text-red-500 text-5xl mb-6 group-hover:rotate-180 transition-transform duration-700"></i>
-                        <p class="text-7xl font-black text-white tracking-tighter">4.5h</p>
-                        <p class="text-xs font-black text-slate-500 uppercase mt-4 tracking-widest">Espera Media Actual</p>
+                    <div class="md:col-span-4 p-10 bg-slate-900 rounded-[3rem] border-2 border-red-500/30 text-center shadow-2xl relative group">
+                        <i class="fa-solid fa-hourglass-half text-red-500 text-5xl mb-6 group-hover:rotate-180 transition-transform duration-1000"></i>
+                        <p class="text-7xl font-black text-red-500 tracking-tighter">4.5h</p>
+                        <p class="text-xs font-black text-slate-500 uppercase mt-4">Espera Media</p>
                     </div>
                 </div>
             </div>
@@ -248,21 +235,21 @@
                     <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-gears text-cyan-400 text-3xl"></i></div>
                     <h2 class="text-4xl font-black text-white tracking-tighter">Características de la IA</h2>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 flex-1 items-center">
-                    <div class="p-10 bg-slate-900 rounded-[2.5rem] border border-white/5 text-center space-y-6 hover:border-cyan-500/50 transition-all shadow-xl">
-                        <i class="fa-solid fa-brain-circuit text-cyan-400 text-5xl"></i>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 flex-1 items-center overflow-y-auto">
+                    <div class="p-10 bg-slate-900 rounded-[3rem] border border-white/5 text-center space-y-6 hover:border-cyan-500/50 transition-all shadow-xl group">
+                        <i class="fa-solid fa-language text-cyan-400 text-5xl group-hover:scale-110 transition-transform"></i>
                         <h4 class="text-white font-black text-lg uppercase tracking-tighter">NLP Avanzado</h4>
-                        <p class="text-slate-500 text-sm leading-relaxed">Interpretación de modismos técnicos y jerga local.</p>
+                        <p class="text-slate-500 text-sm">Interpretación de modismos técnicos colombianos.</p>
                     </div>
-                    <div class="p-10 bg-slate-900 rounded-[2.5rem] border border-white/5 text-center space-y-6 hover:border-cyan-500/50 transition-all shadow-xl">
-                        <i class="fa-solid fa-plug-circle-bolt text-cyan-400 text-5xl"></i>
-                        <h4 class="text-white font-black text-lg uppercase tracking-tighter">Integración</h4>
-                        <p class="text-slate-500 text-sm leading-relaxed">Conexión en vivo con CRM Hubspot y ERP.</p>
+                    <div class="p-10 bg-slate-900 rounded-[3rem] border border-white/5 text-center space-y-6 hover:border-cyan-500/50 transition-all shadow-xl group">
+                        <i class="fa-solid fa-plug-circle-bolt text-cyan-400 text-5xl group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-white font-black text-lg uppercase tracking-tighter">Sincronía API</h4>
+                        <p class="text-slate-500 text-sm">Integración total con CRM y ERP en tiempo real.</p>
                     </div>
-                    <div class="p-10 bg-slate-900 rounded-[2.5rem] border border-white/5 text-center space-y-6 hover:border-cyan-500/50 transition-all shadow-xl">
-                        <i class="fa-solid fa-user-shield text-cyan-400 text-5xl"></i>
-                        <h4 class="text-white font-black text-lg uppercase tracking-tighter">Privacidad</h4>
-                        <p class="text-slate-500 text-sm leading-relaxed">Cifrado AES-256 y cumplimiento Ley 1581.</p>
+                    <div class="p-10 bg-slate-900 rounded-[3rem] border border-white/5 text-center space-y-6 hover:border-cyan-500/50 transition-all shadow-xl group">
+                        <i class="fa-solid fa-user-shield text-cyan-400 text-5xl group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-white font-black text-lg uppercase tracking-tighter">Seguridad</h4>
+                        <p class="text-slate-500 text-sm">Cifrado AES-256 y cumplimiento Ley 1581.</p>
                     </div>
                 </div>
             </div>
@@ -271,72 +258,72 @@
             <div class="slide flex-col space-y-8" data-title="Alcance">
                 <div class="flex items-center gap-5">
                     <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-expand-arrows-alt text-cyan-400 text-3xl"></i></div>
-                    <h2 class="text-4xl font-black text-white tracking-tighter">Alcance Operativo</h2>
+                    <h2 class="text-4xl font-black text-white tracking-tighter">Alcance de Aplicación</h2>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-10 flex-1 overflow-y-auto">
                     <div class="p-10 bg-slate-800/40 rounded-[3rem] border border-white/10 space-y-8 shadow-2xl">
                         <h4 class="text-cyan-400 font-black text-xs uppercase tracking-[0.5em] border-b border-white/5 pb-4 flex items-center gap-4"><i class="fa-solid fa-share-nodes"></i> Omnicanalidad</h4>
-                        <div class="space-y-5">
-                            <p class="text-slate-200 text-lg font-bold flex items-center gap-5 group"><i class="fa-brands fa-whatsapp text-emerald-500 text-3xl group-hover:scale-110 transition-transform"></i> WhatsApp Business API</p>
-                            <p class="text-slate-200 text-lg font-bold flex items-center gap-5 group"><i class="fa-solid fa-globe text-cyan-500 text-3xl group-hover:scale-110 transition-transform"></i> Chat Web Corporativo</p>
+                        <div class="space-y-6">
+                            <p class="text-slate-200 text-lg font-bold flex items-center gap-6 group"><i class="fa-brands fa-whatsapp text-emerald-500 text-4xl group-hover:scale-110 transition-transform"></i> WhatsApp Business API</p>
+                            <p class="text-slate-200 text-lg font-bold flex items-center gap-6 group"><i class="fa-solid fa-globe text-cyan-500 text-4xl group-hover:scale-110 transition-transform"></i> Portal Web Corporativo</p>
                         </div>
                     </div>
-                    <div class="p-10 bg-slate-800/40 rounded-[3rem] border border-white/10 flex flex-col justify-center text-center gap-8 shadow-2xl group">
-                        <i class="fa-solid fa-robot text-cyan-400 text-6xl opacity-30 group-hover:opacity-100 transition-opacity"></i>
-                        <p class="text-2xl text-slate-100 font-black leading-tight">Automatización de Nivel 0 para el 85% de la carga total.</p>
+                    <div class="p-10 bg-slate-800/40 rounded-[3rem] border border-white/10 flex flex-col justify-center text-center gap-8 shadow-2xl">
+                        <i class="fa-solid fa-check-double text-cyan-400 text-6xl opacity-30"></i>
+                        <p class="text-3xl text-slate-100 font-black leading-tight px-4">Resolución Autónoma N0 para el 85% del volumen de tickets.</p>
                     </div>
                 </div>
             </div>
 
             <!-- SLIDE 7: VALOR AGREGADO -->
             <div class="slide flex-col space-y-8" data-title="Valor Agregado">
-                <div class="flex items-center gap-5">
-                    <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-gem text-cyan-400 text-3xl"></i></div>
-                    <h2 class="text-4xl font-black text-white tracking-tighter">Valor Agregado Diferencial</h2>
+                <div class="flex items-center gap-4">
+                    <div class="p-3 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-award text-cyan-400 text-2xl"></i></div>
+                    <h2 class="text-3xl font-black text-white tracking-tighter">Valor Agregado</h2>
                 </div>
-                <div class="flex-1 flex flex-col justify-center">
-                    <div class="p-14 bg-slate-900 rounded-[4rem] border-l-[16px] border-cyan-500 shadow-2xl relative overflow-hidden group">
-                        <i class="fa-solid fa-infinity text-cyan-500/5 text-[20rem] absolute inset-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-1000"></i>
-                        <p class="text-3xl text-slate-100 font-light italic leading-relaxed px-8 relative z-10">
-                            Transición de un soporte horario de oficina a disponibilidad 24/7/365. Anticipamos fallos mediante analítica antes de que el cliente los reporte.
+                <div class="flex-1 flex flex-col justify-center overflow-y-auto">
+                    <div class="p-14 bg-slate-900 rounded-[4rem] border-l-[16px] border-cyan-500 shadow-2xl relative group">
+                        <i class="fa-solid fa-infinity text-cyan-500/5 text-[18rem] absolute inset-0 flex items-center justify-center group-hover:scale-110 transition-transform duration-1000"></i>
+                        <p class="text-3xl text-slate-100 font-light italic leading-relaxed px-10 relative z-10">
+                            "Transición de un soporte 8/5 a disponibilidad total 24/7/365. El cliente recibe respuesta en el segundo que la requiere."
                         </p>
                     </div>
-                    <div class="grid grid-cols-4 gap-6 mt-10">
-                        <div class="p-6 bg-black/60 rounded-3xl text-center border border-white/10 flex flex-col items-center gap-2"><i class="fa-solid fa-bolt text-cyan-400 text-2xl"></i><p class="text-[9px] font-black uppercase text-slate-500 tracking-widest">Instantáneo</p></div>
-                        <div class="p-6 bg-black/60 rounded-3xl text-center border border-white/10 flex flex-col items-center gap-2"><i class="fa-solid fa-infinity text-cyan-400 text-2xl"></i><p class="text-[9px] font-black uppercase text-slate-500">24/7/365</p></div>
-                        <div class="p-6 bg-black/60 rounded-3xl text-center border border-white/10 flex flex-col items-center gap-2"><i class="fa-solid fa-magnifying-glass-chart text-cyan-400 text-2xl"></i><p class="text-[9px] font-black uppercase text-slate-500">Analítica</p></div>
-                        <div class="p-6 bg-black/60 rounded-3xl text-center border border-white/10 flex flex-col items-center gap-2"><i class="fa-solid fa-arrow-up-right-dots text-cyan-400 text-2xl"></i><p class="text-[9px] font-black uppercase text-slate-500">Escalable</p></div>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
+                        <div class="p-6 bg-black/60 rounded-3xl text-center border border-white/10 flex flex-col items-center gap-3"><i class="fa-solid fa-bolt text-cyan-400 text-3xl"></i><p class="text-[9px] font-black uppercase text-slate-500">Instantáneo</p></div>
+                        <div class="p-6 bg-black/60 rounded-3xl text-center border border-white/10 flex flex-col items-center gap-3"><i class="fa-solid fa-calendar-check text-cyan-400 text-3xl"></i><p class="text-[9px] font-black uppercase text-slate-500">24/7/365</p></div>
+                        <div class="p-6 bg-black/60 rounded-3xl text-center border border-white/10 flex flex-col items-center gap-3"><i class="fa-solid fa-chart-area text-cyan-400 text-3xl"></i><p class="text-[9px] font-black uppercase text-slate-500">Predictivo</p></div>
+                        <div class="p-6 bg-black/60 rounded-3xl text-center border border-white/10 flex flex-col items-center gap-3"><i class="fa-solid fa-users-viewfinder text-cyan-400 text-3xl"></i><p class="text-[9px] font-black uppercase text-slate-500">Escalable</p></div>
                     </div>
                 </div>
             </div>
 
             <!-- SLIDE 8: OBJETIVO GENERAL -->
             <div class="slide flex-col items-center justify-center text-center space-y-12" data-title="Objetivo">
-                <div class="p-10 bg-cyan-500/10 rounded-full border-2 border-cyan-400/40 relative shadow-2xl group cursor-help">
-                    <i class="fa-solid fa-bullseye text-cyan-400 text-7xl group-hover:scale-125 transition-transform duration-500"></i>
+                <div class="p-10 bg-cyan-500/10 rounded-full border-2 border-cyan-400/40 relative shadow-2xl group cursor-help transition-all">
+                    <i class="fa-solid fa-bullseye text-cyan-400 text-8xl group-hover:scale-125 transition-transform duration-500"></i>
                 </div>
-                <h2 class="text-4xl md:text-5xl font-black text-white max-w-5xl leading-tight">
-                    Diseñar un Plan Estratégico que logre una <span class="text-cyan-400 underline decoration-cyan-500/30">reducción del 40% en costos directos</span> optimizando la operatividad mediante IA.
+                <h2 class="text-4xl md:text-6xl font-black text-white max-w-5xl leading-tight">
+                    Diseñar un Plan Estratégico que logre una <span class="text-cyan-400 underline decoration-cyan-400/40">reducción del 40% en costos directos</span> optimizando la operatividad mediante IA.
                 </h2>
             </div>
 
             <!-- SLIDE 9: OBJETIVOS ESPECÍFICOS -->
-            <div class="slide flex-col space-y-6" data-title="Objetivos Específicos">
-                <h2 class="text-3xl font-black text-white tracking-tighter">Hitos de Gestión Técnica</h2>
-                <div class="grid grid-cols-1 gap-6 flex-1 justify-center">
-                    <div class="p-10 bg-slate-900 rounded-[3rem] border border-white/10 flex items-center gap-10 hover:border-cyan-500/40 transition-all shadow-xl group">
-                        <div class="w-20 h-20 rounded-[2rem] bg-cyan-500/20 flex items-center justify-center font-black text-cyan-400 text-4xl border border-cyan-500/30 group-hover:scale-110 transition-transform">01</div>
+            <div class="slide flex-col space-y-10" data-title="Objetivos">
+                <h2 class="text-4xl font-black text-white tracking-tighter">Metas de Gestión</h2>
+                <div class="grid grid-cols-1 gap-6 flex-1 justify-center max-w-5xl mx-auto w-full">
+                    <div class="flex items-center gap-10 p-10 bg-slate-900 rounded-[3rem] border border-white/10 hover:border-cyan-500/50 transition-all shadow-xl group">
+                        <div class="w-24 h-24 rounded-[1.5rem] bg-cyan-500/20 flex items-center justify-center font-black text-cyan-400 text-4xl border border-cyan-500/30 group-hover:scale-110 transition-transform shadow-lg">01</div>
                         <div class="flex-1">
-                            <h4 class="text-white font-black text-xl uppercase tracking-tighter mb-2">Estandarización de Conocimiento</h4>
-                            <p class="text-slate-500 text-lg">Normalizar arquitectura de datos en 60 días.</p>
+                            <h4 class="text-white font-black text-2xl uppercase tracking-tighter mb-2">Estandarización de Datos</h4>
+                            <p class="text-slate-500 text-xl">Normalizar arquitectura de conocimiento técnico en 60 días.</p>
                         </div>
-                        <i class="fa-solid fa-server text-cyan-500/20 text-6xl"></i>
+                        <i class="fa-solid fa-database text-cyan-500/10 text-6xl"></i>
                     </div>
-                    <div class="p-10 bg-slate-900 rounded-[3rem] border border-white/10 flex items-center gap-10 hover:border-cyan-500/40 transition-all shadow-xl group">
-                        <div class="w-20 h-20 rounded-[2rem] bg-cyan-500/20 flex items-center justify-center font-black text-cyan-400 text-4xl border border-cyan-500/30 group-hover:scale-110 transition-transform">02</div>
+                    <div class="flex items-center gap-10 p-10 bg-slate-900 rounded-[3rem] border border-white/10 hover:border-cyan-500/50 transition-all shadow-xl group">
+                        <div class="w-24 h-24 rounded-[1.5rem] bg-cyan-500/20 flex items-center justify-center font-black text-cyan-400 text-4xl border border-cyan-500/30 group-hover:scale-110 transition-transform shadow-lg">02</div>
                         <div class="flex-1">
-                            <h4 class="text-white font-black text-xl uppercase tracking-tighter mb-2">Automatización de Tráfico</h4>
-                            <p class="text-slate-500 text-lg">Lograr que el 80% de consultas N0 sean autónomas.</p>
+                            <h4 class="text-white font-black text-2xl uppercase tracking-tighter mb-2">Resolución Autónoma</h4>
+                            <p class="text-slate-500 text-xl">Lograr que el 80% de consultas N0 sean autónomas.</p>
                         </div>
                         <i class="fa-solid fa-microchip text-cyan-500/20 text-6xl"></i>
                     </div>
@@ -344,68 +331,68 @@
             </div>
 
             <!-- SLIDE 10: ALCANCE DETALLADO -->
-            <div class="slide flex-col space-y-8" data-title="Alcance del Plan">
-                <div class="flex items-center gap-5">
-                    <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-diagram-project text-cyan-400 text-3xl"></i></div>
-                    <h2 class="text-4xl font-black text-white tracking-tighter">Alcance del Proyecto</h2>
+            <div class="slide flex-col space-y-10" data-title="Alcance">
+                <div class="flex items-center gap-6">
+                    <div class="p-5 bg-cyan-500/10 rounded-3xl border border-cyan-500/20"><i class="fa-solid fa-diagram-project text-cyan-400 text-4xl"></i></div>
+                    <h2 class="text-5xl font-black text-white tracking-tighter">Alcance del Proyecto</h2>
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 flex-1 items-center">
-                    <div class="p-12 bg-slate-900 rounded-[4rem] border border-white/10 space-y-10 shadow-2xl relative overflow-hidden group">
-                        <i class="fa-solid fa-circle-nodes text-cyan-500/5 text-[15rem] absolute top-0 right-0 pointer-events-none"></i>
-                        <p class="text-2xl text-slate-100 font-light leading-relaxed">Auditoría técnica, entrenamiento de modelos LLM e integración ERP corporativo. Foco exclusivo en eficiencia de Front-office.</p>
-                        <div class="p-6 bg-cyan-500/10 rounded-3xl border border-cyan-500/30 inline-flex flex-col items-center">
-                            <p class="text-cyan-400 font-black text-5xl tracking-tighter">+500%</p>
-                            <p class="text-[10px] font-black uppercase text-slate-500">Escalabilidad</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-12 flex-1 items-center overflow-y-auto">
+                    <div class="p-12 bg-slate-900 rounded-[4rem] border border-white/10 space-y-10 shadow-2xl relative group overflow-hidden">
+                        <i class="fa-solid fa-network-wired text-cyan-500/5 text-[15rem] absolute top-0 right-0 group-hover:scale-110 transition-transform"></i>
+                        <p class="text-2xl text-slate-100 font-light leading-relaxed">Auditoría técnica de logs históricos, entrenamiento de LLM e integración ERP corporativo.</p>
+                        <div class="p-8 bg-cyan-500/10 rounded-3xl border border-cyan-500/30 inline-block">
+                            <p class="text-cyan-400 font-black text-6xl tracking-tighter leading-none">+500%</p>
+                            <p class="text-xs font-black uppercase text-slate-500 mt-2">Escalabilidad de tickets</p>
                         </div>
                     </div>
-                    <div class="p-12 bg-red-500/5 rounded-[4rem] border border-red-500/20 text-center space-y-6 shadow-inner group">
-                        <i class="fa-solid fa-ban text-5xl text-red-500 opacity-30 group-hover:scale-110 transition-transform"></i>
+                    <div class="p-12 bg-red-500/5 rounded-[4rem] border border-red-500/20 text-center space-y-8 flex flex-col justify-center items-center shadow-inner">
+                        <i class="fa-solid fa-ban text-6xl text-red-500 opacity-20"></i>
                         <h4 class="text-red-400 font-black text-xs uppercase tracking-[0.5em]">Fronteras</h4>
-                        <p class="text-xl text-slate-300 px-6">No incluye desarrollo a medida para externos. Transformación interna total.</p>
+                        <p class="text-2xl text-slate-300 font-light">No incluye desarrollo externo a medida. Transformación interna total.</p>
                     </div>
                 </div>
             </div>
 
             <!-- SLIDE 11: PARTES INTERESADAS -->
-            <div class="slide flex-col space-y-8" data-title="Stakeholders">
-                <div class="flex items-center gap-5">
-                    <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-users-gear text-cyan-400 text-3xl"></i></div>
-                    <h2 class="text-4xl font-black text-white tracking-tighter">Stakeholders</h2>
+            <div class="slide flex-col space-y-10" data-title="Stakeholders">
+                <div class="flex items-center gap-6">
+                    <div class="p-5 bg-cyan-500/10 rounded-3xl border border-cyan-500/20"><i class="fa-solid fa-users-gear text-cyan-400 text-4xl"></i></div>
+                    <h2 class="text-5xl font-black text-white tracking-tighter">Gestión de Stakeholders</h2>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-8 flex-1 items-center">
-                    <div class="p-10 bg-slate-900 rounded-[3.5rem] border-t-8 border-cyan-500 shadow-2xl space-y-6 hover:translate-y-[-12px] transition-transform text-center group">
-                        <i class="fa-solid fa-briefcase text-cyan-500 text-5xl group-hover:scale-110 transition-transform"></i>
-                        <h4 class="text-white font-black text-sm uppercase">Gerencia</h4>
-                        <p class="text-slate-500 text-xs">ROI y Rentabilidad.</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 flex-1">
+                    <div class="p-10 bg-slate-900 rounded-[3.5rem] border-t-8 border-cyan-500 shadow-2xl space-y-6 hover:translate-y-[-15px] transition-transform group">
+                        <i class="fa-solid fa-building-user text-cyan-500 text-5xl group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-white font-black text-xl uppercase tracking-tighter">Dirección</h4>
+                        <p class="text-slate-500 text-sm">ROI y rentabilidad anual.</p>
                     </div>
-                    <div class="p-10 bg-slate-900 rounded-[3.5rem] border-t-8 border-indigo-500 shadow-2xl space-y-6 hover:translate-y-[-12px] transition-transform text-center group">
+                    <div class="p-10 bg-slate-900 rounded-[3.5rem] border-t-8 border-indigo-500 shadow-2xl space-y-6 hover:translate-y-[-15px] transition-transform group">
                         <i class="fa-solid fa-user-astronaut text-indigo-500 text-5xl group-hover:scale-110 transition-transform"></i>
-                        <h4 class="text-white font-black text-sm uppercase">Ingeniería</h4>
-                        <p class="text-slate-500 text-xs">Carga operativa optimizada.</p>
+                        <h4 class="text-white font-black text-xl uppercase tracking-tighter">Ingeniería</h4>
+                        <p class="text-slate-500 text-sm">Reskilling de competencias.</p>
                     </div>
-                    <div class="p-10 bg-slate-900 rounded-[3.5rem] border-t-8 border-emerald-500 shadow-2xl space-y-6 hover:translate-y-[-12px] transition-transform text-center group">
+                    <div class="p-10 bg-slate-900 rounded-[3.5rem] border-t-8 border-emerald-500 shadow-2xl space-y-6 hover:translate-y-[-15px] transition-transform group">
                         <i class="fa-solid fa-people-group text-emerald-500 text-5xl group-hover:scale-110 transition-transform"></i>
-                        <h4 class="text-white font-black text-sm uppercase">Clientes</h4>
-                        <p class="text-slate-500 text-xs">Resolución en segundos.</p>
+                        <h4 class="text-white font-black text-xl uppercase tracking-tighter">Clientes</h4>
+                        <p class="text-slate-500 text-sm">Inmediatez y resolución 24/7.</p>
                     </div>
                 </div>
             </div>
 
-            <!-- SLIDE 12: CONTEXTO GENERAL -->
-            <div class="slide flex-col space-y-8" data-title="Contexto">
-                <div class="flex items-center gap-5">
-                    <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-earth-americas text-cyan-400 text-3xl"></i></div>
-                    <h2 class="text-4xl font-black text-white tracking-tighter">Contexto Industrial</h2>
+            <!-- SLIDE 12: CONTEXTO -->
+            <div class="slide flex-col space-y-10" data-title="Contexto">
+                <div class="flex items-center gap-6">
+                    <div class="p-5 bg-cyan-500/10 rounded-3xl border border-cyan-500/20"><i class="fa-solid fa-earth-americas text-cyan-400 text-4xl"></i></div>
+                    <h2 class="text-5xl font-black text-white tracking-tighter">Contexto Industrial</h2>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-10 flex-1 items-center overflow-y-auto">
-                    <div class="md:col-span-8 p-14 bg-slate-800/40 rounded-[4rem] border border-white/5 text-slate-200 text-2xl leading-relaxed italic shadow-2xl relative overflow-hidden group">
-                        <i class="fa-solid fa-chart-area text-cyan-500/5 text-[18rem] absolute -top-10 right-0 pointer-events-none group-hover:rotate-6 transition-transform"></i>
-                        En Colombia, la digitalización de servicios creció un 42% en 2024. TechSolutions debe adoptar IA para evitar la obsolescencia ante competidores globales digitalizados.
+                    <div class="md:col-span-8 p-16 bg-slate-800/40 rounded-[4rem] border border-white/5 text-slate-200 text-3xl leading-relaxed italic shadow-2xl relative overflow-hidden group">
+                        <i class="fa-solid fa-chart-area text-cyan-500/5 text-[20rem] absolute -top-10 right-0 pointer-events-none group-hover:rotate-12 transition-transform duration-1000"></i>
+                        En Colombia, la digitalización creció 42% en 2024. TechSolutions debe adoptar IA para evitar la obsolescencia ante competidores globales digitalizados.
                     </div>
-                    <div class="md:col-span-4 p-12 bg-blue-500/10 rounded-[3.5rem] border border-blue-500/20 text-center shadow-2xl animate-pulse">
+                    <div class="md:col-span-4 p-14 bg-blue-500/10 rounded-[3.5rem] border-2 border-blue-500/30 text-center shadow-2xl animate-pulse">
                         <i class="fa-solid fa-chart-line-up text-blue-400 text-6xl mb-6"></i>
-                        <p class="text-6xl font-black text-white tracking-tighter">42%</p>
-                        <p class="text-[9px] font-black text-slate-500 uppercase mt-4 tracking-widest">Crecimiento Local</p>
+                        <p class="text-7xl font-black text-white tracking-tighter leading-none">42%</p>
+                        <p class="text-[10px] font-black text-slate-500 uppercase mt-4 tracking-widest">Inversión Sectorial</p>
                     </div>
                 </div>
             </div>
@@ -414,47 +401,47 @@
             <div class="slide flex-col space-y-4" data-title="FODA">
                 <h2 class="text-4xl font-black text-white text-center mb-4">Análisis FODA Situacional</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 flex-1 overflow-y-auto custom-scroll pr-4">
-                    <div class="p-10 bg-emerald-500/10 border border-emerald-500/30 rounded-[3.5rem] space-y-4 relative overflow-hidden group hover:bg-emerald-500/20 transition-all shadow-xl">
-                        <i class="fa-solid fa-award text-emerald-500/10 text-9xl absolute -right-4 -bottom-4 group-hover:scale-110 transition-transform"></i>
-                        <h4 class="text-emerald-400 font-black uppercase text-xs tracking-widest flex items-center gap-4"><i class="fa-solid fa-star"></i> Fortalezas</h4>
-                        <p class="text-slate-100 text-lg font-medium leading-relaxed">Talento técnico especializado e infraestructura propia robusta en Colombia.</p>
+                    <div class="p-10 bg-emerald-500/10 border border-emerald-500/30 rounded-[3.5rem] space-y-4 shadow-xl relative overflow-hidden group hover:bg-emerald-500/20 transition-all">
+                        <i class="fa-solid fa-award text-emerald-500/10 text-9xl absolute -right-6 -bottom-6 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-emerald-400 font-black uppercase text-xs tracking-[0.5em] flex items-center gap-4"><i class="fa-solid fa-star"></i> Fortalezas</h4>
+                        <p class="text-slate-100 text-lg font-medium leading-relaxed">Talento técnico especializado e infraestructura propia robusta.</p>
                     </div>
-                    <div class="p-10 bg-blue-500/10 border border-blue-500/30 rounded-[3.5rem] space-y-4 relative overflow-hidden group hover:bg-blue-500/20 transition-all shadow-xl">
-                        <i class="fa-solid fa-bolt text-blue-500/10 text-9xl absolute -right-4 -bottom-4 group-hover:scale-110 transition-transform"></i>
-                        <h4 class="text-blue-400 font-black uppercase text-xs tracking-widest flex items-center gap-4"><i class="fa-solid fa-arrow-trend-up"></i> Oportunidades</h4>
-                        <p class="text-slate-100 text-lg font-medium leading-relaxed">Demanda PYME 24/7 y adopción rápida de canales API.</p>
+                    <div class="p-10 bg-blue-500/10 border border-blue-500/30 rounded-[3.5rem] space-y-4 shadow-xl relative overflow-hidden group hover:bg-blue-500/20 transition-all">
+                        <i class="fa-solid fa-rocket text-blue-500/10 text-9xl absolute -right-6 -bottom-6 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-blue-400 font-black uppercase text-xs tracking-[0.5em] flex items-center gap-4"><i class="fa-solid fa-bolt"></i> Oportunidades</h4>
+                        <p class="text-slate-100 text-lg font-medium leading-relaxed">Demanda PYME 24/7 y adopción de WhatsApp API.</p>
                     </div>
-                    <div class="p-10 bg-red-500/10 border border-red-500/30 rounded-[3.5rem] space-y-4 relative overflow-hidden group hover:bg-red-500/20 transition-all shadow-xl">
-                        <i class="fa-solid fa-triangle-exclamation text-red-500/10 text-9xl absolute -right-4 -bottom-4 group-hover:scale-110 transition-transform"></i>
-                        <h4 class="text-red-400 font-black uppercase text-xs tracking-widest flex items-center gap-4"><i class="fa-solid fa-circle-exclamation"></i> Debilidades</h4>
-                        <p class="text-slate-100 text-lg font-medium leading-relaxed">Manualidad síncrona y latencia de respuesta en picos de demanda.</p>
+                    <div class="p-10 bg-red-500/10 border border-red-500/30 rounded-[3.5rem] space-y-4 shadow-xl relative overflow-hidden group hover:bg-red-500/20 transition-all">
+                        <i class="fa-solid fa-triangle-exclamation text-red-500/10 text-9xl absolute -right-6 -bottom-6 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-red-400 font-black uppercase text-xs tracking-[0.5em] flex items-center gap-4"><i class="fa-solid fa-circle-exclamation"></i> Debilidades</h4>
+                        <p class="text-slate-100 text-lg font-medium leading-relaxed">Manualidad síncrona y latencia de respuesta elevada.</p>
                     </div>
-                    <div class="p-10 bg-orange-500/10 border border-orange-500/30 rounded-[3.5rem] space-y-4 relative overflow-hidden group hover:bg-orange-500/20 transition-all shadow-xl">
-                        <i class="fa-solid fa-shield-halved text-orange-500/10 text-9xl absolute -right-4 -bottom-4 group-hover:scale-110 transition-transform"></i>
-                        <h4 class="text-orange-400 font-black uppercase text-xs tracking-widest flex items-center gap-4"><i class="fa-solid fa-lock"></i> Amenazas</h4>
-                        <p class="text-slate-100 text-lg font-medium leading-relaxed">Competidores internacionales con estructuras de bajo costo marginal.</p>
+                    <div class="p-10 bg-orange-500/10 border border-orange-500/30 rounded-[3.5rem] space-y-4 shadow-xl relative overflow-hidden group hover:bg-orange-500/20 transition-all">
+                        <i class="fa-solid fa-shield-halved text-orange-500/10 text-9xl absolute -right-6 -bottom-6 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-orange-400 font-black uppercase text-xs tracking-[0.5em] flex items-center gap-4"><i class="fa-solid fa-lock"></i> Amenazas</h4>
+                        <p class="text-slate-100 text-lg font-medium leading-relaxed">Competidores globales con estructuras de bajo costo.</p>
                     </div>
                 </div>
             </div>
 
             <!-- SLIDE 14: INTERPRETACIÓN FODA -->
-            <div class="slide flex-col space-y-10" data-title="Estrategia">
-                <h2 class="text-4xl font-black text-white tracking-tighter">¿Por qué este Plan?</h2>
-                <div class="flex-1 flex flex-col justify-center space-y-14 overflow-y-auto">
-                    <div class="p-16 bg-slate-900 rounded-[4rem] border-l-[18px] border-cyan-500 shadow-2xl relative group">
-                        <p class="text-3xl text-slate-100 font-light leading-relaxed italic px-10 relative z-10">
-                            "Apalancaremos nuestra fortaleza técnica para mitigar la debilidad de la manualidad. Capturaremos la oportunidad 24/7 y neutralizaremos la amenaza internacional."
+            <div class="slide flex-col space-y-12" data-title="Estrategia">
+                <h2 class="text-5xl font-black text-white tracking-tighter">¿Por qué este Plan?</h2>
+                <div class="flex-1 flex flex-col justify-center space-y-16">
+                    <div class="p-16 bg-slate-900 rounded-[5rem] border-l-[20px] border-cyan-500 shadow-2xl relative group overflow-hidden">
+                        <i class="fa-solid fa-quote-left text-cyan-500/5 text-[15rem] absolute inset-0 flex items-center justify-center pointer-events-none"></i>
+                        <p class="text-3xl text-slate-100 font-light leading-relaxed italic relative z-10 text-center px-12">
+                            "Aprovecharemos nuestra fortaleza técnica para mitigar la debilidad de la manualidad. Capturaremos el mercado 24/7 y neutralizaremos amenazas externas."
                         </p>
-                        <i class="fa-solid fa-magnifying-glass-chart text-cyan-500/5 text-[12rem] absolute inset-0 flex items-center justify-center pointer-events-none group-hover:scale-125 transition-transform duration-1000"></i>
                     </div>
-                    <div class="grid grid-cols-2 gap-10 max-w-4xl mx-auto w-full">
-                        <div class="p-10 bg-slate-900/90 rounded-[3rem] border border-white/10 text-center flex flex-col items-center gap-4 hover:border-cyan-400 shadow-xl group transition-all">
-                            <p class="text-6xl font-black text-cyan-400 tracking-tighter group-hover:scale-110 transition-transform">245%</p>
-                            <p class="text-[10px] font-black uppercase text-slate-500 tracking-widest">ROI Proyectado</p>
+                    <div class="grid grid-cols-2 gap-10 max-w-5xl mx-auto w-full">
+                        <div class="p-12 bg-slate-900/90 rounded-[3.5rem] border border-white/10 text-center flex flex-col items-center gap-4 hover:border-cyan-400 shadow-2xl group transition-all">
+                            <p class="text-7xl font-black text-cyan-400 tracking-tighter group-hover:scale-110 transition-transform leading-none">245%</p>
+                            <p class="text-[10px] font-black uppercase text-slate-500 tracking-[0.8em] mt-4">ROI Proyectado</p>
                         </div>
-                        <div class="p-10 bg-slate-900/90 rounded-[3rem] border border-white/10 text-center flex flex-col items-center gap-4 hover:border-emerald-400 shadow-xl group transition-all">
-                            <p class="text-6xl font-black text-emerald-400 tracking-tighter group-hover:scale-110 transition-transform">x10</p>
-                            <p class="text-[10px] font-black uppercase text-slate-500 tracking-widest">Escala Operativa</p>
+                        <div class="p-12 bg-slate-900/90 rounded-[3.5rem] border border-white/10 text-center flex flex-col items-center gap-4 hover:border-emerald-400 shadow-2xl group transition-all">
+                            <p class="text-7xl font-black text-emerald-400 tracking-tighter group-hover:scale-110 transition-transform leading-none">x10</p>
+                            <p class="text-[10px] font-black uppercase text-slate-500 tracking-[0.8em] mt-4">Escala Operativa</p>
                         </div>
                     </div>
                 </div>
@@ -462,37 +449,37 @@
 
             <!-- SLIDE 15: JUSTIFICACIÓN COP -->
             <div class="slide flex-col space-y-10" data-title="Finanzas">
-                <div class="flex items-center gap-5">
-                    <div class="p-5 bg-cyan-500/10 rounded-3xl border border-cyan-500/20"><i class="fa-solid fa-wallet text-cyan-400 text-4xl"></i></div>
-                    <h2 class="text-5xl font-black text-white tracking-tighter">Eficiencia COP</h2>
+                <div class="flex items-center gap-6">
+                    <div class="p-5 bg-cyan-500/10 rounded-3xl border border-cyan-500/20"><i class="fa-solid fa-sack-dollar text-cyan-400 text-4xl"></i></div>
+                    <h2 class="text-5xl font-black text-white tracking-tighter">Eficiencia en COP</h2>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-12 flex-1 items-center overflow-y-auto">
                     <div class="md:col-span-8 p-16 bg-slate-800/40 rounded-[4rem] text-slate-200 text-3xl leading-relaxed italic border border-white/10 shadow-inner relative overflow-hidden group">
-                        <i class="fa-solid fa-piggy-bank text-emerald-500/10 text-[20rem] absolute -bottom-10 right-0 pointer-events-none group-hover:scale-110 transition-transform"></i>
-                        Ahorro neto proyectado: <span class="text-emerald-400 font-black tracking-tighter">$520.000.000 COP anuales</span>. Reducción de costo por ticket de $22.500 a solo $850.
+                        <i class="fa-solid fa-piggy-bank text-emerald-500/10 text-[22rem] absolute -bottom-10 right-0 pointer-events-none group-hover:scale-110 transition-transform"></i>
+                        Ahorro neto anual proyectado: <span class="text-emerald-400 font-black tracking-tighter leading-none">$520.000.000 COP</span>. La IA reduce el costo operativo marginal por ticket resuelto.
                     </div>
                     <div class="md:col-span-4 space-y-8">
-                        <div class="p-10 bg-red-500/10 rounded-3xl border border-red-500/20 flex flex-col items-center justify-center shadow-xl group"><i class="fa-solid fa-user-slash text-red-500 text-4xl mb-4 group-hover:shake"></i><span class="text-white font-black text-4xl tracking-tighter">$22.500</span><p class="text-[10px] font-black uppercase text-slate-500 mt-2">Costo Manual</p></div>
-                        <div class="p-10 bg-emerald-500/10 rounded-3xl border border-emerald-500/20 flex flex-col items-center justify-center shadow-xl group hover:scale-105 transition-all"><i class="fa-solid fa-robot text-emerald-500 text-4xl mb-4 group-hover:pulse"></i><span class="text-white font-black text-4xl tracking-tighter">$850</span><p class="text-[10px] font-black uppercase text-slate-500 mt-2">Costo IA Engine</p></div>
+                        <div class="p-10 bg-red-500/10 rounded-3xl border border-red-500/20 flex flex-col items-center justify-center shadow-xl group hover:scale-105 transition-all"><i class="fa-solid fa-user-slash text-red-500 text-5xl mb-3"></i><span class="text-white font-black text-3xl tracking-tighter leading-none">$22.500</span><p class="text-[10px] font-black uppercase text-slate-500 mt-2">Costo Manual</p></div>
+                        <div class="p-10 bg-emerald-500/10 rounded-3xl border border-emerald-500/20 flex flex-col items-center justify-center shadow-xl group hover:scale-105 transition-all"><i class="fa-solid fa-robot text-emerald-400 text-5xl mb-3"></i><span class="text-white font-black text-3xl tracking-tighter leading-none">$850</span><p class="text-[10px] font-black uppercase text-slate-500 mt-2">Costo IA</p></div>
                     </div>
                 </div>
             </div>
 
-            <!-- SLIDE 16: ROI Y ESCALA (FULL DATA) -->
-            <div class="slide flex-col space-y-8" data-title="Métricas">
-                <div class="flex items-center gap-5">
+            <!-- SLIDE 16: ROI Y ESCALA (TABLA) -->
+            <div class="slide flex-col space-y-10" data-title="Métricas">
+                <div class="flex items-center gap-6">
                     <div class="p-5 bg-emerald-500/10 rounded-3xl border border-emerald-500/20"><i class="fa-solid fa-chart-line text-emerald-400 text-4xl"></i></div>
                     <h2 class="text-5xl font-black text-white tracking-tighter">ROI y Escalabilidad</h2>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12 flex-1 overflow-y-auto">
-                    <div class="p-20 bg-slate-900 rounded-[5rem] text-center space-y-10 border border-white/10 hover:shadow-cyan-500/20 shadow-2xl transition-all relative overflow-hidden group">
-                        <i class="fa-solid fa-chart-pie text-cyan-500/10 text-[20rem] absolute inset-0 flex items-center justify-center pointer-events-none group-hover:scale-125 transition-transform duration-1000"></i>
-                        <p class="text-9xl font-black text-cyan-400 tracking-tighter relative z-10 leading-none">245%</p>
+                    <div class="p-20 bg-slate-900 rounded-[5rem] text-center space-y-10 border border-white/10 shadow-2xl relative group overflow-hidden transition-all">
+                        <i class="fa-solid fa-chart-pie text-cyan-500/10 text-[22rem] absolute inset-0 flex items-center justify-center group-hover:scale-125 transition-transform duration-1000"></i>
+                        <p class="text-[11rem] font-black text-cyan-400 tracking-tighter relative z-10 leading-none">245%</p>
                         <p class="text-xs font-black text-slate-500 uppercase tracking-[1em] relative z-10">Retorno Año 1</p>
                     </div>
-                    <div class="p-20 bg-slate-900 rounded-[5rem] text-center space-y-10 border border-white/10 hover:shadow-emerald-500/20 shadow-2xl transition-all relative overflow-hidden group">
-                        <i class="fa-solid fa-users-viewfinder text-emerald-500/10 text-[20rem] absolute inset-0 flex items-center justify-center pointer-events-none group-hover:scale-125 transition-transform duration-1000"></i>
-                        <p class="text-9xl font-black text-emerald-400 tracking-tighter relative z-10 leading-none">x10</p>
+                    <div class="p-20 bg-slate-900 rounded-[5rem] text-center space-y-10 border border-white/10 shadow-2xl relative group overflow-hidden transition-all">
+                        <i class="fa-solid fa-users-viewfinder text-emerald-500/10 text-[22rem] absolute inset-0 flex items-center justify-center group-hover:scale-125 transition-transform duration-1000"></i>
+                        <p class="text-[11rem] font-black text-emerald-400 tracking-tighter relative z-10 leading-none">x10</p>
                         <p class="text-xs font-black text-slate-500 uppercase tracking-[1em] relative z-10">Factor Escala</p>
                     </div>
                 </div>
@@ -500,21 +487,18 @@
 
             <!-- SLIDE 17: COMPARATIVA PARADIGMAS -->
             <div class="slide flex-col space-y-10" data-title="Evolución">
-                <h2 class="text-5xl font-black text-white tracking-tighter text-center mb-8">Comparativa de Paradigmas</h2>
+                <h2 class="text-5xl font-black text-white text-center mb-8">Comparativa de Paradigmas</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12 relative flex-1 items-center overflow-y-auto">
-                    <div class="p-14 bg-slate-900/90 border-2 border-red-500/20 rounded-[5rem] min-h-[350px] relative shadow-2xl flex flex-col justify-center text-center">
+                    <div class="p-16 bg-slate-900/90 border-2 border-red-500/20 rounded-[5rem] min-h-[350px] relative shadow-2xl flex flex-col justify-center text-center">
                         <div class="absolute -top-10 left-1/2 -translate-x-1/2 p-6 bg-red-500/20 rounded-[2rem] text-red-500 shadow-2xl"><i class="fa-solid fa-user-lock text-5xl"></i></div>
                         <h4 class="text-slate-500 font-black mb-10 uppercase text-[10px] tracking-[1em]">Paradigma Manual</h4>
                         <p class="text-slate-200 text-3xl font-light italic leading-relaxed px-10">Atención reactiva, síncrona, 40h semanales y dependencia humana absoluta.</p>
                     </div>
-                    <div class="p-14 bg-cyan-500/10 border-2 border-cyan-500/40 rounded-[5rem] relative overflow-hidden min-h-[350px] shadow-2xl flex flex-col justify-center text-center group">
+                    <div class="p-16 bg-cyan-500/10 border-2 border-cyan-500/40 rounded-[5rem] relative overflow-hidden min-h-[350px] shadow-2xl flex flex-col justify-center text-center group">
                         <div class="absolute -top-10 left-1/2 -translate-x-1/2 p-6 bg-cyan-500/20 rounded-[2rem] text-cyan-400 shadow-2xl group-hover:scale-110 transition-transform"><i class="fa-solid fa-bolt-auto text-5xl"></i></div>
                         <div class="absolute top-0 right-0 p-8 bg-cyan-500 text-slate-950 font-black uppercase text-xs tracking-[0.5em]">Digital IA</div>
                         <h4 class="text-cyan-400 font-black mb-10 uppercase text-[10px] tracking-[1em]">Paradigma IA (Propuesto)</h4>
-                        <p class="text-white text-4xl font-bold leading-tight px-10">Omnicanalidad nativa, 24/7/365, resolución instantánea y precisión técnica.</p>
-                    </div>
-                    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex p-12 bg-slate-800 rounded-full border-2 border-cyan-500/50 z-10 shadow-2xl group cursor-pointer active:scale-95 transition-all">
-                        <i class="fa-solid fa-right-left text-cyan-400 text-5xl group-hover:rotate-180 transition-transform duration-1000"></i>
+                        <p class="text-white text-4xl font-bold leading-tight px-10">Omnicanalidad nativa, 24/7/365, resolución instantánea y precisión total.</p>
                     </div>
                 </div>
             </div>
@@ -528,7 +512,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-12 flex-1 overflow-y-auto">
                     <div class="md:col-span-8 p-16 bg-slate-900/90 rounded-[5rem] text-slate-200 text-3xl leading-relaxed italic border border-white/5 shadow-2xl relative overflow-hidden group">
                         <i class="fa-solid fa-shield-check text-cyan-500/5 text-[20rem] absolute -top-10 -left-10 pointer-events-none group-hover:scale-110 transition-transform"></i>
-                        Cronograma estratégico basado en mitigación de riesgos operativos. Priorizamos estabilidad técnica y adaptación cultural antes del escalado masivo regional.
+                        Cronograma estratégico basado en mitigación de riesgos. Priorizamos estabilidad técnica y adopción cultural antes del escalado regional.
                     </div>
                     <div class="md:col-span-4 grid grid-cols-1 gap-8">
                         <div class="p-10 bg-slate-800/60 rounded-[3rem] flex flex-col items-center gap-6 border border-white/10 group hover:bg-slate-900 transition-all shadow-xl"><i class="fa-solid fa-vial-circle-check text-cyan-400 text-6xl group-hover:scale-110 transition-transform"></i> <span class="text-xs uppercase font-black tracking-[0.5em] text-slate-500">QA Riguroso</span></div>
@@ -541,12 +525,12 @@
             <div class="slide flex-col space-y-10" data-title="Corto Plazo">
                 <h2 class="text-5xl font-black text-white tracking-tighter">Fase 1: Cimentación (1-3 Meses)</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12 flex-1 items-center overflow-y-auto">
-                    <div class="p-14 bg-slate-800/60 rounded-[4.5rem] border border-white/10 space-y-12 shadow-inner relative overflow-hidden group">
+                    <div class="p-16 bg-slate-800/60 rounded-[4.5rem] border border-white/10 space-y-12 shadow-inner relative overflow-hidden group">
                         <i class="fa-solid fa-database text-cyan-500/5 text-[25rem] absolute top-0 right-0 pointer-events-none"></i>
                         <p class="text-3xl text-slate-100 font-light leading-snug px-6">Auditoría de datos históricos y extracción de base de conocimiento real (Data Mining).</p>
-                        <div class="flex items-center gap-10 p-10 bg-cyan-500/10 rounded-3xl border border-cyan-500/30 shadow-2xl"><i class="fa-solid fa-sack-dollar text-cyan-400 text-6xl"></i> <div><p class="font-black text-cyan-400 text-4xl tracking-tighter">$45M COP</p><p class="text-[10px] uppercase font-black text-slate-500 tracking-[0.6em] mt-2">Fase de Diagnóstico</p></div></div>
+                        <div class="flex items-center gap-10 p-10 bg-cyan-500/10 rounded-3xl border border-cyan-500/30 shadow-2xl"><i class="fa-solid fa-sack-dollar text-cyan-400 text-6xl"></i> <div><p class="font-black text-cyan-400 text-4xl tracking-tighter leading-none">$45M COP</p><p class="text-[10px] uppercase font-black text-slate-500 tracking-[0.6em] mt-3">Inversión Diagnóstico</p></div></div>
                     </div>
-                    <div class="p-24 bg-slate-900 rounded-[6rem] text-center border-l-[25px] border-cyan-500 shadow-2xl flex flex-col items-center justify-center group"><i class="fa-solid fa-microchip text-cyan-500 text-[10rem] mb-12 group-hover:scale-110 transition-transform duration-1000"></i><p class="text-8xl font-black text-white tracking-tighter">MVP</p><p class="text-xs uppercase text-slate-500 font-black mt-10 tracking-[1.5em]">Lanzamiento Inicial</p></div>
+                    <div class="p-24 bg-slate-900 rounded-[6rem] text-center border-l-[25px] border-cyan-500 shadow-2xl flex flex-col items-center justify-center group"><i class="fa-solid fa-microchip text-cyan-500 text-[10rem] mb-12 group-hover:scale-110 transition-transform duration-700"></i><p class="text-8xl font-black text-white tracking-tighter">MVP</p><p class="text-xs uppercase text-slate-500 font-black mt-10 tracking-[1.5em]">Lanzamiento Inicial</p></div>
                 </div>
             </div>
 
@@ -554,12 +538,12 @@
             <div class="slide flex-col space-y-10" data-title="Mediano Plazo">
                 <h2 class="text-5xl font-black text-white tracking-tighter text-center">Fase 2: Integración (4-8 Meses)</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12 flex-1 items-center overflow-y-auto">
-                    <div class="p-14 bg-slate-800/60 rounded-[4.5rem] border border-white/10 space-y-12 shadow-inner relative overflow-hidden group">
+                    <div class="p-16 bg-slate-800/60 rounded-[4.5rem] border border-white/10 space-y-12 shadow-inner relative overflow-hidden group">
                         <i class="fa-solid fa-network-wired text-emerald-500/5 text-[25rem] absolute top-0 right-0 pointer-events-none"></i>
-                        <p class="text-3xl text-slate-100 font-light leading-snug px-6">Lanzamiento piloto (20% clientes). Integración total API CRM y capacitación técnica intensiva al equipo.</p>
-                        <div class="flex items-center gap-10 p-10 bg-emerald-500/10 rounded-3xl border border-emerald-500/30 shadow-2xl"><i class="fa-solid fa-users-gear text-emerald-400 text-6xl"></i> <div><p class="font-black text-emerald-400 text-4xl tracking-tighter">$15M COP</p><p class="text-[10px] uppercase font-black text-slate-500 tracking-[0.6em] mt-2">Gestión del Cambio</p></div></div>
+                        <p class="text-3xl text-slate-100 font-light leading-snug px-6">Lanzamiento piloto (20% clientes). Integración total API CRM y capacitación técnica.</p>
+                        <div class="flex items-center gap-10 p-10 bg-emerald-500/10 rounded-3xl border border-emerald-500/30 shadow-2xl"><i class="fa-solid fa-users-gear text-emerald-400 text-6xl"></i> <div><p class="font-black text-emerald-400 text-4xl tracking-tighter leading-none">$15M COP</p><p class="text-[10px] uppercase font-black text-slate-500 tracking-[0.6em] mt-3">Gestión del Cambio</p></div></div>
                     </div>
-                    <div class="p-24 bg-slate-900 rounded-[6rem] text-center border-l-[25px] border-emerald-500 shadow-2xl flex flex-col items-center justify-center group"><i class="fa-solid fa-vial-virus text-emerald-500 text-[10rem] mb-12 group-hover:scale-110 transition-transform duration-1000"></i><p class="text-8xl font-black text-white tracking-tighter">PILOTO</p><p class="text-xs uppercase text-slate-500 font-black mt-10 tracking-[1.5em]">En Marcha</p></div>
+                    <div class="p-24 bg-slate-900 rounded-[6rem] text-center border-l-[25px] border-emerald-500 shadow-2xl flex flex-col items-center justify-center group"><i class="fa-solid fa-vial-virus text-emerald-500 text-[10rem] mb-12 group-hover:scale-110 transition-transform duration-700"></i><p class="text-8xl font-black text-white tracking-tighter">PILOTO</p><p class="text-xs uppercase text-slate-500 font-black mt-10 tracking-[1.5em]">Validación</p></div>
                 </div>
             </div>
 
@@ -585,13 +569,13 @@
                     <h2 class="text-5xl font-black text-white tracking-tighter">Reskilling Humano Elite</h2>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-12 gap-12 flex-1 items-center overflow-y-auto">
-                    <div class="md:col-span-8 p-16 bg-slate-800/40 rounded-[5rem] text-slate-100 text-3xl font-light leading-relaxed border border-white/15 shadow-2xl relative group">
-                        <i class="fa-solid fa-brain-circuit text-cyan-500/5 text-[25rem] absolute top-0 right-0 pointer-events-none group-hover:scale-110 transition-transform duration-1000"></i>
+                    <div class="md:col-span-8 p-16 bg-slate-800/50 rounded-[4.5rem] text-slate-100 text-3xl font-light leading-relaxed border border-white/15 shadow-2xl relative group">
+                        <i class="fa-solid fa-brain-circuit text-cyan-500/5 text-[22rem] absolute top-0 right-0 pointer-events-none group-hover:scale-110 transition-transform duration-1000"></i>
                         Evolución del personal: Los ingenieros técnicos se transforman en Arquitectos de Experiencia y Supervisores de IA. El empleado deja de ser ejecutor para ser el gestor de la tecnología.
                     </div>
                     <div class="md:col-span-4 space-y-12">
-                        <div class="p-12 bg-slate-900 rounded-[3.5rem] border-l-[18px] border-cyan-500 shadow-2xl group hover:bg-black transition-all flex flex-col items-center"><i class="fa-solid fa-code text-cyan-500 text-4xl mb-4 group-hover:rotate-12 transition-transform"></i><h4 class="text-cyan-400 font-black text-[10px] uppercase tracking-widest mb-2">Nuevo Perfil</h4><p class="text-2xl font-bold tracking-tighter text-white">Prompt Engineer</p></div>
-                        <div class="p-12 bg-slate-900 rounded-[3.5rem] border-l-[18px] border-emerald-500 shadow-2xl group hover:bg-black transition-all flex flex-col items-center"><i class="fa-solid fa-database text-emerald-500 text-4xl mb-4 group-hover:rotate-12 transition-transform"></i><h4 class="text-emerald-400 font-black text-[10px] uppercase tracking-widest mb-2">Nuevo Perfil</h4><p class="text-2xl font-bold tracking-tighter text-white">Analista Data IA</p></div>
+                        <div class="p-12 bg-slate-900 rounded-[3.5rem] border-l-[18px] border-cyan-500 shadow-2xl group hover:bg-black transition-all flex flex-col items-center"><i class="fa-solid fa-code text-cyan-500 text-4xl mb-4 group-hover:rotate-12 transition-transform"></i><h4 class="text-cyan-400 font-black text-[10px] uppercase tracking-widest mb-2">Rol Nuevo</h4><p class="text-2xl font-bold tracking-tighter text-white">Prompt Engineer</p></div>
+                        <div class="p-12 bg-slate-900 rounded-[3.5rem] border-l-[18px] border-emerald-500 shadow-2xl group hover:bg-black transition-all flex flex-col items-center"><i class="fa-solid fa-magnifying-glass-chart text-emerald-500 text-4xl mb-4 group-hover:rotate-12 transition-transform"></i><h4 class="text-emerald-400 font-black text-[10px] uppercase mb-2 tracking-widest">Rol Nuevo</h4><p class="text-2xl font-bold tracking-tighter text-white">Data Analyst IA</p></div>
                     </div>
                 </div>
             </div>
@@ -602,11 +586,11 @@
                 <div class="grid grid-cols-1 gap-10 flex-1 justify-center max-w-5xl mx-auto w-full overflow-y-auto">
                     <div class="flex items-center gap-14 p-12 bg-slate-900/90 rounded-[4rem] border border-white/10 hover:border-emerald-500/50 transition-all shadow-2xl group">
                         <div class="w-28 h-28 rounded-full bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-emerald-500/10 border-2 border-emerald-500/20"><i class="fa-solid fa-hand-holding-dollar text-emerald-400 text-6xl"></i></div>
-                        <div><p class="text-slate-500 text-xs font-black uppercase tracking-[0.5em] mb-4">Ahorro Neto Anual</p><p class="text-7xl text-white font-black tracking-tighter leading-none">$520M COP</p></div>
+                        <div><p class="text-slate-500 text-xs font-black uppercase tracking-[0.5em] mb-4">Ahorro Neto Anual</p><p class="text-[7rem] text-white font-black tracking-tighter leading-none">$520M COP</p></div>
                     </div>
                     <div class="flex items-center gap-14 p-12 bg-slate-900/90 rounded-[4rem] border border-white/10 hover:border-cyan-500/50 transition-all shadow-2xl group">
                         <div class="w-28 h-28 rounded-full bg-cyan-500/20 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-cyan-500/10 border-2 border-cyan-500/20"><i class="fa-solid fa-infinity text-cyan-400 text-6xl"></i></div>
-                        <div><p class="text-slate-500 text-xs font-black uppercase tracking-[0.5em] mb-4">Disponibilidad</p><p class="text-7xl text-white font-black tracking-tighter leading-none">100% (24/7)</p></div>
+                        <div><p class="text-slate-500 text-xs font-black uppercase tracking-[0.5em] mb-4">Disponibilidad</p><p class="text-[7rem] text-white font-black tracking-tighter leading-none">100% (24/7)</p></div>
                     </div>
                 </div>
             </div>
@@ -647,7 +631,7 @@
             </div>
 
             <!-- Navegación Incorporada -->
-            <footer class="mt-auto p-6 md:p-10 flex justify-between items-center border-t-2 border-white/5 bg-black/40 z-[110]">
+            <footer class="mt-auto p-6 md:p-10 flex justify-between items-center border-t-2 border-white/5 bg-black/40 z-[120]">
                 <div class="flex items-center gap-6 lg:gap-14">
                     <div class="flex flex-col">
                         <span class="text-[10px] text-slate-500 font-black uppercase tracking-[0.8em] mb-1">Página</span>
@@ -678,9 +662,8 @@
     </div>
 
     <script>
-        // Lógica de Detección de Dispositivo para Escalado
+        // Lógica de Detección de Dispositivo y Escalado Final
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const viewport = document.getElementById('viewport');
         if (isMobile) {
             document.body.classList.add('is-mobile');
         } else {
@@ -743,4 +726,3 @@
     </script>
 </body>
 </html>
-
