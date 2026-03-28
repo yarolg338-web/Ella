@@ -1,717 +1,664 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
-  <title>Un pequeño reto</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      -webkit-tap-highlight-color: transparent;
-      user-select: none;
-      -webkit-user-select: none;
-    }
-
-    html, body {
-      margin: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-      background: #0f1220;
-    }
-
-    canvas {
-      display: block;
-      width: 100vw;
-      height: 100vh;
-      touch-action: none;
-    }
-
-    .screen {
-      position: fixed;
-      inset: 0;
-      display: none;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      text-align: center;
-      padding: 24px;
-      color: #fff6ef;
-      z-index: 20;
-      background:
-        radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 30%),
-        linear-gradient(to bottom, rgba(8,10,20,0.25), rgba(8,10,20,0.55));
-    }
-
-    .screen.active {
-      display: flex;
-    }
-
-    .card {
-      width: min(90vw, 360px);
-      background: rgba(18, 22, 36, 0.88);
-      border: 1px solid rgba(255,255,255,0.10);
-      border-radius: 24px;
-      padding: 24px 20px;
-      box-shadow: 0 18px 50px rgba(0,0,0,0.35);
-      backdrop-filter: blur(8px);
-    }
-
-    h1, h2, p {
-      margin: 0;
-    }
-
-    h1, h2 {
-      font-weight: 700;
-      letter-spacing: 0.3px;
-    }
-
-    p {
-      margin-top: 12px;
-      line-height: 1.5;
-      color: #e7dfe0;
-    }
-
-    .btn {
-      margin-top: 18px;
-      border: none;
-      border-radius: 999px;
-      padding: 14px 24px;
-      font-size: 1rem;
-      color: white;
-      cursor: pointer;
-      background: linear-gradient(135deg, #ff7aa2, #ff9f7a);
-      box-shadow: 0 10px 30px rgba(255, 120, 160, 0.35);
-    }
-
-    .btn:active {
-      transform: scale(0.98);
-    }
-
-    #letterScreen {
-      background: #111;
-      padding: 0;
-    }
-
-    #letterScreen img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      background: #111;
-    }
-
-    .envelope {
-      width: 220px;
-      height: 150px;
-      position: relative;
-      margin: 6px 0 12px;
-      cursor: pointer;
-      animation: floaty 1.8s ease-in-out infinite;
-    }
-
-    .env-back {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 100px;
-      background: #f2d5b5;
-      border-radius: 0 0 18px 18px;
-      box-shadow: 0 12px 28px rgba(0,0,0,0.25);
-    }
-
-    .env-front {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 100px;
-      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0, 50% 55%, 100% 0);
-      background: #e5bd93;
-      border-radius: 0 0 18px 18px;
-    }
-
-    .env-flap {
-      position: absolute;
-      top: 16px;
-      left: 0;
-      width: 0;
-      height: 0;
-      border-left: 110px solid transparent;
-      border-right: 110px solid transparent;
-      border-bottom: 75px solid #d9ae80;
-      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
-    }
-
-    .seal {
-      position: absolute;
-      left: 50%;
-      top: 72px;
-      transform: translateX(-50%);
-      width: 34px;
-      height: 34px;
-      border-radius: 50%;
-      background: radial-gradient(circle at 30% 30%, #d45252, #8d1f1f);
-      z-index: 3;
-    }
-
-    @keyframes floaty {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-6px); }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Plan Estratégico TechSolutions - Yarolt Gonzalez</title>
+    <!-- Tailwind CSS para Estilos Elite -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #060b18;
+            color: #e2e8f0;
+            overflow: hidden;
+        }
+        .glass {
+            background: rgba(15, 23, 42, 0.4);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .slide {
+            display: none;
+            height: 80vh;
+            animation: fadeIn 0.6s ease-out;
+        }
+        .slide.active {
+            display: flex;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.2); border-radius: 10px; }
+        .bg-gradient-custom {
+            background: radial-gradient(circle at top right, rgba(6, 182, 212, 0.1), transparent),
+                        radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05), transparent);
+        }
+    </style>
 </head>
-<body>
-  <canvas id="game"></canvas>
+<body class="bg-gradient-custom min-h-screen flex flex-col items-center justify-center p-4">
 
-  <div id="startScreen" class="screen active">
-    <div class="card">
-      <h1>Un pequeño reto</h1>
-      <p>Solo toca la pantalla para saltar.<br>Si llegas al final, hay una sorpresa.</p>
-      <button class="btn" id="startBtn">Empezar</button>
+    <!-- Barra de Progreso -->
+    <div class="fixed top-0 left-0 w-full h-1.5 bg-slate-900 z-50">
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-cyan-600 to-emerald-400 transition-all duration-500 shadow-[0_0_15px_rgba(6,182,212,0.4)]" style="width: 0%"></div>
     </div>
-  </div>
 
-  <div id="gameOverScreen" class="screen">
-    <div class="card">
-      <h2>Casi…</h2>
-      <p>Te faltó poquito. Inténtalo otra vez.</p>
-      <button class="btn" id="retryBtn">Reintentar</button>
-    </div>
-  </div>
+    <!-- Contenedor de Diapositivas -->
+    <main id="presentation-container" class="w-full max-w-7xl glass rounded-[3rem] p-8 md:p-12 relative shadow-2xl overflow-hidden">
+        
+        <!-- SLIDE 1: PORTADA -->
+        <div class="slide active flex-col items-center justify-center text-center space-y-8" data-title="Portada">
+            <div class="space-y-2">
+                <h3 class="text-cyan-400 font-bold tracking-[0.3em] text-lg uppercase">Universidad Simón Bolívar</h3>
+                <div class="w-20 h-1 bg-cyan-500 mx-auto rounded-full"></div>
+                <p class="text-slate-500 text-sm font-semibold uppercase tracking-widest pt-2">Facultad de Ingeniería</p>
+            </div>
+            <i class="fa-solid fa-microchip text-6xl text-cyan-400 animate-pulse"></i>
+            <div class="space-y-4">
+                <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight">Plan Estratégico de<br>Transformación Digital</h1>
+                <p class="text-xl text-slate-400 italic font-light">Implementación de Ecosistema Conversacional con IA</p>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl text-left bg-slate-900/60 p-8 rounded-3xl border border-white/5">
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Estudiante</p>
+                        <p class="text-slate-200 font-bold">YAROLT FRANCISCO GONZALEZ VASQUEZ</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Asignatura</p>
+                        <p class="text-slate-200 font-bold text-sm">Gerencia Tecnológica de la Industria</p>
+                    </div>
+                </div>
+                <div class="space-y-4">
+                    <div>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Docente</p>
+                        <p class="text-slate-200 font-bold text-sm">JORGE ALBERTO CAMARGO BARBOSA</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Fecha</p>
+                        <p class="text-slate-200 font-bold text-sm">28 de Marzo, 2026</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  <div id="winScreen" class="screen">
-    <div class="card">
-      <div class="envelope" id="openEnvelope">
-        <div class="env-flap"></div>
-        <div class="env-back"></div>
-        <div class="env-front"></div>
-        <div class="seal"></div>
-      </div>
-      <h2>Tienes algo para abrir</h2>
-      <p>Toca la carta.</p>
-      <button class="btn" id="openBtn">Abrir</button>
-    </div>
-  </div>
+        <!-- SLIDE 2: INTRODUCCIÓN -->
+        <div class="slide flex-col space-y-6" data-title="Introducción">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-book-open text-cyan-400 text-2xl"></i></div>
+                <h2 class="text-3xl font-bold text-white">Introducción: Visión de Transformación</h2>
+            </div>
+            <div class="flex-1 overflow-y-auto custom-scrollbar pr-4 space-y-6">
+                <div class="p-8 bg-slate-800/30 rounded-3xl border border-white/5 text-lg leading-relaxed text-slate-300">
+                    TechSolutions S.A.S. se encuentra ante el desafío inminente de evolucionar sus procesos de cara a la Industria 4.0. La gestión manual de servicios ha alcanzado un techo de saturación que compromete la rentabilidad y la escalabilidad del negocio. Esta propuesta presenta una ruta crítica para la adopción de Inteligencia Artificial como un pilar estratégico que optimiza el capital humano y reduce drásticamente la fricción operativa.
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-6 bg-slate-900/60 rounded-2xl text-center">
+                        <p class="text-4xl font-bold text-cyan-400">+300%</p>
+                        <p class="text-[10px] uppercase text-slate-500 font-bold tracking-widest mt-2">Crecimiento Digital Proyectado</p>
+                    </div>
+                    <div class="p-6 bg-slate-900/60 rounded-2xl text-center">
+                        <p class="text-4xl font-bold text-emerald-400">92%</p>
+                        <p class="text-[10px] uppercase text-slate-500 font-bold tracking-widest mt-2">Eficiencia en Procesos</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-  <div id="letterScreen" class="screen">
-    <img src="carta.jpg" alt="Carta sorpresa">
-  </div>
+        <!-- SLIDE 3: EMPRESA -->
+        <div class="slide flex-col space-y-6" data-title="Empresa Seleccionada">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-building text-cyan-400 text-2xl"></i></div>
+                <h2 class="text-3xl font-bold text-white">TechSolutions S.A.S: Contexto</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1 overflow-hidden">
+                <div class="p-8 bg-slate-800/30 rounded-3xl border border-white/5 text-slate-300">
+                    Empresa líder en consultoría y soporte tecnológico para el segmento de pequeñas y medianas empresas (PYMES) en Colombia. Su core business es el aseguramiento de la continuidad operativa digital de sus clientes. Su modelo actual requiere una modernización urgente para gestionar volúmenes crecientes sin comprometer los SLA.
+                </div>
+                <div class="space-y-4">
+                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Mercado</span><span class="text-cyan-400 font-bold">B2B / Soporte IT</span></div>
+                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Presencia</span><span class="text-cyan-400 font-bold">Nacional (Colombia)</span></div>
+                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Estado</span><span class="text-cyan-400 font-bold">Escalado Operativo</span></div>
+                </div>
+            </div>
+        </div>
 
-  <script>
-    const canvas = document.getElementById("game");
-    const ctx = canvas.getContext("2d");
+        <!-- SLIDE 4: PROBLEMA -->
+        <div class="slide flex-col space-y-6" data-title="Situación Actual">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-red-500/10 rounded-xl border border-red-500/20"><i class="fa-solid fa-triangle-exclamation text-red-400 text-2xl"></i></div>
+                <h2 class="text-3xl font-bold text-white">Situación Actual: Desafío de Gestión</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 flex-1">
+                <div class="md:col-span-8 p-8 bg-slate-800/30 rounded-3xl text-slate-300">
+                    Se ha diagnosticado una ineficiencia crítica: el 70% de las solicitudes diarias corresponden a consultas repetitivas de Nivel 0 gestionadas manualmente. Esto eleva el costo por interacción y genera demoras de 4.5 horas en la resolución inicial, limitando la capacidad de atención a horarios administrativos fijos.
+                </div>
+                <div class="md:col-span-4 space-y-4">
+                    <div class="p-6 bg-slate-900/80 rounded-2xl text-center border border-red-500/20">
+                        <p class="text-4xl font-bold text-red-400">18%</p>
+                        <p class="text-[10px] font-bold text-slate-500 uppercase mt-1">Tasa de Retrabajo</p>
+                    </div>
+                    <div class="p-6 bg-slate-900/80 rounded-2xl text-center border border-red-500/20">
+                        <p class="text-4xl font-bold text-red-500">4.5h</p>
+                        <p class="text-[10px] font-bold text-slate-500 uppercase mt-1">Espera Media</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    const startScreen = document.getElementById("startScreen");
-    const gameOverScreen = document.getElementById("gameOverScreen");
-    const winScreen = document.getElementById("winScreen");
-    const letterScreen = document.getElementById("letterScreen");
+        <!-- SLIDE 5: CARACTERÍSTICAS -->
+        <div class="slide flex-col space-y-6" data-title="Características">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-zap text-cyan-400 text-2xl"></i></div>
+                <h2 class="text-3xl font-bold text-white">Características del Chatbot con IA</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1">
+                <div class="md:col-span-8 space-y-4">
+                    <div class="p-4 bg-slate-800/40 rounded-xl border border-white/5 flex items-center gap-4">
+                        <div class="w-2 h-2 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
+                        <p class="text-slate-300">Interpretación semántica avanzada (NLP).</p>
+                    </div>
+                    <div class="p-4 bg-slate-800/40 rounded-xl border border-white/5 flex items-center gap-4">
+                        <div class="w-2 h-2 rounded-full bg-cyan-500"></div>
+                        <p class="text-slate-300">Automatización de flujos de agendamiento.</p>
+                    </div>
+                    <div class="p-4 bg-slate-800/40 rounded-xl border border-white/5 flex items-center gap-4">
+                        <div class="w-2 h-2 rounded-full bg-cyan-500"></div>
+                        <p class="text-slate-300">Integración nativa API con CRM y ERP.</p>
+                    </div>
+                </div>
+                <div class="md:col-span-4 space-y-4">
+                    <div class="p-5 bg-slate-900/60 rounded-xl border border-white/5">
+                        <h4 class="text-cyan-400 text-xs font-bold uppercase mb-2">Gobernanza</h4>
+                        <p class="text-slate-400 text-xs leading-relaxed">Cumplimiento de Ley 1581 (Habeas Data).</p>
+                    </div>
+                    <div class="p-5 bg-slate-900/60 rounded-xl border border-white/5">
+                        <h4 class="text-cyan-400 text-xs font-bold uppercase mb-2">Seguridad</h4>
+                        <p class="text-slate-400 text-xs leading-relaxed">Protocolos TLS 1.3 y AES-256.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    const startBtn = document.getElementById("startBtn");
-    const retryBtn = document.getElementById("retryBtn");
-    const openBtn = document.getElementById("openBtn");
-    const openEnvelope = document.getElementById("openEnvelope");
+        <!-- SLIDE 6: ALCANCE APLICACIÓN -->
+        <div class="slide flex-col space-y-6" data-title="Alcance">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-earth-americas text-cyan-400 text-2xl"></i></div>
+                <h2 class="text-3xl font-bold text-white">Alcance de Aplicación</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1">
+                <div class="p-6 bg-slate-900/60 rounded-3xl text-center space-y-4 border border-white/5">
+                    <i class="fa-brands fa-whatsapp text-4xl text-emerald-400"></i>
+                    <h4 class="text-white font-bold uppercase text-xs">WhatsApp Business</h4>
+                    <p class="text-slate-400 text-sm">Atención inmediata en el canal preferido del mercado colombiano.</p>
+                </div>
+                <div class="p-6 bg-slate-900/60 rounded-3xl text-center space-y-4 border border-white/5">
+                    <i class="fa-solid fa-window-maximize text-4xl text-cyan-400"></i>
+                    <h4 class="text-white font-bold uppercase text-xs">Widget Web</h4>
+                    <p class="text-slate-400 text-sm">Resolución de dudas técnicas y FAQs en el portal corporativo.</p>
+                </div>
+                <div class="p-6 bg-slate-900/60 rounded-3xl text-center space-y-4 border border-white/5">
+                    <i class="fa-solid fa-headset text-4xl text-indigo-400"></i>
+                    <h4 class="text-white font-bold uppercase text-xs">Triaje de Soporte</h4>
+                    <p class="text-slate-400 text-sm">Clasificación inteligente de tickets para los niveles N0 y N1.</p>
+                </div>
+            </div>
+        </div>
 
-    let W = 0;
-    let H = 0;
-    let groundY = 0;
-    let animationId = 0;
+        <!-- SLIDE 7: VALOR AGREGADO -->
+        <div class="slide flex-col space-y-6" data-title="Valor Agregado">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-award text-cyan-400 text-2xl"></i></div>
+                <h2 class="text-3xl font-bold text-white">Valor Agregado Estratégico</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+                <div class="p-8 bg-slate-800/30 rounded-3xl text-slate-300">
+                    El valor reside en la "Omnipresencia de Marca". TechSolutions se convierte en un aliado 24/7 sin incrementar gastos de nómina. Se consolida analítica avanzada: identificaremos fallos recurrentes antes de que el cliente los reporte, transformando el soporte en consultoría proactiva.
+                </div>
+                <div class="space-y-4 flex flex-col justify-center">
+                    <div class="p-6 bg-slate-900/80 rounded-2xl text-center border border-cyan-500/20">
+                        <p class="text-4xl font-bold text-cyan-400">+45%</p>
+                        <p class="text-[10px] font-bold text-slate-500 uppercase">Valor de Marca Percibido</p>
+                    </div>
+                    <div class="p-6 bg-slate-900/80 rounded-2xl text-center border border-emerald-500/20">
+                        <p class="text-4xl font-bold text-emerald-400">+25%</p>
+                        <p class="text-[10px] font-bold text-slate-500 uppercase">Tasa de Fidelización</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    const GOAL = 30;
-    let score = 0;
-    let speed = 7;
-    let running = false;
-    let started = false;
-    let gameOver = false;
-    let won = false;
-    let obstacleTimer = 0;
-    let nextObstacle = 75;
-    let groundOffset = 0;
+        <!-- SLIDE 8: OBJETIVO GENERAL -->
+        <div class="slide flex-col items-center justify-center text-center space-y-8" data-title="Objetivo General">
+            <div class="p-4 bg-cyan-500/10 rounded-full border border-cyan-400/20"><i class="fa-solid fa-bullseye text-cyan-400 text-4xl"></i></div>
+            <h2 class="text-3xl md:text-5xl font-bold text-white max-w-4xl leading-tight">
+                Diseñar y ejecutar un Plan de Transformación Digital que optimice la capacidad operativa del servicio y garantice una <span class="text-cyan-400 underline decoration-cyan-400/30">reducción del 40% en costos directos</span>.
+            </h2>
+        </div>
 
-    const stars = [];
-    const hills = [];
-    const obstacles = [];
-    const particles = [];
-    const fireflies = [];
+        <!-- SLIDE 9: OBJETIVOS ESPECÍFICOS -->
+        <div class="slide flex-col space-y-6" data-title="Objetivos Específicos">
+            <h2 class="text-3xl font-bold text-white">Hitos Estratégicos</h2>
+            <div class="space-y-4 flex-1 justify-center flex flex-col">
+                <div class="p-5 bg-slate-800/40 rounded-2xl border border-white/5 flex items-center gap-6">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center font-bold text-cyan-400 text-xl border border-cyan-500/20">01</div>
+                    <p class="text-slate-200">Normalizar la arquitectura de datos técnicos en un periodo de 60 días.</p>
+                </div>
+                <div class="p-5 bg-slate-800/40 rounded-2xl border border-white/5 flex items-center gap-6">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center font-bold text-cyan-400 text-xl border border-cyan-500/20">02</div>
+                    <p class="text-slate-200">Automatizar el 80% de las consultas informativas de Nivel 0.</p>
+                </div>
+                <div class="p-5 bg-slate-800/40 rounded-2xl border border-white/5 flex items-center gap-6">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center font-bold text-cyan-400 text-xl border border-cyan-500/20">03</div>
+                    <p class="text-slate-200">Reducir el TMO (Tiempo Medio de Operación) en un 65%.</p>
+                </div>
+                <div class="p-5 bg-slate-800/40 rounded-2xl border border-white/5 flex items-center gap-6">
+                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center font-bold text-cyan-400 text-xl border border-cyan-500/20">04</div>
+                    <p class="text-slate-200">Elevar el CSAT (Satisfacción del Cliente) a un mínimo de 90/100.</p>
+                </div>
+            </div>
+        </div>
 
-    const player = {
-      x: 90,
-      y: 0,
-      w: 54,
-      h: 54,
-      vy: 0,
-      gravity: 0.88,
-      jumpPower: -15.5,
-      grounded: true,
-      frame: 0
-    };
+        <!-- SLIDE 10: ALCANCE DETALLADO -->
+        <div class="slide flex-col space-y-6" data-title="Alcance Detallado">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-layer-group text-cyan-400 text-2xl"></i></div>
+                <h2 class="text-3xl font-bold text-white">Alcance Detallado del Proyecto</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+                <div class="p-8 bg-slate-800/30 rounded-3xl text-slate-300">
+                    Este plan contempla auditoría de procesos, diseño de arquitectura de IA, integración técnica con sistemas contables y despliegue en producción. Se limita a la atención de consultas informativas y transaccionales básicas, escalando casos complejos a humanos calificados.
+                </div>
+                <div class="space-y-4">
+                    <div class="p-6 bg-slate-900/60 rounded-2xl border border-white/5">
+                        <h4 class="text-cyan-400 text-xs font-bold uppercase mb-1">Límites</h4>
+                        <p class="text-slate-400 text-sm">Atención exclusiva niveles 0 y 1.</p>
+                    </div>
+                    <div class="p-6 bg-slate-900/60 rounded-2xl border border-white/5">
+                        <h4 class="text-cyan-400 text-xs font-bold uppercase mb-1">Escalabilidad</h4>
+                        <p class="text-slate-400 text-sm">Capacidad para absorber +500% de tickets.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-    function resize() {
-      W = canvas.width = window.innerWidth;
-      H = canvas.height = window.innerHeight;
-      groundY = H * 0.78;
-      player.y = groundY - player.h;
-      buildBackground();
-    }
+        <!-- SLIDE 11: PARTES INTERESADAS -->
+        <div class="slide flex-col space-y-6" data-title="Stakeholders">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-users text-cyan-400 text-2xl"></i></div>
+                <h2 class="text-3xl font-bold text-white">Mapa de Partes Interesadas</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1">
+                <div class="p-6 bg-slate-900/60 rounded-2xl space-y-3 border border-white/5">
+                    <p class="text-cyan-400 font-bold uppercase text-[10px]">Alta Gerencia</p>
+                    <p class="text-slate-200 text-sm">Responsables del ROI y la visión estratégica institucional.</p>
+                </div>
+                <div class="p-6 bg-slate-900/60 rounded-2xl space-y-3 border border-white/5">
+                    <p class="text-cyan-400 font-bold uppercase text-[10px]">Ingenieros de Soporte</p>
+                    <p class="text-slate-200 text-sm">Disminución de carga repetitiva y fatiga laboral.</p>
+                </div>
+                <div class="p-6 bg-slate-900/60 rounded-2xl space-y-3 border border-white/5">
+                    <p class="text-cyan-400 font-bold uppercase text-[10px]">Clientes Finales</p>
+                    <p class="text-slate-200 text-sm">Beneficiarios de la respuesta instantánea en canales digitales.</p>
+                </div>
+            </div>
+        </div>
 
-    function buildBackground() {
-      stars.length = 0;
-      hills.length = 0;
-      fireflies.length = 0;
+        <!-- SLIDE 12: CONTEXTO GENERAL -->
+        <div class="slide flex-col space-y-6" data-title="Contexto General">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-globe text-cyan-400 text-2xl"></i></div>
+                <h2 class="text-3xl font-bold text-white">Análisis de Contexto Industrial</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1">
+                <div class="md:col-span-8 p-8 bg-slate-800/30 rounded-3xl text-slate-300">
+                    En el entorno colombiano, la digitalización ha crecido un 42% anual. Las empresas que no adoptan IA enfrentan una pérdida de competitividad por costos operativos crecientes. TechSolutions debe alinearse con los estándares globales para asegurar la sostenibilidad del negocio IT.
+                </div>
+                <div class="md:col-span-4 space-y-4">
+                    <div class="p-6 bg-slate-900/80 rounded-2xl text-center border border-blue-400/20">
+                        <p class="text-4xl font-bold text-blue-400">+42%</p>
+                        <p class="text-[10px] font-bold text-slate-500 uppercase mt-1">Inversión en IA (COP)</p>
+                    </div>
+                    <div class="p-6 bg-slate-900/80 rounded-2xl text-center border border-cyan-400/20">
+                        <p class="text-4xl font-bold text-cyan-400">x3</p>
+                        <p class="text-[10px] font-bold text-slate-500 uppercase mt-1">Crecimiento de Mercado</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      for (let i = 0; i < 40; i++) {
-        stars.push({
-          x: Math.random() * W,
-          y: Math.random() * (H * 0.45),
-          r: Math.random() * 1.8 + 0.4,
-          a: Math.random() * 0.6 + 0.2
-        });
-      }
+        <!-- SLIDE 13: FODA MATRIZ -->
+        <div class="slide flex-col space-y-6" data-title="Análisis FODA">
+            <h2 class="text-3xl font-bold text-white mb-2">Análisis FODA Situacional</h2>
+            <div class="grid grid-cols-2 gap-4 flex-1 overflow-hidden">
+                <div class="p-5 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
+                    <h4 class="text-emerald-400 font-bold mb-2 uppercase text-[10px] tracking-widest flex items-center gap-2"><i class="fa-solid fa-check-double"></i> Fortalezas</h4>
+                    <p class="text-slate-300 text-sm">Talento humano especializado y sólida infraestructura de servidores propia en Colombia.</p>
+                </div>
+                <div class="p-5 bg-blue-500/10 border border-blue-500/20 rounded-2xl">
+                    <h4 class="text-blue-400 font-bold mb-2 uppercase text-[10px] tracking-widest flex items-center gap-2"><i class="fa-solid fa-arrow-trend-up"></i> Oportunidades</h4>
+                    <p class="text-slate-300 text-sm">Crecimiento de demanda 24/7 en el sector PYME y baja competencia con IA en el mercado local.</p>
+                </div>
+                <div class="p-5 bg-red-500/10 border border-red-500/20 rounded-2xl">
+                    <h4 class="text-red-400 font-bold mb-2 uppercase text-[10px] tracking-widest flex items-center gap-2"><i class="fa-solid fa-circle-exclamation"></i> Debilidades</h4>
+                    <p class="text-slate-300 text-sm">Dependencia de procesos manuales síncronos y tiempos de respuesta variables.</p>
+                </div>
+                <div class="p-5 bg-orange-500/10 border border-orange-500/20 rounded-2xl">
+                    <h4 class="text-orange-400 font-bold mb-2 uppercase text-[10px] tracking-widest flex items-center gap-2"><i class="fa-solid fa-shield"></i> Amenazas</h4>
+                    <p class="text-slate-300 text-sm">Proveedores internacionales con modelos de bajo costo basados en automatización total.</p>
+                </div>
+            </div>
+        </div>
 
-      for (let i = 0; i < 3; i++) {
-        hills.push({
-          x: i * (W / 2),
-          h: 70 + Math.random() * 50
-        });
-      }
+        <!-- SLIDE 14: INTERPRETACIÓN FODA -->
+        <div class="slide flex-col space-y-6" data-title="Interpretación FODA">
+            <h2 class="text-3xl font-bold text-white">Interpretación Estratégica</h2>
+            <div class="flex-1 flex flex-col justify-center space-y-8">
+                <div class="p-8 bg-slate-800/30 rounded-3xl border-l-4 border-cyan-500 text-slate-300 text-lg leading-relaxed">
+                    La estrategia se define como "Optimización Predictiva": utilizaremos nuestras FORTALEZAS (infraestructura) para mitigar nuestra DEBILIDAD (manualidad). Esto nos permite capturar la OPORTUNIDAD del mercado 24/7 y blindarnos ante la AMENAZA de competidores globales.
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-5 bg-slate-900/60 rounded-2xl border border-white/5">
+                        <h4 class="text-cyan-400 text-[10px] font-bold uppercase mb-1">Estrategia FO</h4>
+                        <p class="text-slate-400 text-xs">Apalancar talento en servicios de alto valor.</p>
+                    </div>
+                    <div class="p-5 bg-slate-900/60 rounded-2xl border border-white/5">
+                        <h4 class="text-cyan-400 text-[10px] font-bold uppercase mb-1">Estrategia DA</h4>
+                        <p class="text-slate-400 text-xs">Reducción de vulnerabilidad operativa.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      for (let i = 0; i < 10; i++) {
-        fireflies.push({
-          x: Math.random() * W,
-          y: H * 0.45 + Math.random() * (H * 0.25),
-          r: 1 + Math.random() * 2,
-          dx: 0.2 + Math.random() * 0.4,
-          phase: Math.random() * Math.PI * 2
-        });
-      }
-    }
+        <!-- SLIDE 15: JUSTIFICACIÓN INVERSIÓN (COP) -->
+        <div class="slide flex-col space-y-6" data-title="Justificación Mejora">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-coins text-cyan-400 text-2xl"></i></div>
+                <h2 class="text-3xl font-bold text-white">¿Por qué se propone esta mejora?</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1">
+                <div class="md:col-span-7 p-8 bg-slate-800/30 rounded-3xl text-slate-300 text-lg">
+                    La mejora responde a la necesidad imperativa de eficiencia financiera. El costo actual de un ticket manual se estima en $22.500 COP, mientras que con IA el costo marginal es de $850 COP. Con 2.000 tickets mensuales, el ahorro proyectado supera los $520.000.000 COP anuales.
+                </div>
+                <div class="md:col-span-5 space-y-4">
+                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold">COSTO MANUAL</span><span class="text-red-400 font-bold">$22.500 COP</span></div>
+                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold">COSTO CON IA</span><span class="text-emerald-400 font-bold">$850 COP</span></div>
+                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center bg-cyan-500/5 border border-cyan-500/20"><span class="text-slate-300 text-xs font-bold">AHORRO ANUAL</span><span class="text-cyan-400 font-bold">$520M COP</span></div>
+                </div>
+            </div>
+        </div>
 
-    function showScreen(screen) {
-      [startScreen, gameOverScreen, winScreen, letterScreen].forEach(s => s.classList.remove("active"));
-      if (screen) screen.classList.add("active");
-    }
+        <!-- SLIDE 16: ROI Y ESCALA -->
+        <div class="slide flex-col space-y-6" data-title="ROI y Escala">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20"><i class="fa-solid fa-chart-line text-emerald-400 text-2xl"></i></div>
+                <h2 class="text-3xl font-bold text-white">Retorno y Escalabilidad Operativa</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+                <div class="p-10 bg-slate-900/80 rounded-[2rem] text-center space-y-4 border border-slate-800">
+                    <p class="text-5xl font-black text-cyan-400 tracking-tighter">245%</p>
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">ROI Proyectado (Año 1)</p>
+                    <p class="text-xs text-slate-400 px-6">Rentabilidad neta tras amortización de inversión inicial en infraestructura.</p>
+                </div>
+                <div class="p-10 bg-slate-900/80 rounded-[2rem] text-center space-y-4 border border-slate-800">
+                    <p class="text-5xl font-black text-emerald-400 tracking-tighter">x10</p>
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Escala Operativa</p>
+                    <p class="text-xs text-slate-400 px-6">Capacidad de absorber incrementos masivos de tickets sin nuevos costos de nómina.</p>
+                </div>
+            </div>
+        </div>
 
-    function resetGame() {
-      score = 0;
-      speed = 7;
-      running = true;
-      started = true;
-      gameOver = false;
-      won = false;
-      obstacleTimer = 0;
-      nextObstacle = 70 + Math.random() * 30;
-      groundOffset = 0;
-      obstacles.length = 0;
-      particles.length = 0;
+        <!-- SLIDE 17: COMPARATIVA -->
+        <div class="slide flex-col space-y-6" data-title="Estado Actual vs Mejorado">
+            <h2 class="text-3xl font-bold text-white">Evolución: Comparativa de Paradigmas</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative flex-1 items-center">
+                <div class="p-8 bg-slate-900/50 border border-slate-700/50 rounded-[2rem] min-h-[220px]">
+                    <h4 class="text-slate-500 font-black mb-4 uppercase text-[10px] tracking-[0.2em]">Paradigma Tradicional</h4>
+                    <p class="text-slate-400 text-base leading-relaxed">Atención síncrona, limitada a 40h/semana, con altos niveles de estrés laboral y esperas de horas.</p>
+                </div>
+                <div class="p-8 bg-cyan-500/10 border border-cyan-500/20 rounded-[2rem] relative overflow-hidden min-h-[220px]">
+                    <div class="absolute top-0 right-0 p-3 bg-cyan-500 text-slate-950 font-bold rounded-bl-2xl uppercase text-[10px]">Modelo IA</div>
+                    <h4 class="text-cyan-400 font-black mb-4 uppercase text-[10px] tracking-[0.2em]">Paradigma Digital</h4>
+                    <p class="text-slate-100 text-lg font-medium leading-relaxed">Atención asíncrona e instantánea, disponible 24/7, con precisión absoluta en FAQ y alta satisfacción.</p>
+                </div>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex p-3 bg-slate-800 rounded-full border border-cyan-500/30 z-10">
+                    <i class="fa-solid fa-arrow-right-arrow-left text-cyan-400"></i>
+                </div>
+            </div>
+        </div>
 
-      player.vy = 0;
-      player.grounded = true;
-      player.y = groundY - player.h;
-      player.frame = 0;
+        <!-- SLIDE 18: ESTRATEGIAS -->
+        <div class="slide flex-col space-y-6" data-title="Estrategias">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-sliders text-cyan-400 text-2xl"></i></div>
+                <h2 class="text-3xl font-bold text-white">Estrategias de Implementación</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1">
+                <div class="md:col-span-8 p-8 bg-slate-800/30 rounded-3xl text-slate-300 text-lg">
+                    El cronograma de Gerencia Tecnológica se ha diseñado bajo un esquema de mitigación de riesgos y adopción gradual. Se divide en fases para garantizar estabilidad técnica y satisfacción en cada hito.
+                </div>
+                <div class="md:col-span-4 space-y-4">
+                    <div class="p-6 bg-slate-800/40 rounded-2xl border border-white/5 flex gap-4 items-center">
+                        <i class="fa-solid fa-check text-cyan-400"></i>
+                        <p class="text-xs text-slate-400">Mitigación de Riesgos</p>
+                    </div>
+                    <div class="p-6 bg-slate-800/40 rounded-2xl border border-white/5 flex gap-4 items-center">
+                        <i class="fa-solid fa-check text-cyan-400"></i>
+                        <p class="text-xs text-slate-400">Adopción Gradual</p>
+                    </div>
+                    <div class="p-6 bg-slate-800/40 rounded-2xl border border-white/5 flex gap-4 items-center">
+                        <i class="fa-solid fa-check text-cyan-400"></i>
+                        <p class="text-xs text-slate-400">Calidad QA</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      showScreen(null);
-      cancelAnimationFrame(animationId);
-      animationId = requestAnimationFrame(loop);
-    }
+        <!-- SLIDE 19: CORTO PLAZO -->
+        <div class="slide flex-col space-y-6" data-title="Corto Plazo">
+            <h2 class="text-3xl font-bold text-white">Estrategia Corto Plazo (1-3 Meses)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+                <div class="p-8 bg-slate-800/30 rounded-3xl text-slate-300">
+                    Se destinarán $45.000.000 COP para auditoría y plataforma. Realización de Data Mining sobre 24 meses de logs históricos para extraer conocimiento real y desarrollo del MVP funcional en Sandbox.
+                </div>
+                <div class="space-y-4 flex flex-col justify-center">
+                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Inversión Fase 1</span><span class="text-cyan-400 font-bold">$45M COP</span></div>
+                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Hito Clave</span><span class="text-cyan-400 font-bold">MVP Funcional</span></div>
+                </div>
+            </div>
+        </div>
 
-    function startGame() {
-      resetGame();
-    }
+        <!-- SLIDE 20: MEDIANO PLAZO -->
+        <div class="slide flex-col space-y-6" data-title="Mediano Plazo">
+            <h2 class="text-3xl font-bold text-white">Estrategia Mediano Plazo (4-8 Meses)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
+                <div class="p-8 bg-slate-800/30 rounded-3xl text-slate-300">
+                    Lanzamiento del piloto con el 20% de clientes. Integración API con sistema contable y CRM. Inversión en capacitación ($15M COP) para transformar al equipo técnico en supervisores del modelo IA.
+                </div>
+                <div class="space-y-4 flex flex-col justify-center">
+                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Capacitación</span><span class="text-cyan-400 font-bold">$15M COP</span></div>
+                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Cobertura Piloto</span><span class="text-cyan-400 font-bold">20% Clientes</span></div>
+                </div>
+            </div>
+        </div>
 
-    function jump() {
-      if (!started) {
-        startGame();
-        return;
-      }
+        <!-- SLIDE 21: LARGO PLAZO -->
+        <div class="slide flex-col space-y-6" data-title="Largo Plazo">
+            <h2 class="text-3xl font-bold text-white">Estrategia Largo Plazo (9-12+ Meses)</h2>
+            <div class="flex-1 flex flex-col justify-center space-y-8">
+                <div class="p-8 bg-slate-800/30 rounded-3xl text-slate-300 text-lg">
+                    El chatbot asume el 85% de la carga de soporte N0 y N1. Implementación de funciones proactivas para contacto preventivo. Auditoría final de impacto financiero y análisis de expansión de mercado internacional.
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-6 bg-slate-900/60 rounded-2xl text-center">
+                        <p class="text-4xl font-bold text-cyan-400">85%</p>
+                        <p class="text-[10px] uppercase text-slate-500 font-bold mt-2">Autonomía Operativa</p>
+                    </div>
+                    <div class="p-6 bg-slate-900/60 rounded-2xl text-center">
+                        <p class="text-4xl font-bold text-emerald-400">245%</p>
+                        <p class="text-[10px] uppercase text-slate-500 font-bold mt-2">ROI Final Auditoría</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      if (gameOver) {
-        resetGame();
-        return;
-      }
+        <!-- SLIDE 22: CAPACITACIÓN -->
+        <div class="slide flex-col space-y-6" data-title="Capacitación">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-graduation-cap text-cyan-400 text-2xl"></i></div>
+                <h2 class="text-3xl font-bold text-white">Plan de Capacitación y Gestión</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1">
+                <div class="md:col-span-8 p-8 bg-slate-800/30 rounded-3xl text-slate-300 text-lg">
+                    Se implementará un programa de 'Reskilling' para transformar a los técnicos en 'Arquitectos de Experiencia'. El empleado deja de ser ejecutor para ser el gestor de una herramienta potente que le permite realizar trabajo de mayor valor intelectual.
+                </div>
+                <div class="md:col-span-4 space-y-4">
+                    <div class="p-6 bg-slate-800/40 rounded-2xl border border-white/5">
+                        <h4 class="text-cyan-400 text-xs font-bold uppercase mb-1">Nuevos Roles</h4>
+                        <p class="text-slate-400 text-[10px]">Supervisores de Modelos IA</p>
+                    </div>
+                    <div class="p-6 bg-slate-800/40 rounded-2xl border border-white/5">
+                        <h4 class="text-cyan-400 text-xs font-bold uppercase mb-1">Habilidades</h4>
+                        <p class="text-slate-400 text-[10px]">Prompt Engineering & Data</p>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-      if (won) return;
+        <!-- SLIDE 23: BENEFICIOS (KPIs) -->
+        <div class="slide flex-col space-y-6" data-title="Beneficios Esperados">
+            <h2 class="text-3xl font-bold text-white">Indicadores Clave de Éxito (KPIs)</h2>
+            <div class="grid grid-cols-1 gap-4 flex-1 justify-center flex flex-col">
+                <div class="flex items-center gap-5 p-5 bg-slate-800/30 rounded-2xl border border-white/5">
+                    <div class="w-3 h-3 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
+                    <p class="text-slate-200">Ahorro neto anual proyectado en <span class="text-emerald-400 font-bold">$520.000.000 COP</span>.</p>
+                </div>
+                <div class="flex items-center gap-5 p-5 bg-slate-800/30 rounded-2xl border border-white/5">
+                    <div class="w-3 h-3 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
+                    <p class="text-slate-200">Reducción del 65% en el tiempo medio de resolución.</p>
+                </div>
+                <div class="flex items-center gap-5 p-5 bg-slate-800/30 rounded-2xl border border-white/5">
+                    <div class="w-3 h-3 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
+                    <p class="text-slate-200">Disponibilidad de servicio extendida al 100% de la semana.</p>
+                </div>
+                <div class="flex items-center gap-5 p-5 bg-slate-800/30 rounded-2xl border border-white/5">
+                    <div class="w-3 h-3 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
+                    <p class="text-slate-200">Incremento del 20% en la tasa de renovación de contratos.</p>
+                </div>
+            </div>
+        </div>
 
-      if (player.grounded) {
-        player.vy = player.jumpPower;
-        player.grounded = false;
+        <!-- SLIDE 24: CONCLUSIONES -->
+        <div class="slide flex-col space-y-6" data-title="Conclusiones">
+            <h2 class="text-3xl font-bold text-white">Conclusiones Finales</h2>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1">
+                <div class="md:col-span-8 p-8 bg-slate-800/30 rounded-3xl text-slate-300 text-lg leading-relaxed">
+                    La transformación digital mediante IA no es una mejora estética, sino una decisión gerencial de supervivencia operativa. Este plan resuelve ineficiencias de costo y mejora la satisfacción, garantizando el liderazgo de TechSolutions en el mercado colombiano por los próximos años.
+                </div>
+                <div class="md:col-span-4 p-8 bg-gradient-to-br from-cyan-500/10 to-transparent rounded-3xl border border-cyan-500/20 flex flex-col justify-center items-center text-center space-y-4">
+                    <i class="fa-solid fa-rocket text-cyan-400 text-4xl animate-bounce"></i>
+                    <p class="text-cyan-400 font-bold uppercase text-[10px] tracking-widest">Eficiencia Total</p>
+                </div>
+            </div>
+        </div>
 
-        for (let i = 0; i < 8; i++) {
-          particles.push({
-            x: player.x + 12,
-            y: groundY + 2,
-            vx: -1 - Math.random() * 2,
-            vy: -0.5 - Math.random() * 1.5,
-            size: 2 + Math.random() * 3,
-            life: 18 + Math.random() * 8
-          });
+        <!-- SLIDE 25: CIERRE -->
+        <div class="slide flex-col items-center justify-center text-center space-y-8 py-10" data-title="Cierre">
+            <p class="text-cyan-400 font-bold tracking-[0.4em] uppercase text-sm">Universidad Simón Bolívar</p>
+            <div class="p-6 bg-cyan-500/10 rounded-full border border-cyan-400/20"><i class="fa-solid fa-message text-cyan-400 text-4xl"></i></div>
+            <h2 class="text-5xl md:text-8xl font-black text-white tracking-tighter">¡Muchas Gracias!</h2>
+            <p class="text-xl italic text-slate-400 max-w-2xl font-light leading-relaxed">"La mejor forma de predecir el futuro es diseñándolo mediante la tecnología."</p>
+            <div class="pt-8 border-t border-slate-800 w-full max-w-lg">
+                <p class="text-cyan-400 font-black text-xl uppercase tracking-tighter">YAROLT FRANCISCO GONZALEZ VASQUEZ</p>
+                <p class="text-slate-500 font-medium text-sm">Gerencia Tecnológica de la Industria</p>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Navegación Inferior -->
+    <footer class="fixed bottom-0 left-0 w-full p-8 flex justify-between items-center bg-gradient-to-t from-[#060b18] to-transparent z-40">
+        <div class="flex items-center gap-6">
+            <div class="flex flex-col">
+                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.4em]">Diapositiva</span>
+                <div class="flex items-baseline gap-2">
+                    <span id="slide-number" class="text-3xl font-black text-cyan-400 tracking-tighter">1</span>
+                    <span class="text-slate-600 font-bold">/</span>
+                    <span class="text-slate-600 font-bold">25</span>
+                </div>
+            </div>
+            <div class="h-12 w-px bg-slate-800 hidden lg:block"></div>
+            <div class="hidden lg:block max-w-md">
+                <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.4em] mb-1">Sección</p>
+                <p id="slide-title-display" class="text-slate-400 text-sm font-bold truncate tracking-tight uppercase"></p>
+            </div>
+        </div>
+
+        <div class="flex gap-4">
+            <button onclick="prevSlide()" id="prev-btn" class="flex items-center justify-center w-14 h-14 rounded-2xl border border-slate-700 bg-slate-800/80 text-white hover:bg-cyan-500 hover:text-slate-950 transition-all shadow-xl">
+                <i class="fa-solid fa-chevron-left text-xl"></i>
+            </button>
+            <button onclick="nextSlide()" id="next-btn" class="flex items-center justify-center gap-3 px-8 h-14 rounded-2xl bg-cyan-500 text-slate-950 hover:bg-cyan-400 transition-all font-black text-sm uppercase tracking-widest shadow-2xl">
+                <span>Siguiente</span>
+                <i class="fa-solid fa-chevron-right text-sm"></i>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        const slides = document.querySelectorAll('.slide');
+        const slideNumber = document.getElementById('slide-number');
+        const slideTitleDisplay = document.getElementById('slide-title-display');
+        const progressBar = document.getElementById('progress-bar');
+        const nextBtn = document.getElementById('next-btn');
+        let currentSlide = 0;
+
+        function updateSlide() {
+            slides.forEach((s, i) => {
+                s.classList.remove('active');
+                if (i === currentSlide) s.classList.add('active');
+            });
+
+            const currentData = slides[currentSlide].getAttribute('data-title');
+            slideNumber.innerText = currentSlide + 1;
+            slideTitleDisplay.innerText = currentData;
+            progressBar.style.width = ((currentSlide + 1) / slides.length) * 100 + '%';
+            
+            if (currentSlide === slides.length - 1) {
+                nextBtn.querySelector('span').innerText = "Finalizar";
+            } else {
+                nextBtn.querySelector('span').innerText = "Siguiente";
+            }
         }
-      }
-    }
 
-    function spawnObstacle() {
-      const types = ["thorn", "stone", "log"];
-      const type = types[Math.floor(Math.random() * types.length)];
-      let w = 0, h = 0;
-
-      if (type === "thorn") { w = 26; h = 28; }
-      if (type === "stone") { w = 32; h = 22; }
-      if (type === "log")   { w = 44; h = 18; }
-
-      obstacles.push({
-        type,
-        x: W + 20,
-        y: groundY - h,
-        w,
-        h
-      });
-
-      obstacleTimer = 0;
-      nextObstacle = Math.max(48, 82 - score * 0.8) + Math.random() * 28;
-    }
-
-    function setGameOver() {
-      running = false;
-      gameOver = true;
-      cancelAnimationFrame(animationId);
-      showScreen(gameOverScreen);
-    }
-
-    function setWin() {
-      running = false;
-      won = true;
-      cancelAnimationFrame(animationId);
-      showScreen(winScreen);
-    }
-
-    function update() {
-      if (!running) return;
-
-      player.vy += player.gravity;
-      player.y += player.vy;
-
-      const floor = groundY - player.h;
-      if (player.y >= floor) {
-        player.y = floor;
-        player.vy = 0;
-        player.grounded = true;
-      }
-
-      player.frame += 0.22;
-      groundOffset += speed;
-
-      obstacleTimer++;
-      if (obstacleTimer >= nextObstacle) spawnObstacle();
-
-      for (let i = obstacles.length - 1; i >= 0; i--) {
-        const o = obstacles[i];
-        o.x -= speed;
-
-        if (o.x + o.w < 0) {
-          obstacles.splice(i, 1);
-          score++;
-          if (score % 5 === 0) speed += 0.35;
-          if (score >= GOAL) {
-            setWin();
-            return;
-          }
-        } else if (collides(player, o)) {
-          setGameOver();
-          return;
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateSlide();
+            }
         }
-      }
 
-      for (let i = particles.length - 1; i >= 0; i--) {
-        const p = particles[i];
-        p.x += p.vx;
-        p.y += p.vy;
-        p.vy += 0.08;
-        p.life--;
-        if (p.life <= 0) particles.splice(i, 1);
-      }
-
-      fireflies.forEach(f => {
-        f.x -= f.dx;
-        f.phase += 0.04;
-        if (f.x < -10) {
-          f.x = W + 10;
-          f.y = H * 0.45 + Math.random() * (H * 0.25);
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateSlide();
+            }
         }
-      });
-    }
 
-    function collides(a, b) {
-      const padX = 10;
-      const padY = 8;
-      return (
-        a.x + padX < b.x + b.w &&
-        a.x + a.w - padX > b.x &&
-        a.y + padY < b.y + b.h &&
-        a.y + a.h - padY > b.y
-      );
-    }
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
 
-    function drawSky() {
-      const g = ctx.createLinearGradient(0, 0, 0, H);
-      g.addColorStop(0, "#10162f");
-      g.addColorStop(0.55, "#1d2340");
-      g.addColorStop(1, "#2c2142");
-      ctx.fillStyle = g;
-      ctx.fillRect(0, 0, W, H);
-
-      // luna
-      ctx.fillStyle = "rgba(255,245,220,0.9)";
-      ctx.beginPath();
-      ctx.arc(W - 90, 90, 34, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = "rgba(230,220,255,0.12)";
-      ctx.beginPath();
-      ctx.arc(W - 78, 82, 30, 0, Math.PI * 2);
-      ctx.fill();
-
-      // estrellas
-      stars.forEach(s => {
-        ctx.fillStyle = `rgba(255,255,255,${s.a})`;
-        ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    }
-
-    function drawHills() {
-      ctx.fillStyle = "#221a35";
-      for (let i = 0; i < hills.length; i++) {
-        const x = ((i * (W / 2)) - (groundOffset * 0.15) % (W * 1.5));
-        ctx.beginPath();
-        ctx.moveTo(x - 100, groundY);
-        ctx.quadraticCurveTo(x + 80, groundY - hills[i].h, x + 250, groundY);
-        ctx.fill();
-      }
-
-      ctx.fillStyle = "#182033";
-      ctx.fillRect(0, groundY, W, H - groundY);
-    }
-
-    function drawGround() {
-      ctx.fillStyle = "#30415f";
-      ctx.fillRect(0, groundY, W, 4);
-
-      for (let i = 0; i < W + 40; i += 30) {
-        ctx.fillStyle = "#4d6187";
-        ctx.fillRect(i - (groundOffset % 30), groundY + 12, 12, 3);
-      }
-    }
-
-    function drawFireflies() {
-      fireflies.forEach(f => {
-        const alpha = 0.35 + Math.sin(f.phase) * 0.25;
-        ctx.fillStyle = `rgba(255, 235, 140, ${alpha})`;
-        ctx.beginPath();
-        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2);
-        ctx.fill();
-      });
-    }
-
-    function drawPlayer() {
-      const x = player.x;
-      const y = player.y;
-      const bounce = player.grounded ? Math.sin(player.frame * 2.8) * 1.5 : 0;
-      const leg = player.grounded ? Math.sin(player.frame * 5) * 4 : 0;
-
-      // sombra
-      ctx.fillStyle = "rgba(0,0,0,0.22)";
-      ctx.beginPath();
-      ctx.ellipse(x + 24, groundY + 12, 20, 6, 0, 0, Math.PI * 2);
-      ctx.fill();
-
-      // cuerpo del zorro/gatito estilizado
-      ctx.fillStyle = "#ffb36b";
-      ctx.beginPath();
-      ctx.roundRect(x + 8, y + 18 + bounce, 26, 18, 8);
-      ctx.fill();
-
-      // cabeza
-      ctx.beginPath();
-      ctx.roundRect(x + 24, y + 8 + bounce, 20, 18, 8);
-      ctx.fill();
-
-      // orejas
-      ctx.beginPath();
-      ctx.moveTo(x + 28, y + 10 + bounce);
-      ctx.lineTo(x + 31, y + 2 + bounce);
-      ctx.lineTo(x + 35, y + 10 + bounce);
-      ctx.closePath();
-      ctx.fill();
-
-      ctx.beginPath();
-      ctx.moveTo(x + 38, y + 10 + bounce);
-      ctx.lineTo(x + 41, y + 2 + bounce);
-      ctx.lineTo(x + 44, y + 10 + bounce);
-      ctx.closePath();
-      ctx.fill();
-
-      // cola
-      ctx.strokeStyle = "#ffb36b";
-      ctx.lineWidth = 8;
-      ctx.lineCap = "round";
-      ctx.beginPath();
-      ctx.moveTo(x + 10, y + 24 + bounce);
-      ctx.quadraticCurveTo(x - 6, y + 14 + bounce, x - 2, y + 34 + bounce);
-      ctx.stroke();
-
-      // vientre
-      ctx.fillStyle = "#ffe5c7";
-      ctx.beginPath();
-      ctx.roundRect(x + 18, y + 22 + bounce, 12, 12, 6);
-      ctx.fill();
-
-      // ojo
-      ctx.fillStyle = "#1d2233";
-      ctx.fillRect(x + 36, y + 15 + bounce, 3, 3);
-
-      // hocico
-      ctx.fillStyle = "#ffe5c7";
-      ctx.beginPath();
-      ctx.roundRect(x + 39, y + 17 + bounce, 8, 5, 3);
-      ctx.fill();
-
-      // patas
-      ctx.strokeStyle = "#ffb36b";
-      ctx.lineWidth = 6;
-      ctx.beginPath();
-      if (player.grounded) {
-        ctx.moveTo(x + 16, y + 35 + bounce);
-        ctx.lineTo(x + 14, y + 50 + bounce + leg * 0.3);
-        ctx.moveTo(x + 28, y + 35 + bounce);
-        ctx.lineTo(x + 30, y + 50 + bounce - leg * 0.3);
-      } else {
-        ctx.moveTo(x + 16, y + 35 + bounce);
-        ctx.lineTo(x + 13, y + 48 + bounce);
-        ctx.moveTo(x + 28, y + 35 + bounce);
-        ctx.lineTo(x + 31, y + 48 + bounce);
-      }
-      ctx.stroke();
-    }
-
-    function drawObstacle(o) {
-      if (o.type === "thorn") {
-        ctx.fillStyle = "#8c6bb3";
-        ctx.beginPath();
-        ctx.moveTo(o.x, o.y + o.h);
-        ctx.lineTo(o.x + 6, o.y + 8);
-        ctx.lineTo(o.x + 14, o.y + o.h);
-        ctx.lineTo(o.x + 20, o.y + 4);
-        ctx.lineTo(o.x + 26, o.y + o.h);
-        ctx.closePath();
-        ctx.fill();
-      }
-
-      if (o.type === "stone") {
-        ctx.fillStyle = "#7b83a8";
-        ctx.beginPath();
-        ctx.roundRect(o.x, o.y, o.w, o.h, 10);
-        ctx.fill();
-      }
-
-      if (o.type === "log") {
-        ctx.fillStyle = "#8e5f4d";
-        ctx.beginPath();
-        ctx.roundRect(o.x, o.y, o.w, o.h, 12);
-        ctx.fill();
-
-        ctx.fillStyle = "#a87760";
-        ctx.fillRect(o.x + 6, o.y + 4, o.w - 12, 3);
-      }
-    }
-
-    function drawParticles() {
-      ctx.fillStyle = "rgba(255, 215, 160, 0.7)";
-      particles.forEach(p => {
-        ctx.fillRect(p.x, p.y, p.size, p.size);
-      });
-    }
-
-    function drawUI() {
-      // barra de progreso
-      const barW = Math.min(220, W * 0.48);
-      const x = 16;
-      const y = 18;
-      const progress = Math.min(score / GOAL, 1);
-
-      ctx.fillStyle = "rgba(255,255,255,0.15)";
-      ctx.beginPath();
-      ctx.roundRect(x, y, barW, 14, 8);
-      ctx.fill();
-
-      ctx.fillStyle = "#ff8fb1";
-      ctx.beginPath();
-      ctx.roundRect(x, y, barW * progress, 14, 8);
-      ctx.fill();
-
-      ctx.fillStyle = "#fff2f6";
-      ctx.font = "bold 16px Arial";
-      ctx.fillText(`${score}/${GOAL}`, x + barW + 10, y + 12);
-    }
-
-    function drawIntroHint() {
-      if (!started) {
-        ctx.fillStyle = "rgba(255,255,255,0.88)";
-        ctx.textAlign = "center";
-        ctx.font = "bold 26px Arial";
-        ctx.fillText("Toca para empezar", W / 2, H / 2);
-        ctx.font = "16px Arial";
-        ctx.fillText("Salta y llega al final", W / 2, H / 2 + 28);
-        ctx.textAlign = "left";
-      }
-    }
-
-    function draw() {
-      drawSky();
-      drawHills();
-      drawFireflies();
-      drawGround();
-      drawParticles();
-      drawPlayer();
-      obstacles.forEach(drawObstacle);
-      drawUI();
-      drawIntroHint();
-    }
-
-    function loop() {
-      update();
-      draw();
-      if (running) animationId = requestAnimationFrame(loop);
-    }
-
-    function openLetter() {
-      showScreen(letterScreen);
-    }
-
-    window.addEventListener("resize", resize);
-
-    startBtn.addEventListener("click", startGame);
-    retryBtn.addEventListener("click", resetGame);
-    openBtn.addEventListener("click", openLetter);
-    openEnvelope.addEventListener("click", openLetter);
-
-    canvas.addEventListener("touchstart", (e) => {
-      e.preventDefault();
-      jump();
-    }, { passive: false });
-
-    canvas.addEventListener("mousedown", (e) => {
-      e.preventDefault();
-      jump();
-    });
-
-    window.addEventListener("keydown", (e) => {
-      if (e.code === "Space" || e.code === "ArrowUp") {
-        e.preventDefault();
-        jump();
-      }
-    });
-
-    resize();
-    draw();
-  </script>
+        // Inicializar
+        updateSlide();
+    </script>
 </body>
 </html>
+
