@@ -6,607 +6,622 @@
     <title>Plan Estratégico TechSolutions - Yarolt Gonzalez</title>
     <!-- Tailwind CSS para Estilos Elite -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
+    <!-- Google Fonts: Plus Jakarta Sans -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome para Iconografía (V6) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-dark: #020617;
+            --accent-cyan: #22d3ee;
+            --accent-emerald: #10b981;
+        }
+
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: #060b18;
-            color: #e2e8f0;
+            background-color: var(--primary-dark);
+            color: #f1f5f9;
             overflow: hidden;
         }
-        .glass {
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+
+        .glass-premium {
+            background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
         }
+
         .slide {
             display: none;
-            height: 80vh;
-            animation: fadeIn 0.6s ease-out;
+            height: 78vh;
+            animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
+
         .slide.active {
             display: flex;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+
+        /* Interlineado ajustado para evitar choque de tildes en el título principal */
+        .main-title {
+            line-height: 1.45 !important;
+            letter-spacing: -0.01em;
         }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.2); border-radius: 10px; }
-        .bg-gradient-custom {
-            background: radial-gradient(circle at top right, rgba(6, 182, 212, 0.1), transparent),
-                        radial-gradient(circle at bottom left, rgba(16, 185, 129, 0.05), transparent);
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: scale(0.98) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        /* Animación del Chatbot Saludando */
+        @keyframes wave {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            75% { transform: rotate(-15deg); }
+        }
+        .wave-anim { animation: wave 2s infinite ease-in-out; }
+
+        @keyframes bounce-subtle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .bot-bounce { animation: bounce-subtle 3s infinite ease-in-out; }
+
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(34, 211, 238, 0.4); border-radius: 10px; }
+
+        .bg-gradient-vibrant {
+            background: radial-gradient(circle at 10% 10%, rgba(6, 182, 212, 0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 90% 90%, rgba(16, 185, 129, 0.15) 0%, transparent 50%),
+                        #020617;
         }
     </style>
 </head>
-<body class="bg-gradient-custom min-h-screen flex flex-col items-center justify-center p-4">
+<body class="bg-gradient-vibrant min-h-screen flex flex-col items-center justify-center p-6">
 
-    <!-- Barra de Progreso -->
+    <!-- Barra de Progreso Superior -->
     <div class="fixed top-0 left-0 w-full h-1.5 bg-slate-900 z-50">
-        <div id="progress-bar" class="h-full bg-gradient-to-r from-cyan-600 to-emerald-400 transition-all duration-500 shadow-[0_0_15px_rgba(6,182,212,0.4)]" style="width: 0%"></div>
+        <div id="progress-bar" class="h-full bg-gradient-to-r from-cyan-400 via-cyan-600 to-emerald-500 transition-all duration-700 shadow-[0_0_20px_rgba(34,211,238,0.5)]" style="width: 0%"></div>
     </div>
 
-    <!-- Contenedor de Diapositivas -->
-    <main id="presentation-container" class="w-full max-w-7xl glass rounded-[3rem] p-8 md:p-12 relative shadow-2xl overflow-hidden">
+    <!-- Contenedor Principal de la Presentación -->
+    <main id="presentation-container" class="w-full max-w-7xl glass-premium rounded-[3rem] p-8 md:p-14 relative overflow-hidden">
         
-        <!-- SLIDE 1: PORTADA -->
-        <div class="slide active flex-col items-center justify-center text-center space-y-8" data-title="Portada">
+        <!-- SLIDE 1: PORTADA CON CHATBOT SALUDANDO -->
+        <div class="slide active flex-col items-center justify-center text-center space-y-8" data-title="Portada Institucional">
             <div class="space-y-2">
-                <h3 class="text-cyan-400 font-bold tracking-[0.3em] text-lg uppercase">Universidad Simón Bolívar</h3>
-                <div class="w-20 h-1 bg-cyan-500 mx-auto rounded-full"></div>
-                <p class="text-slate-500 text-sm font-semibold uppercase tracking-widest pt-2">Facultad de Ingeniería</p>
+                <h3 class="text-cyan-400 font-extrabold tracking-[0.5em] text-lg uppercase">Universidad Simón Bolívar</h3>
+                <div class="w-24 h-1 bg-cyan-500 mx-auto rounded-full"></div>
+                <p class="text-slate-400 text-xs font-black uppercase tracking-[0.2em] pt-2">Facultad de Ingeniería / Gerencia Tecnológica</p>
             </div>
-            <i class="fa-solid fa-microchip text-6xl text-cyan-400 animate-pulse"></i>
+            
+            <!-- CONTENEDOR CHATBOT HOLA -->
+            <div class="relative py-4 bot-bounce">
+                <!-- Globo de Texto -->
+                <div class="absolute -top-6 -right-16 bg-cyan-500 text-slate-950 font-black px-6 py-2 rounded-full rounded-bl-none shadow-xl text-xl animate-pulse">
+                    ¡Hola!
+                </div>
+                <!-- Avatar Robot -->
+                <div class="p-6 bg-cyan-500/10 rounded-full border-2 border-cyan-500/30">
+                    <i class="fa-solid fa-robot text-7xl text-cyan-400 wave-anim"></i>
+                </div>
+            </div>
+
             <div class="space-y-4">
-                <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight">Plan Estratégico de<br>Transformación Digital</h1>
-                <p class="text-xl text-slate-400 italic font-light">Implementación de Ecosistema Conversacional con IA</p>
+                <h1 class="main-title text-5xl md:text-7xl font-black text-white leading-tight">Plan Estratégico de<br><span class="text-cyan-400">Transformación Digital</span></h1>
+                <p class="text-2xl text-slate-300 font-light italic">Sistemas de IA para la Excelencia en el Servicio al Cliente</p>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-full max-w-3xl text-left bg-slate-900/60 p-8 rounded-3xl border border-white/5">
-                <div class="space-y-4">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-4xl text-left bg-black/50 p-8 rounded-[2.5rem] border border-white/10 shadow-2xl">
+                <div class="flex items-center gap-5">
+                    <div class="p-3 bg-cyan-500/20 rounded-xl"><i class="fa-solid fa-user-tie text-cyan-400"></i></div>
                     <div>
-                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Estudiante</p>
-                        <p class="text-slate-200 font-bold">YAROLT FRANCISCO GONZALEZ VASQUEZ</p>
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Asignatura</p>
-                        <p class="text-slate-200 font-bold text-sm">Gerencia Tecnológica de la Industria</p>
+                        <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest">Estudiante</p>
+                        <p class="text-white font-bold text-lg uppercase">Yarolt Francisco Gonzalez Vasquez</p>
                     </div>
                 </div>
-                <div class="space-y-4">
+                <div class="flex items-center gap-5">
+                    <div class="p-3 bg-cyan-500/20 rounded-xl"><i class="fa-solid fa-chalkboard-user text-cyan-400"></i></div>
                     <div>
-                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Docente</p>
-                        <p class="text-slate-200 font-bold text-sm">JORGE ALBERTO CAMARGO BARBOSA</p>
-                    </div>
-                    <div>
-                        <p class="text-[10px] text-slate-500 font-bold uppercase tracking-tighter">Fecha</p>
-                        <p class="text-slate-200 font-bold text-sm">28 de Marzo, 2026</p>
+                        <p class="text-[10px] text-slate-500 font-black uppercase tracking-widest">Docente</p>
+                        <p class="text-white font-bold text-lg uppercase">Jorge Alberto Camargo Barbosa</p>
                     </div>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 2: INTRODUCCIÓN -->
-        <div class="slide flex-col space-y-6" data-title="Introducción">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-book-open text-cyan-400 text-2xl"></i></div>
-                <h2 class="text-3xl font-bold text-white">Introducción: Visión de Transformación</h2>
+        <div class="slide flex-col space-y-8" data-title="Introducción">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-lightbulb text-cyan-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">Introducción: Visión Estratégica</h2>
             </div>
-            <div class="flex-1 overflow-y-auto custom-scrollbar pr-4 space-y-6">
-                <div class="p-8 bg-slate-800/30 rounded-3xl border border-white/5 text-lg leading-relaxed text-slate-300">
-                    TechSolutions S.A.S. se encuentra ante el desafío inminente de evolucionar sus procesos de cara a la Industria 4.0. La gestión manual de servicios ha alcanzado un techo de saturación que compromete la rentabilidad y la escalabilidad del negocio. Esta propuesta presenta una ruta crítica para la adopción de Inteligencia Artificial como un pilar estratégico que optimiza el capital humano y reduce drásticamente la fricción operativa.
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="p-6 bg-slate-900/60 rounded-2xl text-center">
-                        <p class="text-4xl font-bold text-cyan-400">+300%</p>
-                        <p class="text-[10px] uppercase text-slate-500 font-bold tracking-widest mt-2">Crecimiento Digital Proyectado</p>
+            <div class="flex-1 overflow-y-auto custom-scrollbar pr-4 space-y-8">
+                <p class="text-xl leading-relaxed text-slate-300 bg-slate-800/30 p-10 rounded-[2.5rem] border border-white/5 shadow-inner">
+                    TechSolutions S.A.S. se encuentra ante el desafío de evolucionar sus procesos hacia la Industria 4.0. La gestión manual ha alcanzado un techo de saturación que compromete la rentabilidad. Esta propuesta presenta una ruta crítica apalancada en IA para optimizar el capital humano y reducir la fricción operativa drásticamente.
+                </p>
+                <div class="grid grid-cols-2 gap-6">
+                    <div class="p-8 bg-black/60 rounded-3xl border border-cyan-500/20 text-center hover:bg-slate-900 transition-all">
+                        <i class="fa-solid fa-gauge-high text-cyan-500 text-3xl mb-4"></i>
+                        <p class="text-5xl font-black text-cyan-400">+300%</p>
+                        <p class="text-[10px] uppercase text-slate-500 font-black tracking-widest mt-2">Capacidad Operativa</p>
                     </div>
-                    <div class="p-6 bg-slate-900/60 rounded-2xl text-center">
-                        <p class="text-4xl font-bold text-emerald-400">92%</p>
-                        <p class="text-[10px] uppercase text-slate-500 font-bold tracking-widest mt-2">Eficiencia en Procesos</p>
+                    <div class="p-8 bg-black/60 rounded-3xl border-emerald-500/20 text-center hover:bg-slate-900 transition-all">
+                        <i class="fa-solid fa-bolt-lightning text-emerald-500 text-3xl mb-4"></i>
+                        <p class="text-5xl font-black text-emerald-400">92%</p>
+                        <p class="text-[10px] uppercase text-slate-500 font-black tracking-widest mt-2">Eficiencia en Procesos</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 3: EMPRESA -->
-        <div class="slide flex-col space-y-6" data-title="Empresa Seleccionada">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-building text-cyan-400 text-2xl"></i></div>
-                <h2 class="text-3xl font-bold text-white">TechSolutions S.A.S: Contexto</h2>
+        <!-- SLIDE 3: PRESENTACIÓN EMPRESA -->
+        <div class="slide flex-col space-y-8" data-title="Empresa Seleccionada">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-building text-cyan-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">TechSolutions S.A.S.</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1 overflow-hidden">
-                <div class="p-8 bg-slate-800/30 rounded-3xl border border-white/5 text-slate-300">
-                    Empresa líder en consultoría y soporte tecnológico para el segmento de pequeñas y medianas empresas (PYMES) en Colombia. Su core business es el aseguramiento de la continuidad operativa digital de sus clientes. Su modelo actual requiere una modernización urgente para gestionar volúmenes crecientes sin comprometer los SLA.
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1 items-center">
+                <div class="md:col-span-7 space-y-6">
+                    <div class="p-10 bg-slate-900/50 rounded-[3rem] border border-white/10">
+                        <p class="text-2xl text-slate-200 font-medium mb-4 italic">"Aliado estratégico en servicios IT para el segmento PYME en Colombia."</p>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="flex items-center gap-3 p-4 bg-white/5 rounded-2xl"><i class="fa-solid fa-microchip text-cyan-400"></i> <span class="text-sm font-bold">Servicios IT</span></div>
+                            <div class="flex items-center gap-3 p-4 bg-white/5 rounded-2xl"><i class="fa-solid fa-map-location-dot text-cyan-400"></i> <span class="text-sm font-bold">Nacional</span></div>
+                        </div>
+                    </div>
                 </div>
-                <div class="space-y-4">
-                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Mercado</span><span class="text-cyan-400 font-bold">B2B / Soporte IT</span></div>
-                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Presencia</span><span class="text-cyan-400 font-bold">Nacional (Colombia)</span></div>
-                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Estado</span><span class="text-cyan-400 font-bold">Escalado Operativo</span></div>
+                <div class="md:col-span-5 grid grid-cols-1 gap-4">
+                    <div class="p-6 bg-slate-800/40 rounded-2xl border-r-4 border-cyan-500 flex items-center gap-5"><i class="fa-solid fa-user-check text-cyan-400 text-2xl"></i> <div><p class="text-xs text-slate-500 font-black uppercase">Foco</p><p class="text-white font-bold">Clientes B2B</p></div></div>
+                    <div class="p-6 bg-slate-800/40 rounded-2xl border-r-4 border-emerald-500 flex items-center gap-5"><i class="fa-solid fa-chart-line text-emerald-400 text-2xl"></i> <div><p class="text-xs text-slate-500 font-black uppercase">Meta</p><p class="text-white font-bold">Escalabilidad</p></div></div>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 4: PROBLEMA -->
-        <div class="slide flex-col space-y-6" data-title="Situación Actual">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-red-500/10 rounded-xl border border-red-500/20"><i class="fa-solid fa-triangle-exclamation text-red-400 text-2xl"></i></div>
-                <h2 class="text-3xl font-bold text-white">Situación Actual: Desafío de Gestión</h2>
+        <!-- SLIDE 4: PROBLEMA ACTUAL -->
+        <div class="slide flex-col space-y-8" data-title="Problema Actual">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-red-500/10 rounded-2xl border border-red-500/20"><i class="fa-solid fa-triangle-exclamation text-red-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">Situación Actual: Ineficiencia</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 flex-1">
-                <div class="md:col-span-8 p-8 bg-slate-800/30 rounded-3xl text-slate-300">
-                    Se ha diagnosticado una ineficiencia crítica: el 70% de las solicitudes diarias corresponden a consultas repetitivas de Nivel 0 gestionadas manualmente. Esto eleva el costo por interacción y genera demoras de 4.5 horas en la resolución inicial, limitando la capacidad de atención a horarios administrativos fijos.
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1">
+                <div class="p-10 bg-red-500/5 rounded-[2.5rem] border border-red-500/20 text-center space-y-6">
+                    <i class="fa-solid fa-clock-rotate-left text-5xl text-red-500"></i>
+                    <p class="text-slate-300">El 70% de las consultas son repetitivas (N0) atendidas manualmente.</p>
                 </div>
-                <div class="md:col-span-4 space-y-4">
-                    <div class="p-6 bg-slate-900/80 rounded-2xl text-center border border-red-500/20">
-                        <p class="text-4xl font-bold text-red-400">18%</p>
-                        <p class="text-[10px] font-bold text-slate-500 uppercase mt-1">Tasa de Retrabajo</p>
-                    </div>
-                    <div class="p-6 bg-slate-900/80 rounded-2xl text-center border border-red-500/20">
-                        <p class="text-4xl font-bold text-red-500">4.5h</p>
-                        <p class="text-[10px] font-bold text-slate-500 uppercase mt-1">Espera Media</p>
-                    </div>
+                <div class="p-10 bg-red-500/5 rounded-[2.5rem] border border-red-500/20 text-center space-y-6">
+                    <i class="fa-solid fa-hourglass-half text-5xl text-red-500"></i>
+                    <h3 class="text-6xl font-black text-white">4.5h</h3>
+                    <p class="text-xs font-black text-slate-500 uppercase">Espera Promedio</p>
+                </div>
+                <div class="p-10 bg-red-500/5 rounded-[2.5rem] border border-red-500/20 text-center space-y-6">
+                    <i class="fa-solid fa-user-large-slash text-5xl text-red-500"></i>
+                    <p class="text-slate-300">Servicio limitado a horario de oficina (40h/semana).</p>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 5: CARACTERÍSTICAS -->
-        <div class="slide flex-col space-y-6" data-title="Características">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-zap text-cyan-400 text-2xl"></i></div>
-                <h2 class="text-3xl font-bold text-white">Características del Chatbot con IA</h2>
+        <div class="slide flex-col space-y-8" data-title="Características">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-list-check text-cyan-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">Características de la Solución</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1">
-                <div class="md:col-span-8 space-y-4">
-                    <div class="p-4 bg-slate-800/40 rounded-xl border border-white/5 flex items-center gap-4">
-                        <div class="w-2 h-2 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
-                        <p class="text-slate-300">Interpretación semántica avanzada (NLP).</p>
-                    </div>
-                    <div class="p-4 bg-slate-800/40 rounded-xl border border-white/5 flex items-center gap-4">
-                        <div class="w-2 h-2 rounded-full bg-cyan-500"></div>
-                        <p class="text-slate-300">Automatización de flujos de agendamiento.</p>
-                    </div>
-                    <div class="p-4 bg-slate-800/40 rounded-xl border border-white/5 flex items-center gap-4">
-                        <div class="w-2 h-2 rounded-full bg-cyan-500"></div>
-                        <p class="text-slate-300">Integración nativa API con CRM y ERP.</p>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+                <div class="p-6 bg-slate-900/60 rounded-3xl border border-white/5 flex gap-6 items-center">
+                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20"><i class="fa-solid fa-brain text-cyan-400 text-3xl"></i></div>
+                    <div><h4 class="text-white font-bold text-lg">Aprendizaje Profundo</h4><p class="text-slate-500 text-sm">Mejora continua basada en interacciones pasadas.</p></div>
                 </div>
-                <div class="md:col-span-4 space-y-4">
-                    <div class="p-5 bg-slate-900/60 rounded-xl border border-white/5">
-                        <h4 class="text-cyan-400 text-xs font-bold uppercase mb-2">Gobernanza</h4>
-                        <p class="text-slate-400 text-xs leading-relaxed">Cumplimiento de Ley 1581 (Habeas Data).</p>
-                    </div>
-                    <div class="p-5 bg-slate-900/60 rounded-xl border border-white/5">
-                        <h4 class="text-cyan-400 text-xs font-bold uppercase mb-2">Seguridad</h4>
-                        <p class="text-slate-400 text-xs leading-relaxed">Protocolos TLS 1.3 y AES-256.</p>
-                    </div>
+                <div class="p-6 bg-slate-900/60 rounded-3xl border border-white/5 flex gap-6 items-center">
+                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20"><i class="fa-solid fa-message-dots text-cyan-400 text-3xl"></i></div>
+                    <div><h4 class="text-white font-bold text-lg">Voz de Marca</h4><p class="text-slate-500 text-sm">Tono institucional y empático en cada respuesta.</p></div>
+                </div>
+                <div class="p-6 bg-slate-900/60 rounded-3xl border border-white/5 flex gap-6 items-center">
+                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20"><i class="fa-solid fa-shield-halved text-cyan-400 text-3xl"></i></div>
+                    <div><h4 class="text-white font-bold text-lg">Ciberseguridad</h4><p class="text-slate-500 text-sm">Protección de datos bajo estándares ISO 27001.</p></div>
+                </div>
+                <div class="p-6 bg-slate-900/60 rounded-3xl border border-white/5 flex gap-6 items-center">
+                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center border border-cyan-500/20"><i class="fa-solid fa-network-wired text-cyan-400 text-3xl"></i></div>
+                    <div><h4 class="text-white font-bold text-lg">Sincronía ERP</h4><p class="text-slate-500 text-sm">Consultas en vivo de facturación y servicios.</p></div>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 6: ALCANCE APLICACIÓN -->
-        <div class="slide flex-col space-y-6" data-title="Alcance">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-earth-americas text-cyan-400 text-2xl"></i></div>
-                <h2 class="text-3xl font-bold text-white">Alcance de Aplicación</h2>
+        <div class="slide flex-col space-y-8" data-title="Alcance de Aplicación">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-expand text-cyan-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">Alcance de Aplicación</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1">
-                <div class="p-6 bg-slate-900/60 rounded-3xl text-center space-y-4 border border-white/5">
-                    <i class="fa-brands fa-whatsapp text-4xl text-emerald-400"></i>
-                    <h4 class="text-white font-bold uppercase text-xs">WhatsApp Business</h4>
-                    <p class="text-slate-400 text-sm">Atención inmediata en el canal preferido del mercado colombiano.</p>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1">
+                <div class="md:col-span-8 grid grid-cols-2 gap-4">
+                    <div class="p-8 bg-black/40 rounded-3xl border border-white/5 flex flex-col items-center text-center group">
+                        <i class="fa-brands fa-whatsapp text-4xl text-emerald-500 mb-4 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-white font-bold uppercase text-[10px]">WhatsApp Business</h4>
+                    </div>
+                    <div class="p-8 bg-black/40 rounded-3xl border border-white/5 flex flex-col items-center text-center group">
+                        <i class="fa-solid fa-globe text-4xl text-cyan-500 mb-4 group-hover:scale-110 transition-transform"></i>
+                        <h4 class="text-white font-bold uppercase text-[10px]">Portal Web</h4>
+                    </div>
                 </div>
-                <div class="p-6 bg-slate-900/60 rounded-3xl text-center space-y-4 border border-white/5">
-                    <i class="fa-solid fa-window-maximize text-4xl text-cyan-400"></i>
-                    <h4 class="text-white font-bold uppercase text-xs">Widget Web</h4>
-                    <p class="text-slate-400 text-sm">Resolución de dudas técnicas y FAQs en el portal corporativo.</p>
-                </div>
-                <div class="p-6 bg-slate-900/60 rounded-3xl text-center space-y-4 border border-white/5">
-                    <i class="fa-solid fa-headset text-4xl text-indigo-400"></i>
-                    <h4 class="text-white font-bold uppercase text-xs">Triaje de Soporte</h4>
-                    <p class="text-slate-400 text-sm">Clasificación inteligente de tickets para los niveles N0 y N1.</p>
+                <div class="md:col-span-4 p-8 bg-cyan-500/10 rounded-3xl border border-cyan-500/20 flex flex-col justify-center text-center">
+                    <i class="fa-solid fa-headset text-5xl text-white mb-6 opacity-30"></i>
+                    <p class="text-slate-300 text-sm italic">Resolución automática del 80% de incidencias técnicas nivel básico.</p>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 7: VALOR AGREGADO -->
-        <div class="slide flex-col space-y-6" data-title="Valor Agregado">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-award text-cyan-400 text-2xl"></i></div>
-                <h2 class="text-3xl font-bold text-white">Valor Agregado Estratégico</h2>
+        <div class="slide flex-col space-y-8" data-title="Valor Agregado">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-gem text-cyan-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">Valor Agregado Estratégico</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
-                <div class="p-8 bg-slate-800/30 rounded-3xl text-slate-300">
-                    El valor reside en la "Omnipresencia de Marca". TechSolutions se convierte en un aliado 24/7 sin incrementar gastos de nómina. Se consolida analítica avanzada: identificaremos fallos recurrentes antes de que el cliente los reporte, transformando el soporte en consultoría proactiva.
+            <div class="flex-1 flex flex-col justify-center">
+                <div class="p-12 bg-slate-800/30 rounded-[3rem] border-l-[12px] border-cyan-500 relative shadow-2xl">
+                    <i class="fa-solid fa-quote-left absolute top-6 left-10 text-cyan-500/20 text-6xl"></i>
+                    <p class="text-2xl text-slate-200 font-light leading-relaxed px-6">
+                        "La transición de un soporte 8/5 a una omnipresencia 24/7 sin aumentar costos de nómina. La IA captura analítica para anticipar fallos antes que el cliente."
+                    </p>
                 </div>
-                <div class="space-y-4 flex flex-col justify-center">
-                    <div class="p-6 bg-slate-900/80 rounded-2xl text-center border border-cyan-500/20">
-                        <p class="text-4xl font-bold text-cyan-400">+45%</p>
-                        <p class="text-[10px] font-bold text-slate-500 uppercase">Valor de Marca Percibido</p>
-                    </div>
-                    <div class="p-6 bg-slate-900/80 rounded-2xl text-center border border-emerald-500/20">
-                        <p class="text-4xl font-bold text-emerald-400">+25%</p>
-                        <p class="text-[10px] font-bold text-slate-500 uppercase">Tasa de Fidelización</p>
-                    </div>
+                <div class="grid grid-cols-3 gap-6 mt-10">
+                    <div class="text-center p-6 bg-slate-900/60 rounded-3xl border border-white/5"><i class="fa-solid fa-clock text-cyan-500 text-2xl mb-2"></i><p class="text-xs font-black uppercase text-slate-500 tracking-tighter">Respuesta < 1s</p></div>
+                    <div class="text-center p-6 bg-slate-900/60 rounded-3xl border border-white/5"><i class="fa-solid fa-users text-cyan-500 text-2xl mb-2"></i><p class="text-xs font-black uppercase text-slate-500 tracking-tighter">Atención Masiva</p></div>
+                    <div class="text-center p-6 bg-slate-900/60 rounded-3xl border border-white/5"><i class="fa-solid fa-database text-cyan-500 text-2xl mb-2"></i><p class="text-xs font-black uppercase text-slate-500 tracking-tighter">Data Real-Time</p></div>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 8: OBJETIVO GENERAL -->
-        <div class="slide flex-col items-center justify-center text-center space-y-8" data-title="Objetivo General">
-            <div class="p-4 bg-cyan-500/10 rounded-full border border-cyan-400/20"><i class="fa-solid fa-bullseye text-cyan-400 text-4xl"></i></div>
-            <h2 class="text-3xl md:text-5xl font-bold text-white max-w-4xl leading-tight">
-                Diseñar y ejecutar un Plan de Transformación Digital que optimice la capacidad operativa del servicio y garantice una <span class="text-cyan-400 underline decoration-cyan-400/30">reducción del 40% en costos directos</span>.
+        <div class="slide flex-col items-center justify-center text-center space-y-12" data-title="Objetivo General">
+            <div class="relative">
+                <div class="absolute inset-0 bg-cyan-500/30 blur-2xl rounded-full"></div>
+                <div class="p-8 bg-cyan-500/10 rounded-full border border-cyan-400/40 relative">
+                    <i class="fa-solid fa-bullseye text-cyan-400 text-6xl"></i>
+                </div>
+            </div>
+            <h2 class="text-4xl md:text-5xl font-black text-white max-w-5xl leading-snug">
+                Diseñar un Plan Estratégico que logre una <span class="text-cyan-400 underline decoration-cyan-500/30">reducción del 40% en costos directos</span> optimizando la operatividad mediante IA.
             </h2>
         </div>
 
         <!-- SLIDE 9: OBJETIVOS ESPECÍFICOS -->
-        <div class="slide flex-col space-y-6" data-title="Objetivos Específicos">
-            <h2 class="text-3xl font-bold text-white">Hitos Estratégicos</h2>
-            <div class="space-y-4 flex-1 justify-center flex flex-col">
-                <div class="p-5 bg-slate-800/40 rounded-2xl border border-white/5 flex items-center gap-6">
-                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center font-bold text-cyan-400 text-xl border border-cyan-500/20">01</div>
-                    <p class="text-slate-200">Normalizar la arquitectura de datos técnicos en un periodo de 60 días.</p>
+        <div class="slide flex-col space-y-8" data-title="Objetivos Específicos">
+            <h2 class="text-4xl font-black text-white tracking-tight">Hitos de Gestión</h2>
+            <div class="grid grid-cols-1 gap-4 flex-1 justify-center">
+                <div class="flex items-center gap-8 p-6 bg-slate-800/40 rounded-[2rem] border border-white/10 hover:border-cyan-500/40 transition-all">
+                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center font-black text-cyan-400 text-2xl border border-cyan-500/30">01</div>
+                    <p class="text-xl text-slate-200"><i class="fa-solid fa-folder-tree text-cyan-500 mr-4"></i>Normalizar arquitectura de datos técnicos en 60 días.</p>
                 </div>
-                <div class="p-5 bg-slate-800/40 rounded-2xl border border-white/5 flex items-center gap-6">
-                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center font-bold text-cyan-400 text-xl border border-cyan-500/20">02</div>
-                    <p class="text-slate-200">Automatizar el 80% de las consultas informativas de Nivel 0.</p>
+                <div class="flex items-center gap-8 p-6 bg-slate-800/40 rounded-[2rem] border border-white/10 hover:border-cyan-500/40 transition-all">
+                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center font-black text-cyan-400 text-2xl border border-cyan-500/30">02</div>
+                    <p class="text-xl text-slate-200"><i class="fa-solid fa-robot text-cyan-500 mr-4"></i>Automatizar el 80% de las consultas informativas N0.</p>
                 </div>
-                <div class="p-5 bg-slate-800/40 rounded-2xl border border-white/5 flex items-center gap-6">
-                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center font-bold text-cyan-400 text-xl border border-cyan-500/20">03</div>
-                    <p class="text-slate-200">Reducir el TMO (Tiempo Medio de Operación) en un 65%.</p>
-                </div>
-                <div class="p-5 bg-slate-800/40 rounded-2xl border border-white/5 flex items-center gap-6">
-                    <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center font-bold text-cyan-400 text-xl border border-cyan-500/20">04</div>
-                    <p class="text-slate-200">Elevar el CSAT (Satisfacción del Cliente) a un mínimo de 90/100.</p>
+                <div class="flex items-center gap-8 p-6 bg-slate-800/40 rounded-[2rem] border border-white/10 hover:border-cyan-500/40 transition-all">
+                    <div class="w-16 h-16 rounded-2xl bg-cyan-500/20 flex items-center justify-center font-black text-cyan-400 text-2xl border border-cyan-500/30">03</div>
+                    <p class="text-xl text-slate-200"><i class="fa-solid fa-star text-cyan-500 mr-4"></i>Elevar Satisfacción (CSAT) a un mínimo de 90/100.</p>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 10: ALCANCE DETALLADO -->
-        <div class="slide flex-col space-y-6" data-title="Alcance Detallado">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-layer-group text-cyan-400 text-2xl"></i></div>
-                <h2 class="text-3xl font-bold text-white">Alcance Detallado del Proyecto</h2>
+        <div class="slide flex-col space-y-8" data-title="Alcance Detallado">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-microchip text-cyan-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">Alcance Detallado</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
-                <div class="p-8 bg-slate-800/30 rounded-3xl text-slate-300">
-                    Este plan contempla auditoría de procesos, diseño de arquitectura de IA, integración técnica con sistemas contables y despliegue en producción. Se limita a la atención de consultas informativas y transaccionales básicas, escalando casos complejos a humanos calificados.
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 flex-1">
+                <div class="p-10 bg-slate-900/60 rounded-[3rem] border border-white/5 space-y-6">
+                    <p class="text-xl text-slate-300 leading-relaxed">Auditoría técnica de logs, entrenamiento de LLM e integración ERP/CRM corporativo.</p>
+                    <div class="flex gap-4">
+                        <div class="p-4 bg-white/5 rounded-2xl text-center flex-1"><i class="fa-solid fa-arrows-spin text-cyan-500 text-2xl mb-2"></i><p class="text-[10px] font-bold uppercase text-slate-500">Ciclo Ágil</p></div>
+                        <div class="p-4 bg-white/5 rounded-2xl text-center flex-1"><i class="fa-solid fa-users-gear text-cyan-500 text-2xl mb-2"></i><p class="text-[10px] font-bold uppercase text-slate-500">Foco CX</p></div>
+                    </div>
                 </div>
-                <div class="space-y-4">
-                    <div class="p-6 bg-slate-900/60 rounded-2xl border border-white/5">
-                        <h4 class="text-cyan-400 text-xs font-bold uppercase mb-1">Límites</h4>
-                        <p class="text-slate-400 text-sm">Atención exclusiva niveles 0 y 1.</p>
-                    </div>
-                    <div class="p-6 bg-slate-900/60 rounded-2xl border border-white/5">
-                        <h4 class="text-cyan-400 text-xs font-bold uppercase mb-1">Escalabilidad</h4>
-                        <p class="text-slate-400 text-sm">Capacidad para absorber +500% de tickets.</p>
-                    </div>
+                <div class="flex flex-col justify-center items-center text-center p-10 bg-cyan-500/5 rounded-[3rem] border border-cyan-500/20">
+                    <i class="fa-solid fa-rocket-launch text-7xl text-cyan-400 opacity-20 mb-6"></i>
+                    <p class="text-4xl font-black text-white mb-2">+500%</p>
+                    <p class="text-xs font-black uppercase text-slate-500 tracking-widest">Escalabilidad de tickets</p>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 11: PARTES INTERESADAS -->
-        <div class="slide flex-col space-y-6" data-title="Stakeholders">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-users text-cyan-400 text-2xl"></i></div>
-                <h2 class="text-3xl font-bold text-white">Mapa de Partes Interesadas</h2>
+        <div class="slide flex-col space-y-8" data-title="Stakeholders">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-users text-cyan-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">Partes Interesadas</h2>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 flex-1">
-                <div class="p-6 bg-slate-900/60 rounded-2xl space-y-3 border border-white/5">
-                    <p class="text-cyan-400 font-bold uppercase text-[10px]">Alta Gerencia</p>
-                    <p class="text-slate-200 text-sm">Responsables del ROI y la visión estratégica institucional.</p>
+                <div class="p-8 bg-slate-900/60 rounded-3xl border-t-4 border-cyan-500 shadow-xl space-y-4">
+                    <i class="fa-solid fa-building-user text-cyan-500 text-4xl"></i>
+                    <h4 class="text-white font-bold">Gerencia</h4>
+                    <p class="text-slate-400 text-sm">Focalizados en el ROI y sostenibilidad financiera.</p>
                 </div>
-                <div class="p-6 bg-slate-900/60 rounded-2xl space-y-3 border border-white/5">
-                    <p class="text-cyan-400 font-bold uppercase text-[10px]">Ingenieros de Soporte</p>
-                    <p class="text-slate-200 text-sm">Disminución de carga repetitiva y fatiga laboral.</p>
+                <div class="p-8 bg-slate-900/60 rounded-3xl border-t-4 border-indigo-500 shadow-xl space-y-4">
+                    <i class="fa-solid fa-user-gear text-indigo-500 text-4xl"></i>
+                    <h4 class="text-white font-bold">Ingeniería</h4>
+                    <p class="text-slate-400 text-sm">Liberación de carga operativa y reskilling digital.</p>
                 </div>
-                <div class="p-6 bg-slate-900/60 rounded-2xl space-y-3 border border-white/5">
-                    <p class="text-cyan-400 font-bold uppercase text-[10px]">Clientes Finales</p>
-                    <p class="text-slate-200 text-sm">Beneficiarios de la respuesta instantánea en canales digitales.</p>
+                <div class="p-8 bg-slate-900/60 rounded-3xl border-t-4 border-emerald-500 shadow-xl space-y-4">
+                    <i class="fa-solid fa-people-group text-emerald-500 text-4xl"></i>
+                    <h4 class="text-white font-bold">Clientes</h4>
+                    <p class="text-slate-400 text-sm">Usuarios finales que reciben inmediatez digital.</p>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 12: CONTEXTO GENERAL -->
-        <div class="slide flex-col space-y-6" data-title="Contexto General">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-globe text-cyan-400 text-2xl"></i></div>
-                <h2 class="text-3xl font-bold text-white">Análisis de Contexto Industrial</h2>
+        <div class="slide flex-col space-y-8" data-title="Análisis Contexto">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-earth-americas text-cyan-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">Contexto Industrial</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1">
-                <div class="md:col-span-8 p-8 bg-slate-800/30 rounded-3xl text-slate-300">
-                    En el entorno colombiano, la digitalización ha crecido un 42% anual. Las empresas que no adoptan IA enfrentan una pérdida de competitividad por costos operativos crecientes. TechSolutions debe alinearse con los estándares globales para asegurar la sostenibilidad del negocio IT.
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 flex-1 items-center">
+                <div class="md:col-span-8 p-12 bg-slate-900/80 rounded-[3rem] text-slate-300 text-xl leading-relaxed">
+                    <i class="fa-solid fa-chart-area text-cyan-500/30 text-6xl absolute top-8 right-8"></i>
+                    En el entorno colombiano, la digitalización creció un 42% anual. Las empresas que no integran IA enfrentan una pérdida inminente de mercado frente a competidores globales.
                 </div>
-                <div class="md:col-span-4 space-y-4">
-                    <div class="p-6 bg-slate-900/80 rounded-2xl text-center border border-blue-400/20">
-                        <p class="text-4xl font-bold text-blue-400">+42%</p>
-                        <p class="text-[10px] font-bold text-slate-500 uppercase mt-1">Inversión en IA (COP)</p>
-                    </div>
-                    <div class="p-6 bg-slate-900/80 rounded-2xl text-center border border-cyan-400/20">
-                        <p class="text-4xl font-bold text-cyan-400">x3</p>
-                        <p class="text-[10px] font-bold text-slate-500 uppercase mt-1">Crecimiento de Mercado</p>
-                    </div>
+                <div class="md:col-span-4 p-10 bg-blue-500/10 rounded-3xl border border-blue-500/20 text-center">
+                    <i class="fa-solid fa-arrow-trend-up text-4xl text-blue-400 mb-4"></i>
+                    <p class="text-5xl font-black text-white">42%</p>
+                    <p class="text-[10px] font-black text-slate-500 uppercase mt-2">Crecimiento Digital</p>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 13: FODA MATRIZ -->
-        <div class="slide flex-col space-y-6" data-title="Análisis FODA">
-            <h2 class="text-3xl font-bold text-white mb-2">Análisis FODA Situacional</h2>
-            <div class="grid grid-cols-2 gap-4 flex-1 overflow-hidden">
-                <div class="p-5 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl">
-                    <h4 class="text-emerald-400 font-bold mb-2 uppercase text-[10px] tracking-widest flex items-center gap-2"><i class="fa-solid fa-check-double"></i> Fortalezas</h4>
-                    <p class="text-slate-300 text-sm">Talento humano especializado y sólida infraestructura de servidores propia en Colombia.</p>
+        <div class="slide flex-col space-y-8" data-title="Matriz FODA">
+            <h2 class="text-4xl font-black text-white tracking-tight text-center mb-4">Matriz FODA Estratégica</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
+                <div class="foda-card p-10 bg-emerald-500/10 border border-emerald-500/20 rounded-[2.5rem] space-y-4">
+                    <h4 class="text-emerald-400 font-black uppercase text-xs tracking-widest flex items-center gap-3"><i class="fa-solid fa-award"></i> Fortalezas</h4>
+                    <p class="text-slate-200">Talento humano especializado e infraestructura robusta propia.</p>
                 </div>
-                <div class="p-5 bg-blue-500/10 border border-blue-500/20 rounded-2xl">
-                    <h4 class="text-blue-400 font-bold mb-2 uppercase text-[10px] tracking-widest flex items-center gap-2"><i class="fa-solid fa-arrow-trend-up"></i> Oportunidades</h4>
-                    <p class="text-slate-300 text-sm">Crecimiento de demanda 24/7 en el sector PYME y baja competencia con IA en el mercado local.</p>
+                <div class="foda-card p-10 bg-blue-500/10 border border-blue-500/20 rounded-[2.5rem] space-y-4">
+                    <h4 class="text-blue-400 font-black uppercase text-xs tracking-widest flex items-center gap-3"><i class="fa-solid fa-rocket"></i> Oportunidades</h4>
+                    <p class="text-slate-200">Demanda insatisfecha 24/7 y adopción masiva de canales API.</p>
                 </div>
-                <div class="p-5 bg-red-500/10 border border-red-500/20 rounded-2xl">
-                    <h4 class="text-red-400 font-bold mb-2 uppercase text-[10px] tracking-widest flex items-center gap-2"><i class="fa-solid fa-circle-exclamation"></i> Debilidades</h4>
-                    <p class="text-slate-300 text-sm">Dependencia de procesos manuales síncronos y tiempos de respuesta variables.</p>
+                <div class="foda-card p-10 bg-red-500/10 border border-red-500/20 rounded-[2.5rem] space-y-4">
+                    <h4 class="text-red-400 font-black uppercase text-xs tracking-widest flex items-center gap-3"><i class="fa-solid fa-circle-exclamation"></i> Debilidades</h4>
+                    <p class="text-slate-200">Manualidad síncrona y tiempos de respuesta variables.</p>
                 </div>
-                <div class="p-5 bg-orange-500/10 border border-orange-500/20 rounded-2xl">
-                    <h4 class="text-orange-400 font-bold mb-2 uppercase text-[10px] tracking-widest flex items-center gap-2"><i class="fa-solid fa-shield"></i> Amenazas</h4>
-                    <p class="text-slate-300 text-sm">Proveedores internacionales con modelos de bajo costo basados en automatización total.</p>
+                <div class="foda-card p-10 bg-orange-500/10 border border-orange-500/20 rounded-[2.5rem] space-y-4">
+                    <h4 class="text-orange-400 font-black uppercase text-xs tracking-widest flex items-center gap-3"><i class="fa-solid fa-shield-halved"></i> Amenazas</h4>
+                    <p class="text-slate-200">Competidores globales automatizados con bajo costo marginal.</p>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 14: INTERPRETACIÓN FODA -->
-        <div class="slide flex-col space-y-6" data-title="Interpretación FODA">
-            <h2 class="text-3xl font-bold text-white">Interpretación Estratégica</h2>
-            <div class="flex-1 flex flex-col justify-center space-y-8">
-                <div class="p-8 bg-slate-800/30 rounded-3xl border-l-4 border-cyan-500 text-slate-300 text-lg leading-relaxed">
-                    La estrategia se define como "Optimización Predictiva": utilizaremos nuestras FORTALEZAS (infraestructura) para mitigar nuestra DEBILIDAD (manualidad). Esto nos permite capturar la OPORTUNIDAD del mercado 24/7 y blindarnos ante la AMENAZA de competidores globales.
+        <div class="slide flex-col space-y-8" data-title="Interpretación FODA">
+            <h2 class="text-4xl font-black text-white tracking-tight">Interpretación Estratégica</h2>
+            <div class="flex-1 flex flex-col justify-center space-y-12">
+                <div class="p-12 bg-slate-800/40 rounded-[3rem] border-l-[12px] border-cyan-500 text-slate-200 text-3xl font-light italic leading-relaxed">
+                    <i class="fa-solid fa-magnifying-glass-chart text-cyan-500/20 text-7xl absolute bottom-6 right-10"></i>
+                    "Apalancaremos nuestras FORTALEZAS técnicas para mitigar la DEBILIDAD de la manualidad y capturar la OPORTUNIDAD 24/7."
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="p-5 bg-slate-900/60 rounded-2xl border border-white/5">
-                        <h4 class="text-cyan-400 text-[10px] font-bold uppercase mb-1">Estrategia FO</h4>
-                        <p class="text-slate-400 text-xs">Apalancar talento en servicios de alto valor.</p>
-                    </div>
-                    <div class="p-5 bg-slate-900/60 rounded-2xl border border-white/5">
-                        <h4 class="text-cyan-400 text-[10px] font-bold uppercase mb-1">Estrategia DA</h4>
-                        <p class="text-slate-400 text-xs">Reducción de vulnerabilidad operativa.</p>
-                    </div>
+                <div class="grid grid-cols-2 gap-8">
+                    <div class="p-8 bg-slate-900/90 rounded-2xl text-center border border-white/5 uppercase text-xs font-black tracking-widest text-cyan-400 flex items-center justify-center gap-4"><i class="fa-solid fa-shield-check"></i> Estrategia Ofensiva FO</div>
+                    <div class="p-8 bg-slate-900/90 rounded-2xl text-center border border-white/5 uppercase text-xs font-black tracking-widest text-emerald-400 flex items-center justify-center gap-4"><i class="fa-solid fa-user-shield"></i> Estrategia Defensiva DA</div>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 15: JUSTIFICACIÓN INVERSIÓN (COP) -->
-        <div class="slide flex-col space-y-6" data-title="Justificación Mejora">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-coins text-cyan-400 text-2xl"></i></div>
-                <h2 class="text-3xl font-bold text-white">¿Por qué se propone esta mejora?</h2>
+        <!-- SLIDE 15: JUSTIFICACIÓN INVERSIÓN -->
+        <div class="slide flex-col space-y-8" data-title="Justificación Económica">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-wallet text-cyan-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">Justificación: Eficiencia Financiera</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1">
-                <div class="md:col-span-7 p-8 bg-slate-800/30 rounded-3xl text-slate-300 text-lg">
-                    La mejora responde a la necesidad imperativa de eficiencia financiera. El costo actual de un ticket manual se estima en $22.500 COP, mientras que con IA el costo marginal es de $850 COP. Con 2.000 tickets mensuales, el ahorro proyectado supera los $520.000.000 COP anuales.
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 flex-1 items-center">
+                <div class="md:col-span-7 p-12 bg-slate-800/30 rounded-[3rem] text-slate-300 text-2xl leading-relaxed">
+                    Ahorro superior a los <span class="text-emerald-400 font-black tracking-tighter">$520 Millones COP anuales</span>. Reduciendo el costo por ticket de $22.500 a solo $850 mediante automatización IA.
                 </div>
-                <div class="md:col-span-5 space-y-4">
-                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold">COSTO MANUAL</span><span class="text-red-400 font-bold">$22.500 COP</span></div>
-                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold">COSTO CON IA</span><span class="text-emerald-400 font-bold">$850 COP</span></div>
-                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center bg-cyan-500/5 border border-cyan-500/20"><span class="text-slate-300 text-xs font-bold">AHORRO ANUAL</span><span class="text-cyan-400 font-bold">$520M COP</span></div>
+                <div class="md:col-span-5 space-y-6">
+                    <div class="p-8 bg-red-500/10 rounded-3xl border border-red-500/20 flex justify-between items-center group shadow-xl"><i class="fa-solid fa-user-slash text-red-400 text-2xl"></i> <span class="text-white font-black text-xl">$22.500</span></div>
+                    <div class="p-8 bg-emerald-500/10 rounded-3xl border border-emerald-500/20 flex justify-between items-center group shadow-xl"><i class="fa-solid fa-robot text-emerald-400 text-2xl"></i> <span class="text-white font-black text-xl">$850</span></div>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 16: ROI Y ESCALA -->
-        <div class="slide flex-col space-y-6" data-title="ROI y Escala">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-emerald-500/10 rounded-xl border border-emerald-500/20"><i class="fa-solid fa-chart-line text-emerald-400 text-2xl"></i></div>
-                <h2 class="text-3xl font-bold text-white">Retorno y Escalabilidad Operativa</h2>
+        <div class="slide flex-col space-y-8" data-title="ROI y Escala">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-emerald-500/10 rounded-2xl border border-emerald-500/20"><i class="fa-solid fa-chart-pie text-emerald-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">ROI y Escalabilidad</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
-                <div class="p-10 bg-slate-900/80 rounded-[2rem] text-center space-y-4 border border-slate-800">
-                    <p class="text-5xl font-black text-cyan-400 tracking-tighter">245%</p>
-                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">ROI Proyectado (Año 1)</p>
-                    <p class="text-xs text-slate-400 px-6">Rentabilidad neta tras amortización de inversión inicial en infraestructura.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 flex-1">
+                <div class="p-12 bg-slate-900/90 rounded-[3rem] text-center space-y-6 border border-white/10 hover:shadow-cyan-500/10 shadow-2xl transition-all">
+                    <i class="fa-solid fa-arrow-up-right-dots text-cyan-400 text-5xl opacity-40"></i>
+                    <p class="text-8xl font-black text-cyan-400 tracking-tighter">245%</p>
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Retorno Proyectado (COP)</p>
                 </div>
-                <div class="p-10 bg-slate-900/80 rounded-[2rem] text-center space-y-4 border border-slate-800">
-                    <p class="text-5xl font-black text-emerald-400 tracking-tighter">x10</p>
-                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-[0.3em]">Escala Operativa</p>
-                    <p class="text-xs text-slate-400 px-6">Capacidad de absorber incrementos masivos de tickets sin nuevos costos de nómina.</p>
+                <div class="p-12 bg-slate-900/90 rounded-[3rem] text-center space-y-6 border border-white/10 hover:shadow-emerald-500/10 shadow-2xl transition-all">
+                    <i class="fa-solid fa-users-viewfinder text-emerald-400 text-5xl opacity-40"></i>
+                    <p class="text-8xl font-black text-emerald-400 tracking-tighter">x10</p>
+                    <p class="text-[10px] font-black text-slate-500 uppercase tracking-widest">Escala Operativa sin nómina</p>
                 </div>
             </div>
         </div>
 
-        <!-- SLIDE 17: COMPARATIVA -->
-        <div class="slide flex-col space-y-6" data-title="Estado Actual vs Mejorado">
-            <h2 class="text-3xl font-bold text-white">Evolución: Comparativa de Paradigmas</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative flex-1 items-center">
-                <div class="p-8 bg-slate-900/50 border border-slate-700/50 rounded-[2rem] min-h-[220px]">
-                    <h4 class="text-slate-500 font-black mb-4 uppercase text-[10px] tracking-[0.2em]">Paradigma Tradicional</h4>
-                    <p class="text-slate-400 text-base leading-relaxed">Atención síncrona, limitada a 40h/semana, con altos niveles de estrés laboral y esperas de horas.</p>
+        <!-- SLIDE 17: ESTADO ACTUAL VS MEJORADO -->
+        <div class="slide flex-col space-y-8" data-title="Evolución del Modelo">
+            <h2 class="text-4xl font-black text-white tracking-tight text-center mb-4">Evolución: Comparativa</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 relative flex-1 items-center">
+                <div class="p-10 bg-slate-900/70 border border-red-500/20 rounded-[3.5rem] min-h-[250px] relative shadow-2xl">
+                    <div class="absolute -top-4 left-10 p-3 bg-red-500/20 rounded-xl text-red-500"><i class="fa-solid fa-user-lock"></i></div>
+                    <h4 class="text-slate-500 font-black mb-6 uppercase text-[10px] tracking-widest">Modelo Manual</h4>
+                    <p class="text-slate-300 text-xl leading-relaxed italic">Atención síncrona, 40h/semana, dependencia humana total.</p>
                 </div>
-                <div class="p-8 bg-cyan-500/10 border border-cyan-500/20 rounded-[2rem] relative overflow-hidden min-h-[220px]">
-                    <div class="absolute top-0 right-0 p-3 bg-cyan-500 text-slate-950 font-bold rounded-bl-2xl uppercase text-[10px]">Modelo IA</div>
-                    <h4 class="text-cyan-400 font-black mb-4 uppercase text-[10px] tracking-[0.2em]">Paradigma Digital</h4>
-                    <p class="text-slate-100 text-lg font-medium leading-relaxed">Atención asíncrona e instantánea, disponible 24/7, con precisión absoluta en FAQ y alta satisfacción.</p>
+                <div class="p-10 bg-cyan-500/10 border border-cyan-500/30 rounded-[3.5rem] relative overflow-hidden min-h-[250px] shadow-2xl">
+                    <div class="absolute -top-4 left-10 p-3 bg-cyan-500/20 rounded-xl text-cyan-500"><i class="fa-solid fa-cloud-bolt"></i></div>
+                    <div class="absolute top-0 right-0 p-4 bg-cyan-500 text-slate-950 font-black uppercase text-[10px] tracking-widest">Digital</div>
+                    <h4 class="text-cyan-400 font-black mb-6 uppercase text-[10px] tracking-widest">Modelo con IA</h4>
+                    <p class="text-white text-2xl font-bold leading-relaxed">Omnicanalidad, 24/7/365, Precisión Total.</p>
                 </div>
-                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex p-3 bg-slate-800 rounded-full border border-cyan-500/30 z-10">
-                    <i class="fa-solid fa-arrow-right-arrow-left text-cyan-400"></i>
+                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:flex p-6 bg-slate-800 rounded-full border border-cyan-500/50 z-10 shadow-2xl">
+                    <i class="fa-solid fa-right-left text-cyan-400 text-3xl"></i>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 18: ESTRATEGIAS -->
-        <div class="slide flex-col space-y-6" data-title="Estrategias">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-sliders text-cyan-400 text-2xl"></i></div>
-                <h2 class="text-3xl font-bold text-white">Estrategias de Implementación</h2>
+        <div class="slide flex-col space-y-8" data-title="Estrategias Despliegue">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-route text-cyan-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">Estrategias de Despliegue</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1">
-                <div class="md:col-span-8 p-8 bg-slate-800/30 rounded-3xl text-slate-300 text-lg">
-                    El cronograma de Gerencia Tecnológica se ha diseñado bajo un esquema de mitigación de riesgos y adopción gradual. Se divide en fases para garantizar estabilidad técnica y satisfacción en cada hito.
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 flex-1">
+                <div class="md:col-span-8 p-12 bg-slate-900/80 rounded-[3rem] text-slate-300 text-2xl leading-relaxed shadow-xl">
+                    Metodología basada en mitigación de riesgos operativos. Priorizamos la estabilidad técnica y la satisfacción del usuario antes del escalado masivo regional.
                 </div>
-                <div class="md:col-span-4 space-y-4">
-                    <div class="p-6 bg-slate-800/40 rounded-2xl border border-white/5 flex gap-4 items-center">
-                        <i class="fa-solid fa-check text-cyan-400"></i>
-                        <p class="text-xs text-slate-400">Mitigación de Riesgos</p>
-                    </div>
-                    <div class="p-6 bg-slate-800/40 rounded-2xl border border-white/5 flex gap-4 items-center">
-                        <i class="fa-solid fa-check text-cyan-400"></i>
-                        <p class="text-xs text-slate-400">Adopción Gradual</p>
-                    </div>
-                    <div class="p-6 bg-slate-800/40 rounded-2xl border border-white/5 flex gap-4 items-center">
-                        <i class="fa-solid fa-check text-cyan-400"></i>
-                        <p class="text-xs text-slate-400">Calidad QA</p>
-                    </div>
+                <div class="md:col-span-4 grid grid-cols-1 gap-4">
+                    <div class="p-8 bg-slate-800/50 rounded-3xl flex flex-col items-center gap-3 border border-white/5"><i class="fa-solid fa-vial-circle-check text-cyan-400 text-3xl"></i> <span class="text-[10px] uppercase font-black tracking-widest">QA Riguroso</span></div>
+                    <div class="p-8 bg-slate-800/50 rounded-3xl flex flex-col items-center gap-3 border border-white/5"><i class="fa-solid fa-people-arrows text-cyan-400 text-3xl"></i> <span class="text-[10px] uppercase font-black tracking-widest">Adopción Humana</span></div>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 19: CORTO PLAZO -->
-        <div class="slide flex-col space-y-6" data-title="Corto Plazo">
-            <h2 class="text-3xl font-bold text-white">Estrategia Corto Plazo (1-3 Meses)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
-                <div class="p-8 bg-slate-800/30 rounded-3xl text-slate-300">
-                    Se destinarán $45.000.000 COP para auditoría y plataforma. Realización de Data Mining sobre 24 meses de logs históricos para extraer conocimiento real y desarrollo del MVP funcional en Sandbox.
+        <div class="slide flex-col space-y-8" data-title="Corto Plazo">
+            <h2 class="text-4xl font-black text-white tracking-tight">Corto Plazo (1-3 Meses)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 flex-1 items-center">
+                <div class="p-12 bg-slate-800/50 rounded-[3rem] border border-white/5 space-y-8 shadow-inner">
+                    <p class="text-2xl text-slate-200">Data Mining de 24 meses históricos. Prototipado MVP en entornos de Sandbox controlados.</p>
+                    <div class="flex items-center gap-6 p-6 bg-cyan-500/10 rounded-2xl border border-cyan-500/30"><i class="fa-solid fa-sack-dollar text-cyan-400 text-3xl"></i> <div><p class="font-black text-cyan-400 text-xl">$45M COP</p><p class="text-[10px] uppercase font-black text-slate-500 tracking-widest">Inversión Fase 1</p></div></div>
                 </div>
-                <div class="space-y-4 flex flex-col justify-center">
-                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Inversión Fase 1</span><span class="text-cyan-400 font-bold">$45M COP</span></div>
-                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Hito Clave</span><span class="text-cyan-400 font-bold">MVP Funcional</span></div>
-                </div>
+                <div class="p-14 bg-slate-900/90 rounded-[3rem] text-center border-l-[12px] border-cyan-500 shadow-2xl"><i class="fa-solid fa-microchip text-cyan-500 text-5xl mb-6"></i><p class="text-5xl font-black text-white">MVP</p><p class="text-xs uppercase text-slate-500 font-black mt-4">Producto Mínimo Viable</p></div>
             </div>
         </div>
 
         <!-- SLIDE 20: MEDIANO PLAZO -->
-        <div class="slide flex-col space-y-6" data-title="Mediano Plazo">
-            <h2 class="text-3xl font-bold text-white">Estrategia Mediano Plazo (4-8 Meses)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 flex-1">
-                <div class="p-8 bg-slate-800/30 rounded-3xl text-slate-300">
-                    Lanzamiento del piloto con el 20% de clientes. Integración API con sistema contable y CRM. Inversión en capacitación ($15M COP) para transformar al equipo técnico en supervisores del modelo IA.
+        <div class="slide flex-col space-y-8" data-title="Mediano Plazo">
+            <h2 class="text-4xl font-black text-white tracking-tight">Mediano Plazo (4-8 Meses)</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 flex-1 items-center">
+                <div class="p-12 bg-slate-800/50 rounded-[3rem] border border-white/5 space-y-8 shadow-inner">
+                    <p class="text-2xl text-slate-200">Lanzamiento piloto (20% clientes). Integración total API CRM y capacitación de personal técnico.</p>
+                    <div class="flex items-center gap-6 p-6 bg-emerald-500/10 rounded-2xl border border-emerald-500/30"><i class="fa-solid fa-users-gear text-emerald-400 text-3xl"></i> <div><p class="font-black text-emerald-400 text-xl">$15M COP</p><p class="text-[10px] uppercase font-black text-slate-500 tracking-widest">Capacitación Humana</p></div></div>
                 </div>
-                <div class="space-y-4 flex flex-col justify-center">
-                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Capacitación</span><span class="text-cyan-400 font-bold">$15M COP</span></div>
-                    <div class="p-6 bg-slate-900/60 rounded-2xl flex justify-between items-center"><span class="text-slate-500 text-xs font-bold uppercase">Cobertura Piloto</span><span class="text-cyan-400 font-bold">20% Clientes</span></div>
-                </div>
+                <div class="p-14 bg-slate-900/90 rounded-[3rem] text-center border-l-[12px] border-emerald-500 shadow-2xl"><i class="fa-solid fa-vial-virus text-emerald-500 text-5xl mb-6"></i><p class="text-5xl font-black text-white">PILOTO</p><p class="text-xs uppercase text-slate-500 font-black mt-4">Validación Operativa</p></div>
             </div>
         </div>
 
         <!-- SLIDE 21: LARGO PLAZO -->
-        <div class="slide flex-col space-y-6" data-title="Largo Plazo">
-            <h2 class="text-3xl font-bold text-white">Estrategia Largo Plazo (9-12+ Meses)</h2>
-            <div class="flex-1 flex flex-col justify-center space-y-8">
-                <div class="p-8 bg-slate-800/30 rounded-3xl text-slate-300 text-lg">
-                    El chatbot asume el 85% de la carga de soporte N0 y N1. Implementación de funciones proactivas para contacto preventivo. Auditoría final de impacto financiero y análisis de expansión de mercado internacional.
+        <div class="slide flex-col space-y-8" data-title="Largo Plazo">
+            <h2 class="text-4xl font-black text-white tracking-tight">Largo Plazo (9-12+ Meses)</h2>
+            <div class="flex-1 flex flex-col justify-center space-y-12">
+                <div class="p-12 bg-slate-900/80 rounded-[4rem] text-slate-300 text-3xl font-light italic text-center px-12 border border-white/5 relative">
+                    <i class="fa-solid fa-infinity text-cyan-500/10 text-9xl absolute inset-0 flex items-center justify-center pointer-events-none"></i>
+                    "Chatbot asume el 85% de la carga operativa. Implementación de funciones predictivas internacionales."
                 </div>
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="p-6 bg-slate-900/60 rounded-2xl text-center">
-                        <p class="text-4xl font-bold text-cyan-400">85%</p>
-                        <p class="text-[10px] uppercase text-slate-500 font-bold mt-2">Autonomía Operativa</p>
-                    </div>
-                    <div class="p-6 bg-slate-900/60 rounded-2xl text-center">
-                        <p class="text-4xl font-bold text-emerald-400">245%</p>
-                        <p class="text-[10px] uppercase text-slate-500 font-bold mt-2">ROI Final Auditoría</p>
-                    </div>
+                <div class="grid grid-cols-2 gap-10">
+                    <div class="p-12 bg-slate-900/90 rounded-[2.5rem] text-center border-b-[10px] border-cyan-500 shadow-xl"><p class="text-6xl font-black text-white tracking-tighter">85%</p><p class="text-[10px] font-black text-slate-500 uppercase mt-2 tracking-[0.3em]">Autonomía Real</p></div>
+                    <div class="p-12 bg-slate-900/90 rounded-[2.5rem] text-center border-b-[10px] border-emerald-500 shadow-xl"><p class="text-6xl font-black text-white tracking-tighter">245%</p><p class="text-[10px] font-black text-slate-500 uppercase mt-2 tracking-[0.3em]">ROI Auditado</p></div>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 22: CAPACITACIÓN -->
-        <div class="slide flex-col space-y-6" data-title="Capacitación">
-            <div class="flex items-center gap-4">
-                <div class="p-3 bg-cyan-500/10 rounded-xl border border-cyan-500/20"><i class="fa-solid fa-graduation-cap text-cyan-400 text-2xl"></i></div>
-                <h2 class="text-3xl font-bold text-white">Plan de Capacitación y Gestión</h2>
+        <div class="slide flex-col space-y-8" data-title="Plan Capacitación">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-graduation-cap text-cyan-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">Reskilling Humano Elite</h2>
             </div>
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1">
-                <div class="md:col-span-8 p-8 bg-slate-800/30 rounded-3xl text-slate-300 text-lg">
-                    Se implementará un programa de 'Reskilling' para transformar a los técnicos en 'Arquitectos de Experiencia'. El empleado deja de ser ejecutor para ser el gestor de una herramienta potente que le permite realizar trabajo de mayor valor intelectual.
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 flex-1 items-center">
+                <div class="md:col-span-8 p-14 bg-slate-800/40 rounded-[3rem] text-slate-200 text-2xl leading-relaxed border border-white/10 shadow-2xl">
+                    <i class="fa-solid fa-people-up text-cyan-500/20 text-7xl absolute top-6 right-10"></i>
+                    Evolución del personal: Los ingenieros técnicos se transforman en **Arquitectos de Experiencia** y Supervisores de Calidad de Modelos IA.
                 </div>
-                <div class="md:col-span-4 space-y-4">
-                    <div class="p-6 bg-slate-800/40 rounded-2xl border border-white/5">
-                        <h4 class="text-cyan-400 text-xs font-bold uppercase mb-1">Nuevos Roles</h4>
-                        <p class="text-slate-400 text-[10px]">Supervisores de Modelos IA</p>
-                    </div>
-                    <div class="p-6 bg-slate-800/40 rounded-2xl border border-white/5">
-                        <h4 class="text-cyan-400 text-xs font-bold uppercase mb-1">Habilidades</h4>
-                        <p class="text-slate-400 text-[10px]">Prompt Engineering & Data</p>
-                    </div>
+                <div class="md:col-span-4 space-y-6">
+                    <div class="p-8 bg-slate-900/95 rounded-3xl border-l-8 border-cyan-500 shadow-xl group hover:bg-slate-900 transition-colors"><i class="fa-solid fa-code-branch text-cyan-500 text-xl mb-2"></i><h4 class="text-cyan-400 font-black text-[10px] uppercase mb-1 tracking-widest">Perfil Nuevo</h4><p class="text-lg font-bold">Prompt Engineers</p></div>
+                    <div class="p-8 bg-slate-900/95 rounded-3xl border-l-8 border-cyan-500 shadow-xl group hover:bg-slate-900 transition-colors"><i class="fa-solid fa-database text-cyan-500 text-xl mb-2"></i><h4 class="text-cyan-400 font-black text-[10px] uppercase mb-1 tracking-widest">Perfil Nuevo</h4><p class="text-lg font-bold">Analistas de Datos</p></div>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 23: BENEFICIOS (KPIs) -->
-        <div class="slide flex-col space-y-6" data-title="Beneficios Esperados">
-            <h2 class="text-3xl font-bold text-white">Indicadores Clave de Éxito (KPIs)</h2>
-            <div class="grid grid-cols-1 gap-4 flex-1 justify-center flex flex-col">
-                <div class="flex items-center gap-5 p-5 bg-slate-800/30 rounded-2xl border border-white/5">
-                    <div class="w-3 h-3 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
-                    <p class="text-slate-200">Ahorro neto anual proyectado en <span class="text-emerald-400 font-bold">$520.000.000 COP</span>.</p>
+        <div class="slide flex-col space-y-8" data-title="Beneficios Esperados">
+            <h2 class="text-4xl font-black text-white tracking-tight text-center mb-6">Indicadores de Éxito</h2>
+            <div class="grid grid-cols-1 gap-6 flex-1 justify-center max-w-4xl mx-auto w-full">
+                <div class="flex items-center gap-10 p-8 bg-slate-900/80 rounded-[2.5rem] border border-white/10 hover:border-emerald-500/40 transition-all shadow-2xl group">
+                    <div class="w-16 h-16 rounded-full bg-emerald-500/20 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-emerald-500/20"><i class="fa-solid fa-hand-holding-dollar text-emerald-400 text-3xl"></i></div>
+                    <div><p class="text-slate-400 text-sm font-bold uppercase tracking-widest mb-1">Ahorro Neto Anual</p><p class="text-3xl text-white font-black tracking-tighter">$520.000.000 COP</p></div>
                 </div>
-                <div class="flex items-center gap-5 p-5 bg-slate-800/30 rounded-2xl border border-white/5">
-                    <div class="w-3 h-3 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
-                    <p class="text-slate-200">Reducción del 65% en el tiempo medio de resolución.</p>
+                <div class="flex items-center gap-10 p-8 bg-slate-900/80 rounded-[2.5rem] border border-white/10 hover:border-cyan-500/40 transition-all shadow-2xl group">
+                    <div class="w-16 h-16 rounded-full bg-cyan-500/20 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-cyan-500/20"><i class="fa-solid fa-infinity text-cyan-400 text-3xl"></i></div>
+                    <div><p class="text-slate-400 text-sm font-bold uppercase tracking-widest mb-1">Disponibilidad</p><p class="text-3xl text-white font-black tracking-tighter">100% (24/7/365)</p></div>
                 </div>
-                <div class="flex items-center gap-5 p-5 bg-slate-800/30 rounded-2xl border border-white/5">
-                    <div class="w-3 h-3 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
-                    <p class="text-slate-200">Disponibilidad de servicio extendida al 100% de la semana.</p>
-                </div>
-                <div class="flex items-center gap-5 p-5 bg-slate-800/30 rounded-2xl border border-white/5">
-                    <div class="w-3 h-3 rounded-full bg-cyan-500 shadow-lg shadow-cyan-500/50"></div>
-                    <p class="text-slate-200">Incremento del 20% en la tasa de renovación de contratos.</p>
+                <div class="flex items-center gap-10 p-8 bg-slate-900/80 rounded-[2.5rem] border border-white/10 hover:border-red-500/40 transition-all shadow-2xl group">
+                    <div class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center group-hover:scale-110 transition-transform shadow-lg shadow-red-500/20"><i class="fa-solid fa-bolt text-red-400 text-3xl"></i></div>
+                    <div><p class="text-slate-400 text-sm font-bold uppercase tracking-widest mb-1">Reducción TMO</p><p class="text-3xl text-white font-black tracking-tighter">Eficiencia del 65%</p></div>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 24: CONCLUSIONES -->
-        <div class="slide flex-col space-y-6" data-title="Conclusiones">
-            <h2 class="text-3xl font-bold text-white">Conclusiones Finales</h2>
-            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 flex-1">
-                <div class="md:col-span-8 p-8 bg-slate-800/30 rounded-3xl text-slate-300 text-lg leading-relaxed">
-                    La transformación digital mediante IA no es una mejora estética, sino una decisión gerencial de supervivencia operativa. Este plan resuelve ineficiencias de costo y mejora la satisfacción, garantizando el liderazgo de TechSolutions en el mercado colombiano por los próximos años.
+        <div class="slide flex-col space-y-8" data-title="Conclusiones Finales">
+            <div class="flex items-center gap-5">
+                <div class="p-4 bg-cyan-500/10 rounded-2xl border border-cyan-500/20"><i class="fa-solid fa-flag-checkered text-cyan-400 text-3xl"></i></div>
+                <h2 class="text-4xl font-black text-white tracking-tight">Conclusiones</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-10 flex-1 items-center">
+                <div class="md:col-span-9 p-14 bg-slate-900/80 rounded-[4rem] text-slate-200 text-2xl leading-relaxed italic border border-white/15 shadow-2xl relative">
+                    <i class="fa-solid fa-check-double text-cyan-500/10 text-9xl absolute bottom-0 right-10"></i>
+                    "La transformación digital no es opcional, es una decisión estratégica de supervivencia. TechSolutions queda blindada tecnológicamente, lista para liderar con eficiencia y centrismo en el cliente corporativo."
                 </div>
-                <div class="md:col-span-4 p-8 bg-gradient-to-br from-cyan-500/10 to-transparent rounded-3xl border border-cyan-500/20 flex flex-col justify-center items-center text-center space-y-4">
-                    <i class="fa-solid fa-rocket text-cyan-400 text-4xl animate-bounce"></i>
-                    <p class="text-cyan-400 font-bold uppercase text-[10px] tracking-widest">Eficiencia Total</p>
+                <div class="md:col-span-3 text-center">
+                    <div class="relative inline-block">
+                        <i class="fa-solid fa-rocket-launch text-cyan-400 text-9xl animate-bounce opacity-40"></i>
+                        <i class="fa-solid fa-sparkles text-cyan-300 text-4xl absolute -top-4 -right-4 animate-pulse"></i>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- SLIDE 25: CIERRE -->
-        <div class="slide flex-col items-center justify-center text-center space-y-8 py-10" data-title="Cierre">
-            <p class="text-cyan-400 font-bold tracking-[0.4em] uppercase text-sm">Universidad Simón Bolívar</p>
-            <div class="p-6 bg-cyan-500/10 rounded-full border border-cyan-400/20"><i class="fa-solid fa-message text-cyan-400 text-4xl"></i></div>
-            <h2 class="text-5xl md:text-8xl font-black text-white tracking-tighter">¡Muchas Gracias!</h2>
-            <p class="text-xl italic text-slate-400 max-w-2xl font-light leading-relaxed">"La mejor forma de predecir el futuro es diseñándolo mediante la tecnología."</p>
-            <div class="pt-8 border-t border-slate-800 w-full max-w-lg">
-                <p class="text-cyan-400 font-black text-xl uppercase tracking-tighter">YAROLT FRANCISCO GONZALEZ VASQUEZ</p>
-                <p class="text-slate-500 font-medium text-sm">Gerencia Tecnológica de la Industria</p>
+        <div class="slide flex-col items-center justify-center text-center space-y-12 py-10" data-title="Finalización">
+            <p class="text-cyan-400 font-black tracking-[0.6em] uppercase text-sm">Universidad Simón Bolívar</p>
+            <div class="relative">
+                <div class="absolute inset-0 bg-cyan-500/30 blur-[100px] rounded-full"></div>
+                <i class="fa-solid fa-circle-check text-9xl text-white relative drop-shadow-[0_0_30px_rgba(34,211,238,0.5)]"></i>
+            </div>
+            <h2 class="text-7xl md:text-9xl font-black text-white tracking-tighter">¡Muchas Gracias!</h2>
+            <div class="pt-10 border-t border-slate-800 w-full max-w-3xl">
+                <p class="text-cyan-400 font-black text-4xl uppercase tracking-tighter mb-4">YAROLT FRANCISCO GONZALEZ VASQUEZ</p>
+                <div class="flex justify-center gap-10">
+                    <div class="flex items-center gap-3"><i class="fa-solid fa-calendar text-slate-500"></i><span class="text-slate-500 font-black text-xs uppercase tracking-widest">Marzo 2026</span></div>
+                    <div class="flex items-center gap-3"><i class="fa-solid fa-graduation-cap text-slate-500"></i><span class="text-slate-500 font-black text-xs uppercase tracking-widest">Ingeniería de Sistemas</span></div>
+                </div>
             </div>
         </div>
 
     </main>
 
-    <!-- Navegación Inferior -->
-    <footer class="fixed bottom-0 left-0 w-full p-8 flex justify-between items-center bg-gradient-to-t from-[#060b18] to-transparent z-40">
-        <div class="flex items-center gap-6">
+    <!-- Controles de Navegación Inferiores Mejorados -->
+    <footer class="fixed bottom-0 left-0 w-full p-8 md:p-12 flex justify-between items-center bg-gradient-to-t from-slate-950 to-transparent z-40">
+        <div class="flex items-center gap-12">
             <div class="flex flex-col">
-                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.4em]">Diapositiva</span>
-                <div class="flex items-baseline gap-2">
-                    <span id="slide-number" class="text-3xl font-black text-cyan-400 tracking-tighter">1</span>
-                    <span class="text-slate-600 font-bold">/</span>
-                    <span class="text-slate-600 font-bold">25</span>
+                <span class="text-[10px] text-slate-500 font-black uppercase tracking-[0.5em] mb-1">Página</span>
+                <div class="flex items-baseline gap-3">
+                    <span id="slide-number" class="text-5xl font-black text-cyan-400 tracking-tighter">1</span>
+                    <span class="text-slate-700 font-bold text-2xl">/</span>
+                    <span class="text-slate-700 font-bold text-2xl">25</span>
                 </div>
             </div>
-            <div class="h-12 w-px bg-slate-800 hidden lg:block"></div>
-            <div class="hidden lg:block max-w-md">
-                <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.4em] mb-1">Sección</p>
-                <p id="slide-title-display" class="text-slate-400 text-sm font-bold truncate tracking-tight uppercase"></p>
+            <div class="h-16 w-px bg-slate-800 hidden lg:block"></div>
+            <div class="hidden lg:block max-w-lg">
+                <p class="text-[10px] text-slate-500 font-black uppercase tracking-[0.5em] mb-2">Sección Actual</p>
+                <p id="slide-title-display" class="text-slate-200 text-lg font-black truncate tracking-tight uppercase"></p>
             </div>
         </div>
 
-        <div class="flex gap-4">
-            <button onclick="prevSlide()" id="prev-btn" class="flex items-center justify-center w-14 h-14 rounded-2xl border border-slate-700 bg-slate-800/80 text-white hover:bg-cyan-500 hover:text-slate-950 transition-all shadow-xl">
-                <i class="fa-solid fa-chevron-left text-xl"></i>
+        <div class="flex gap-6">
+            <button onclick="prevSlide()" id="prev-btn" class="group flex items-center justify-center w-20 h-20 rounded-[2rem] border-2 border-slate-800 bg-slate-900/90 text-white hover:bg-cyan-500 hover:text-slate-950 hover:border-cyan-400 transition-all shadow-2xl active:scale-90">
+                <i class="fa-solid fa-chevron-left text-2xl"></i>
             </button>
-            <button onclick="nextSlide()" id="next-btn" class="flex items-center justify-center gap-3 px-8 h-14 rounded-2xl bg-cyan-500 text-slate-950 hover:bg-cyan-400 transition-all font-black text-sm uppercase tracking-widest shadow-2xl">
-                <span>Siguiente</span>
-                <i class="fa-solid fa-chevron-right text-sm"></i>
+            <button onclick="nextSlide()" id="next-btn" class="flex items-center justify-center gap-6 px-12 h-20 rounded-[2rem] bg-cyan-500 text-slate-950 hover:bg-cyan-400 transition-all font-black text-lg uppercase tracking-widest shadow-2xl active:scale-95 group">
+                <span id="next-text">Siguiente</span>
+                <i class="fa-solid fa-chevron-right text-xl group-hover:translate-x-2 transition-transform"></i>
             </button>
         </div>
     </footer>
@@ -616,7 +631,7 @@
         const slideNumber = document.getElementById('slide-number');
         const slideTitleDisplay = document.getElementById('slide-title-display');
         const progressBar = document.getElementById('progress-bar');
-        const nextBtn = document.getElementById('next-btn');
+        const nextText = document.getElementById('next-text');
         let currentSlide = 0;
 
         function updateSlide() {
@@ -628,12 +643,16 @@
             const currentData = slides[currentSlide].getAttribute('data-title');
             slideNumber.innerText = currentSlide + 1;
             slideTitleDisplay.innerText = currentData;
-            progressBar.style.width = ((currentSlide + 1) / slides.length) * 100 + '%';
             
+            // Animación de barra de progreso
+            const progressPercentage = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = progressPercentage + '%';
+            
+            // Texto del botón final
             if (currentSlide === slides.length - 1) {
-                nextBtn.querySelector('span').innerText = "Finalizar";
+                nextText.innerText = "Finalizar";
             } else {
-                nextBtn.querySelector('span').innerText = "Siguiente";
+                nextText.innerText = "Siguiente";
             }
         }
 
@@ -651,12 +670,18 @@
             }
         }
 
+        // Navegación con teclado
         document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
-            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                e.preventDefault();
+                nextSlide();
+            }
+            if (e.key === 'ArrowLeft') {
+                e.preventDefault();
+                prevSlide();
+            }
         });
 
-        // Inicializar
         updateSlide();
     </script>
 </body>
