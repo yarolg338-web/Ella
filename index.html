@@ -1,433 +1,354 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dino Run</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Dino Sorpresa ❤️</title>
 
 <style>
-  * {
-    box-sizing: border-box;
-  }
+* {
+  box-sizing: border-box;
+}
 
-  body {
-    margin: 0;
-    min-height: 100vh;
-    background: linear-gradient(180deg, #eef3f8, #ffffff);
-    font-family: monospace;
-    color: #555;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+body {
+  margin: 0;
+  background: #f7f7f7;
+  font-family: Arial, sans-serif;
+  overflow: hidden;
+  text-align: center;
+}
 
-  .game-wrapper {
-    width: 95%;
-    max-width: 850px;
-    background: #f7f7f7;
-    border: 2px solid #ddd;
-    border-radius: 18px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-    padding: 18px;
-    position: relative;
-  }
+#game {
+  display: block;
+  margin: 40px auto 0;
+  background: #fff;
+  border: 3px solid #222;
+  border-radius: 14px;
+  width: 95%;
+  max-width: 900px;
+  height: auto;
+  touch-action: manipulation;
+}
 
-  canvas {
-    display: block;
-    width: 100%;
-    height: auto;
-    background: #f7f7f7;
-    touch-action: manipulation;
-  }
+#info {
+  margin-top: 10px;
+  font-size: 16px;
+  color: #333;
+}
 
-  .screen {
-    position: absolute;
-    inset: 18px;
-    background: rgba(247,247,247,0.94);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    z-index: 10;
-  }
+#final {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #fff0f6, #ffffff);
+  z-index: 10;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding: 24px;
+  animation: aparecer 1s ease;
+}
 
-  .hidden {
-    display: none;
-  }
+#final h1 {
+  font-size: 42px;
+  margin: 10px 0;
+}
 
-  .panel {
-    border: 2px solid #555;
-    border-radius: 14px;
-    padding: 24px;
-    max-width: 420px;
-    background: #f7f7f7;
-  }
+#final h2 {
+  font-size: 28px;
+  color: #d6336c;
+  margin: 10px 0;
+}
 
-  h1 {
-    margin: 0 0 10px;
-    font-size: 28px;
-  }
+#final p {
+  font-size: 20px;
+  max-width: 600px;
+}
 
-  p {
-    font-size: 15px;
-    line-height: 1.5;
-  }
+#final img {
+  margin-top: 18px;
+  max-width: 85%;
+  max-height: 45vh;
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(0,0,0,.25);
+}
 
-  button {
-    margin-top: 12px;
-    background: #555;
-    color: white;
-    border: none;
-    padding: 12px 22px;
-    border-radius: 8px;
-    font-family: monospace;
-    font-size: 15px;
-    cursor: pointer;
-  }
+#restart {
+  margin-top: 22px;
+  padding: 14px 22px;
+  border: none;
+  border-radius: 999px;
+  background: #d6336c;
+  color: white;
+  font-size: 17px;
+  cursor: pointer;
+}
 
-  #finalScreen img {
-    max-width: 90%;
-    max-height: 70vh;
-    border-radius: 12px;
-    margin-top: 15px;
-  }
+@keyframes aparecer {
+  from { opacity: 0; transform: scale(.95); }
+  to { opacity: 1; transform: scale(1); }
+}
 </style>
 </head>
 
 <body>
 
-<div class="game-wrapper">
+<canvas id="game" width="900" height="260"></canvas>
+<div id="info">Toca la pantalla o presiona ESPACIO / ↑ para saltar</div>
 
-  <canvas id="gameCanvas" width="800" height="300"></canvas>
+<div id="final">
+  <h1>💖 Sorpresa 💖</h1>
+  <p>Lo lograste… pero el verdadero premio era llegar hasta aquí.</p>
+  <h2>Te amo muchísimo ❤️</h2>
 
-  <div id="startScreen" class="screen">
-    <div class="panel">
-      <h1>DINO RUN</h1>
-      <p>Salta los cactus y llega al final.</p>
-      <p><b>Celular:</b> toca el juego para saltar.</p>
-      <p><b>Computadora:</b> presiona ESPACIO.</p>
-      <button onclick="startGame()">COMENZAR</button>
-    </div>
-  </div>
+  <!-- CAMBIA ESTA IMAGEN POR TU FOTO -->
+  <img src="sorpresa.jpg" alt="Imagen sorpresa">
 
-  <div id="gameOverScreen" class="screen hidden">
-    <div class="panel">
-      <h1>GAME OVER</h1>
-      <p>Inténtalo otra vez.</p>
-      <button onclick="restartGame()">REINTENTAR</button>
-    </div>
-  </div>
-
-  <div id="finalScreen" class="screen hidden">
-    <div class="panel">
-      <h1>DESBLOQUEADO</h1>
-      <p>Has llegado al final.</p>
-      <img src="assets/carta.jpg" alt="Carta">
-    </div>
-  </div>
-
+  <button id="restart">Jugar otra vez</button>
 </div>
 
 <script>
-const canvas = document.getElementById("gameCanvas");
+const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-const startScreen = document.getElementById("startScreen");
-const gameOverScreen = document.getElementById("gameOverScreen");
-const finalScreen = document.getElementById("finalScreen");
+let W = canvas.width;
+let H = canvas.height;
 
-let dino;
-let obstacles = [];
-let clouds = [];
+let groundY = 205;
 let score = 0;
+let bestScore = localStorage.getItem("bestScoreDinoLove") || 0;
 let speed = 6;
-let gravity = 1;
-let groundX = 0;
-let gameRunning = false;
-let started = false;
-let animationId = null;
+let gravity = 0.8;
+let gameRunning = true;
+let won = false;
+let frame = 0;
 
-let jumps = 0;
-const maxJumps = 20;
-let canJump = true;
+const WIN_SCORE = 15; // CAMBIA AQUÍ CUÁNTOS PUNTOS NECESITA PARA GANAR
 
-function resetGame() {
-  dino = {
-    x: 65,
-    y: 210,
-    width: 44,
-    height: 48,
-    velocityY: 0,
-    jumping: false
-  };
+const player = {
+  x: 70,
+  y: groundY - 45,
+  w: 42,
+  h: 45,
+  vy: 0,
+  jumping: false
+};
 
-  obstacles = [];
-  clouds = [];
-  score = 0;
-  speed = 6;
-  groundX = 0;
-  jumps = 0;
-  canJump = true;
+let obstacles = [];
+let clouds = [
+  {x: 160, y: 45, s: 1},
+  {x: 430, y: 65, s: .8},
+  {x: 700, y: 40, s: 1.1}
+];
 
-  gameRunning = true;
-  started = true;
+function drawGround() {
+  ctx.strokeStyle = "#444";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.moveTo(0, groundY);
+  ctx.lineTo(W, groundY);
+  ctx.stroke();
+
+  ctx.fillStyle = "#999";
+  for (let i = 0; i < 35; i++) {
+    let x = (i * 37 - frame * speed * 0.4) % W;
+    if (x < 0) x += W;
+    ctx.fillRect(x, groundY + 8 + (i % 3) * 4, 3, 2);
+  }
 }
 
-function startGame() {
-  resetGame();
-
-  startScreen.classList.add("hidden");
-  gameOverScreen.classList.add("hidden");
-  finalScreen.classList.add("hidden");
-
-  cancelAnimationFrame(animationId);
-  loop();
+function drawCloud(c) {
+  ctx.strokeStyle = "#bbb";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(c.x, c.y, 12 * c.s, Math.PI, 2 * Math.PI);
+  ctx.arc(c.x + 18 * c.s, c.y - 7 * c.s, 14 * c.s, Math.PI, 2 * Math.PI);
+  ctx.arc(c.x + 38 * c.s, c.y, 12 * c.s, Math.PI, 2 * Math.PI);
+  ctx.stroke();
 }
 
-function restartGame() {
-  startGame();
+function drawPlayer() {
+  ctx.fillStyle = "#222";
+
+  // cuerpo
+  ctx.fillRect(player.x, player.y + 12, 28, 25);
+
+  // cabeza
+  ctx.fillRect(player.x + 22, player.y, 25, 22);
+
+  // ojo
+  ctx.fillStyle = "#fff";
+  ctx.fillRect(player.x + 38, player.y + 6, 4, 4);
+  ctx.fillStyle = "#222";
+
+  // pierna animada
+  if (frame % 20 < 10) {
+    ctx.fillRect(player.x + 5, player.y + 36, 8, 14);
+    ctx.fillRect(player.x + 22, player.y + 36, 8, 10);
+  } else {
+    ctx.fillRect(player.x + 5, player.y + 36, 8, 10);
+    ctx.fillRect(player.x + 22, player.y + 36, 8, 14);
+  }
+
+  // cola
+  ctx.fillRect(player.x - 12, player.y + 25, 16, 8);
+}
+
+function createObstacle() {
+  const type = Math.random() < 0.5 ? "cactus" : "heart";
+  obstacles.push({
+    x: W + 30,
+    y: groundY - 38,
+    w: 24,
+    h: 38,
+    type: type,
+    passed: false
+  });
+}
+
+function drawObstacle(o) {
+  if (o.type === "heart") {
+    ctx.fillStyle = "#d6336c";
+    ctx.beginPath();
+    ctx.moveTo(o.x + 12, o.y + 32);
+    ctx.bezierCurveTo(o.x - 10, o.y + 14, o.x + 2, o.y - 4, o.x + 12, o.y + 8);
+    ctx.bezierCurveTo(o.x + 22, o.y - 4, o.x + 34, o.y + 14, o.x + 12, o.y + 32);
+    ctx.fill();
+  } else {
+    ctx.fillStyle = "#222";
+    ctx.fillRect(o.x + 8, o.y, 10, 38);
+    ctx.fillRect(o.x, o.y + 15, 10, 7);
+    ctx.fillRect(o.x + 17, o.y + 8, 10, 7);
+  }
+}
+
+function collision(a, b) {
+  return (
+    a.x < b.x + b.w &&
+    a.x + a.w > b.x &&
+    a.y < b.y + b.h &&
+    a.y + a.h > b.y
+  );
 }
 
 function jump() {
-  if (!gameRunning || !canJump || dino.jumping) return;
+  if (!player.jumping && gameRunning) {
+    player.vy = -15;
+    player.jumping = true;
+  }
 
-  dino.velocityY = -18;
-  dino.jumping = true;
-  canJump = false;
-
-  jumps++;
-
-  if (jumps >= maxJumps) {
-    winGame();
+  if (!gameRunning && !won) {
+    restartGame();
   }
 }
 
-document.addEventListener("keydown", function(e) {
-  if (e.code !== "Space") return;
-
-  e.preventDefault();
-
-  if (!started) {
-    startGame();
-  } else {
-    jump();
-  }
-});
-
-document.addEventListener("keyup", function(e) {
-  if (e.code === "Space") canJump = true;
-});
-
-canvas.addEventListener("pointerdown", function(e) {
-  e.preventDefault();
-
-  if (!started) {
-    startGame();
-  } else {
-    jump();
-  }
-});
-
-canvas.addEventListener("pointerup", function() {
-  canJump = true;
-});
-
-canvas.addEventListener("pointercancel", function() {
-  canJump = true;
-});
-
-function createObstacle() {
-  const type = Math.random();
-
-  let width;
-  let height;
-
-  if (type < 0.45) {
-    width = 18;
-    height = 40;
-  } else if (type < 0.8) {
-    width = 28;
-    height = 52;
-  } else {
-    width = 42;
-    height = 45;
-  }
-
-  obstacles.push({
-    x: canvas.width + 30,
-    y: 258 - height,
-    width,
-    height
-  });
-}
-
-function createCloud() {
-  clouds.push({
-    x: canvas.width + 30,
-    y: 55 + Math.random() * 50
-  });
-}
-
-function update() {
-  score++;
-  speed = 6 + score / 420;
-  groundX -= speed;
-
-  dino.y += dino.velocityY;
-  dino.velocityY += gravity;
-
-  if (dino.y >= 210) {
-    dino.y = 210;
-    dino.velocityY = 0;
-    dino.jumping = false;
-  }
-
-  if (score % Math.max(50, Math.floor(105 - speed * 5)) === 0) {
-    createObstacle();
-  }
-
-  if (score % 170 === 0) {
-    createCloud();
-  }
-
-  obstacles.forEach(ob => ob.x -= speed);
-  clouds.forEach(cloud => cloud.x -= speed * 0.3);
-
-  obstacles = obstacles.filter(ob => ob.x + ob.width > 0);
-  clouds = clouds.filter(cloud => cloud.x + 70 > 0);
-
-  for (let ob of obstacles) {
-    if (
-      dino.x < ob.x + ob.width &&
-      dino.x + dino.width > ob.x &&
-      dino.y < ob.y + ob.height &&
-      dino.y + dino.height > ob.y
-    ) {
-      loseGame();
-    }
-  }
-}
-
-function loseGame() {
+function showFinal() {
+  won = true;
   gameRunning = false;
-  gameOverScreen.classList.remove("hidden");
-  cancelAnimationFrame(animationId);
+  document.getElementById("final").style.display = "flex";
 }
 
-function winGame() {
+function gameOver() {
   gameRunning = false;
-  finalScreen.classList.remove("hidden");
-  cancelAnimationFrame(animationId);
+  ctx.fillStyle = "#222";
+  ctx.font = "28px Arial";
+  ctx.fillText("Perdiste 😅", W / 2 - 70, 100);
+  ctx.font = "18px Arial";
+  ctx.fillText("Toca o presiona ESPACIO para intentar otra vez", W / 2 - 180, 135);
 }
 
-function drawDino() {
-  ctx.fillStyle = "#555";
-
-  ctx.fillRect(dino.x + 8, dino.y + 12, 26, 28);
-  ctx.fillRect(dino.x + 26, dino.y, 18, 18);
-  ctx.fillRect(dino.x + 36, dino.y + 12, 12, 6);
-  ctx.fillRect(dino.x + 10, dino.y + 38, 8, 10);
-  ctx.fillRect(dino.x + 26, dino.y + 38, 8, 10);
-  ctx.fillRect(dino.x, dino.y + 24, 12, 8);
-
-  ctx.fillStyle = "#f7f7f7";
-  ctx.fillRect(dino.x + 36, dino.y + 5, 3, 3);
-}
-
-function drawCactus(ob) {
-  ctx.fillStyle = "#555";
-
-  ctx.fillRect(ob.x + ob.width / 2 - 4, ob.y, 8, ob.height);
-  ctx.fillRect(ob.x, ob.y + 14, 8, 22);
-  ctx.fillRect(ob.x + ob.width - 8, ob.y + 8, 8, 26);
-  ctx.fillRect(ob.x + 4, ob.y + 14, 10, 6);
-  ctx.fillRect(ob.x + ob.width - 14, ob.y + 8, 10, 6);
-}
-
-function drawGround() {
-  ctx.strokeStyle = "#555";
-  ctx.lineWidth = 2;
-
-  ctx.beginPath();
-  ctx.moveTo(0, 258);
-  ctx.lineTo(canvas.width, 258);
-  ctx.stroke();
-
-  ctx.fillStyle = "#555";
-
-  for (let i = 0; i < canvas.width; i += 38) {
-    let x = (i + groundX) % canvas.width;
-    if (x < 0) x += canvas.width;
-
-    ctx.fillRect(x, 268, 8, 2);
-    ctx.fillRect(x + 18, 274, 4, 2);
-  }
-}
-
-function drawClouds() {
-  ctx.strokeStyle = "#bbb";
-  ctx.lineWidth = 2;
-
-  clouds.forEach(cloud => {
-    ctx.beginPath();
-    ctx.moveTo(cloud.x, cloud.y + 12);
-    ctx.lineTo(cloud.x + 12, cloud.y + 12);
-    ctx.quadraticCurveTo(cloud.x + 18, cloud.y, cloud.x + 30, cloud.y + 8);
-    ctx.quadraticCurveTo(cloud.x + 42, cloud.y, cloud.x + 54, cloud.y + 12);
-    ctx.lineTo(cloud.x + 66, cloud.y + 12);
-    ctx.stroke();
-  });
-}
-
-function drawScore() {
-  ctx.fillStyle = "#555";
-  ctx.font = "20px monospace";
-
-  const hi = "HI 002005";
-  const puntos = ("00000" + score).slice(-5);
-
-  ctx.fillText("SALTOS " + jumps + "/20", 30, 35);
-  ctx.fillText(hi + "  " + puntos, 555, 35);
-}
-
-function drawStartScene() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  drawClouds();
-  drawGround();
-  drawDino();
-  drawScore();
-}
-
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-  drawClouds();
-  drawGround();
-  drawDino();
-  obstacles.forEach(drawCactus);
-  drawScore();
+function restartGame() {
+  score = 0;
+  speed = 6;
+  obstacles = [];
+  frame = 0;
+  won = false;
+  gameRunning = true;
+  player.y = groundY - player.h;
+  player.vy = 0;
+  player.jumping = false;
+  document.getElementById("final").style.display = "none";
+  requestAnimationFrame(loop);
 }
 
 function loop() {
   if (!gameRunning) return;
 
-  update();
-  draw();
+  frame++;
+  ctx.clearRect(0, 0, W, H);
 
-  animationId = requestAnimationFrame(loop);
+  clouds.forEach(c => {
+    c.x -= speed * 0.15;
+    if (c.x < -80) c.x = W + 80;
+    drawCloud(c);
+  });
+
+  drawGround();
+
+  player.vy += gravity;
+  player.y += player.vy;
+
+  if (player.y >= groundY - player.h) {
+    player.y = groundY - player.h;
+    player.vy = 0;
+    player.jumping = false;
+  }
+
+  if (frame % 90 === 0) createObstacle();
+
+  obstacles.forEach(o => {
+    o.x -= speed;
+    drawObstacle(o);
+
+    if (!o.passed && o.x + o.w < player.x) {
+      o.passed = true;
+      score++;
+      speed += 0.25;
+
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem("bestScoreDinoLove", bestScore);
+      }
+
+      if (score >= WIN_SCORE) {
+        showFinal();
+      }
+    }
+
+    if (collision(player, o)) {
+      gameOver();
+    }
+  });
+
+  obstacles = obstacles.filter(o => o.x > -60);
+
+  drawPlayer();
+
+  ctx.fillStyle = "#222";
+  ctx.font = "18px Arial";
+  ctx.fillText("Puntos: " + score, W - 140, 30);
+  ctx.fillText("Récord: " + bestScore, W - 140, 55);
+
+  requestAnimationFrame(loop);
 }
 
-dino = {
-  x: 65,
-  y: 210,
-  width: 44,
-  height: 48,
-  velocityY: 0,
-  jumping: false
-};
+document.addEventListener("keydown", e => {
+  if (e.code === "Space" || e.code === "ArrowUp") {
+    e.preventDefault();
+    jump();
+  }
+});
 
-drawStartScene();
+canvas.addEventListener("touchstart", e => {
+  e.preventDefault();
+  jump();
+});
+
+canvas.addEventListener("mousedown", jump);
+
+document.getElementById("restart").addEventListener("click", restartGame);
+
+loop();
 </script>
 
 </body>
