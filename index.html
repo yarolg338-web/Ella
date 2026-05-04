@@ -3,143 +3,83 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Juego Sorpresa</title>
+<title>Runner Challenge</title>
 
 <style>
 *{box-sizing:border-box}
-
 html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  font-family:Arial,sans-serif;
-  background:#111;
+  margin:0;width:100%;height:100%;overflow:hidden;
+  font-family:Arial,sans-serif;background:#111;
 }
-
-canvas{
-  display:block;
-  width:100vw;
-  height:100vh;
-  touch-action:none;
-}
+canvas{display:block;width:100vw;height:100vh;touch-action:none}
 
 .screen{
-  position:fixed;
-  inset:0;
-  z-index:10;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  text-align:center;
-  padding:25px;
-  color:white;
+  position:fixed;inset:0;z-index:10;
+  display:flex;justify-content:center;align-items:center;
+  flex-direction:column;text-align:center;padding:25px;color:white;
 }
-
-#inicio{
-  background:linear-gradient(135deg,#4f46e5,#06b6d4,#22c55e);
-}
-
-#inicio h1{
-  font-size:clamp(42px,8vw,80px);
-  margin:0 0 15px;
-}
-
-#inicio p{
-  font-size:20px;
-  max-width:650px;
-}
+#inicio{background:linear-gradient(135deg,#4f46e5,#06b6d4,#22c55e)}
+#inicio h1{font-size:clamp(38px,8vw,76px);margin:0 0 18px}
+#inicio p{font-size:21px;max-width:650px;line-height:1.4}
 
 button{
-  border:none;
-  cursor:pointer;
-  font-weight:bold;
+  border:none;cursor:pointer;font-weight:bold;
+  padding:17px 34px;border-radius:999px;font-size:22px;
+  background:#ffdd00;color:#111;box-shadow:0 10px 25px rgba(0,0,0,.3);
 }
+#gameOver{display:none;background:rgba(0,0,0,.88)}
+#final{display:none;background:linear-gradient(135deg,#111827,#1e293b)}
 
-#btnInicio{
-  margin-top:25px;
-  padding:18px 34px;
-  border-radius:999px;
-  font-size:22px;
-  background:#ffdd00;
-  color:#111;
-  box-shadow:0 10px 25px rgba(0,0,0,.3);
-}
-
-#final{
-  display:none;
-  background:linear-gradient(135deg,#111827,#1e293b);
-}
-
-#final h1{
-  font-size:clamp(30px,6vw,58px);
-  margin-bottom:10px;
-}
-
-#final p{
-  font-size:22px;
-  max-width:700px;
+.carta-wrap{
+  margin-top:30px;
+  width:280px;height:190px;position:relative;
+  display:flex;justify-content:center;align-items:center;
 }
 
 .sobre{
-  width:260px;
-  height:170px;
-  background:#facc15;
-  margin-top:25px;
-  position:relative;
-  border-radius:10px;
-  box-shadow:0 15px 35px rgba(0,0,0,.45);
-  animation:flotar 1.8s infinite ease-in-out;
+  width:280px;height:180px;position:relative;
+  background:#f8fafc;border-radius:14px;
+  box-shadow:0 18px 45px rgba(0,0,0,.45);
+  overflow:hidden;
+  border:3px solid #e2e8f0;
 }
 
-.sobre:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(135deg,transparent 49%,#eab308 50%);
-  clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%);
-  border-radius:10px;
+.sobre .solapa{
+  position:absolute;left:0;top:0;width:100%;height:100%;
+  background:#e2e8f0;
+  clip-path:polygon(0 0,50% 58%,100% 0);
 }
 
-.sobre:after{
-  content:"";
-  position:absolute;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  background:#fde047;
-  clip-path:polygon(0 0,50% 58%,100% 0,50% 45%);
-  border-radius:10px;
-  transform-origin:top;
+.sobre .lado-izq{
+  position:absolute;left:0;bottom:0;width:100%;height:100%;
+  background:#f1f5f9;
+  clip-path:polygon(0 0,50% 55%,0 100%);
+}
+
+.sobre .lado-der{
+  position:absolute;right:0;bottom:0;width:100%;height:100%;
+  background:#cbd5e1;
+  clip-path:polygon(100% 0,50% 55%,100% 100%);
+}
+
+.sobre .frente{
+  position:absolute;left:0;bottom:0;width:100%;height:100%;
+  background:#ffffff;
+  clip-path:polygon(0 100%,50% 45%,100% 100%);
 }
 
 #btnAbrir{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-35%);
-  z-index:3;
-  padding:13px 26px;
-  border-radius:999px;
-  font-size:20px;
-  background:white;
-  color:#111;
+  position:absolute;z-index:5;margin:0;
+  top:50%;left:50%;transform:translate(-50%,-50%);
+  background:#111827;color:white;font-size:20px;
+  padding:13px 30px;
 }
 
 #imagenFinal{
   display:none;
-  max-width:88vw;
-  max-height:65vh;
-  border-radius:22px;
-  margin-top:20px;
+  max-width:88vw;max-height:65vh;
+  border-radius:22px;margin-top:20px;
   box-shadow:0 0 35px rgba(255,255,255,.35);
-}
-
-@keyframes flotar{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-12px)}
 }
 </style>
 </head>
@@ -150,19 +90,34 @@ button{
 
 <div id="inicio" class="screen">
   <h1>RUNNER CHALLENGE</h1>
-  <p>Salta los obstáculos tocando la pantalla o presionando espacio. Completa los 20 obstáculos para desbloquear la sorpresa.</p>
+  <p>
+    Toca la pantalla o presiona espacio para saltar.
+    Evita los obstáculos y completa el recorrido para pasar de nivel.
+  </p>
   <button id="btnInicio">Comenzar ahora</button>
+</div>
+
+<div id="gameOver" class="screen">
+  <h1>GAME OVER</h1>
+  <p>Chocaste con un obstáculo.</p>
+  <button id="btnReintentar">Intentar de nuevo</button>
 </div>
 
 <div id="final" class="screen">
   <h1>¡Felicidades!</h1>
   <p>Tienes esta carta. Ábrela.</p>
 
-  <div class="sobre" id="sobre">
+  <div class="carta-wrap" id="cartaWrap">
+    <div class="sobre">
+      <div class="solapa"></div>
+      <div class="lado-izq"></div>
+      <div class="lado-der"></div>
+      <div class="frente"></div>
+    </div>
     <button id="btnAbrir">Abrir</button>
   </div>
 
-  <img id="imagenFinal" src="sorpresa.jpg" alt="Carta sorpresa">
+  <img id="imagenFinal" src="sorpresa.jpg" alt="Carta">
 </div>
 
 <script>
@@ -170,67 +125,75 @@ const canvas=document.getElementById("game");
 const ctx=canvas.getContext("2d");
 
 let W,H,suelo;
+let frame,velocidad,gravedad,completados,jugando,perdio,gano;
+let obstaculos=[];
+
+const META=20;
+
+const jugador={
+  x:120,y:0,
+  ancho:36,alto:68,
+  vy:0,saltando:false
+};
 
 function resize(){
   W=canvas.width=innerWidth;
   H=canvas.height=innerHeight;
-  suelo=H*0.78;
+  suelo=H*0.74;
 }
 resize();
 addEventListener("resize",resize);
 
-let frame=0;
-let velocidad=9;
-let gravedad=1.05;
-let completados=0;
-let jugando=false;
-let terminado=false;
+function resetear(){
+  frame=0;
+  velocidad=10.2;
+  gravedad=1.08;
+  completados=0;
+  jugando=false;
+  perdio=false;
+  gano=false;
+  obstaculos=[];
+  jugador.y=suelo-jugador.alto;
+  jugador.vy=0;
+  jugador.saltando=false;
+}
 
-const jugador={
-  x:100,
-  y:0,
-  ancho:46,
-  alto:86,
-  vy:0,
-  saltando:false
-};
-
-jugador.y=suelo-jugador.alto;
-
-let obstaculos=[];
+resetear();
 
 function iniciar(){
+  resetear();
   document.getElementById("inicio").style.display="none";
+  document.getElementById("gameOver").style.display="none";
+  document.getElementById("final").style.display="none";
+  document.getElementById("cartaWrap").style.display="flex";
+  document.getElementById("imagenFinal").style.display="none";
   jugando=true;
   loop();
 }
 
-document.getElementById("btnInicio").addEventListener("click",iniciar);
+document.getElementById("btnInicio").onclick=iniciar;
+document.getElementById("btnReintentar").onclick=iniciar;
 
 function saltar(e){
   if(e)e.preventDefault();
-  if(!jugando||terminado)return;
-
+  if(!jugando||perdio||gano)return;
   if(!jugador.saltando){
-    jugador.vy=-21;
+    jugador.vy=-19.5;
     jugador.saltando=true;
   }
 }
 
 addEventListener("pointerdown",saltar,{passive:false});
-
 addEventListener("keydown",e=>{
-  if(e.code==="Space"||e.code==="ArrowUp"){
-    saltar(e);
-  }
+  if(e.code==="Space"||e.code==="ArrowUp")saltar(e);
 });
 
 function crearObstaculo(){
-  const alto=50+Math.random()*35;
+  const alto=42+Math.random()*22;
   obstaculos.push({
     x:W+80,
     y:suelo-alto,
-    ancho:38+Math.random()*18,
+    ancho:34+Math.random()*10,
     alto:alto,
     pasado:false,
     color:["#ef4444","#f97316","#8b5cf6","#06b6d4"][Math.floor(Math.random()*4)]
@@ -245,110 +208,110 @@ function fondo(){
   ctx.fillStyle=g;
   ctx.fillRect(0,0,W,H);
 
-  ctx.fillStyle="rgba(255,255,255,.8)";
-  for(let i=0;i<6;i++){
-    let x=(i*230-frame*1.1)%(W+250)-120;
-    let y=70+(i%3)*55;
+  ctx.fillStyle="rgba(255,255,255,.85)";
+  for(let i=0;i<5;i++){
+    const x=(i*260-frame*0.8)%(W+300)-150;
+    const y=70+(i%3)*50;
     nube(x,y);
   }
 
   ctx.fillStyle="#16a34a";
   ctx.fillRect(0,suelo,W,H-suelo);
-
   ctx.fillStyle="#15803d";
-  ctx.fillRect(0,suelo,W,10);
+  ctx.fillRect(0,suelo,W,8);
 }
 
 function nube(x,y){
   ctx.beginPath();
-  ctx.arc(x,y,25,0,Math.PI*2);
-  ctx.arc(x+30,y-12,33,0,Math.PI*2);
-  ctx.arc(x+65,y,25,0,Math.PI*2);
+  ctx.arc(x,y,20,0,Math.PI*2);
+  ctx.arc(x+25,y-10,28,0,Math.PI*2);
+  ctx.arc(x+55,y,20,0,Math.PI*2);
   ctx.fill();
 }
 
 function muneco(){
-  const x=jugador.x;
-  const y=jugador.y;
+  const x=jugador.x,y=jugador.y;
 
   ctx.fillStyle="#facc15";
   ctx.beginPath();
-  ctx.arc(x+23,y+18,17,0,Math.PI*2);
+  ctx.arc(x+18,y+14,13,0,Math.PI*2);
   ctx.fill();
 
   ctx.fillStyle="#111";
   ctx.beginPath();
-  ctx.arc(x+23,y+9,18,Math.PI,Math.PI*2);
+  ctx.arc(x+18,y+7,14,Math.PI,Math.PI*2);
   ctx.fill();
 
   ctx.fillStyle="#2563eb";
-  ctx.fillRect(x+8,y+36,30,34);
+  ctx.fillRect(x+7,y+28,23,27);
 
   ctx.strokeStyle="#facc15";
-  ctx.lineWidth=7;
+  ctx.lineWidth=5;
   ctx.lineCap="round";
   ctx.beginPath();
 
-  if(frame%16<8){
-    ctx.moveTo(x+10,y+43); ctx.lineTo(x-8,y+58);
-    ctx.moveTo(x+36,y+43); ctx.lineTo(x+54,y+55);
+  if(frame%14<7){
+    ctx.moveTo(x+8,y+34);ctx.lineTo(x-6,y+46);
+    ctx.moveTo(x+29,y+34);ctx.lineTo(x+42,y+44);
   }else{
-    ctx.moveTo(x+10,y+43); ctx.lineTo(x-7,y+50);
-    ctx.moveTo(x+36,y+43); ctx.lineTo(x+53,y+63);
+    ctx.moveTo(x+8,y+34);ctx.lineTo(x-5,y+40);
+    ctx.moveTo(x+29,y+34);ctx.lineTo(x+42,y+50);
   }
   ctx.stroke();
 
   ctx.strokeStyle="#111";
-  ctx.lineWidth=8;
+  ctx.lineWidth=6;
   ctx.beginPath();
 
   if(jugador.saltando){
-    ctx.moveTo(x+16,y+69); ctx.lineTo(x+4,y+85);
-    ctx.moveTo(x+31,y+69); ctx.lineTo(x+45,y+85);
-  }else if(frame%16<8){
-    ctx.moveTo(x+16,y+69); ctx.lineTo(x+4,y+88);
-    ctx.moveTo(x+31,y+69); ctx.lineTo(x+47,y+82);
+    ctx.moveTo(x+13,y+55);ctx.lineTo(x+4,y+68);
+    ctx.moveTo(x+25,y+55);ctx.lineTo(x+35,y+68);
+  }else if(frame%14<7){
+    ctx.moveTo(x+13,y+55);ctx.lineTo(x+3,y+70);
+    ctx.moveTo(x+25,y+55);ctx.lineTo(x+38,y+66);
   }else{
-    ctx.moveTo(x+16,y+69); ctx.lineTo(x,y+80);
-    ctx.moveTo(x+31,y+69); ctx.lineTo(x+42,y+88);
+    ctx.moveTo(x+13,y+55);ctx.lineTo(x,y+65);
+    ctx.moveTo(x+25,y+55);ctx.lineTo(x+34,y+70);
   }
   ctx.stroke();
 
   ctx.fillStyle="#000";
   ctx.beginPath();
-  ctx.arc(x+31,y+18,3,0,Math.PI*2);
+  ctx.arc(x+25,y+14,2.5,0,Math.PI*2);
   ctx.fill();
 }
 
-function obstaculo(o){
+function dibujarObstaculo(o){
   ctx.fillStyle=o.color;
   ctx.fillRect(o.x,o.y,o.ancho,o.alto);
-
   ctx.fillStyle="rgba(255,255,255,.35)";
-  ctx.fillRect(o.x+6,o.y+6,o.ancho-12,8);
+  ctx.fillRect(o.x+5,o.y+5,o.ancho-10,7);
 }
 
 function colision(a,b){
+  const m=5;
   return(
-    a.x<b.x+b.ancho &&
-    a.x+a.ancho>b.x &&
-    a.y<b.y+b.alto &&
-    a.y+a.alto>b.y
+    a.x+m<b.x+b.ancho &&
+    a.x+a.ancho-m>b.x &&
+    a.y+m<b.y+b.alto &&
+    a.y+a.alto-m>b.y
   );
 }
 
 function perder(){
-  location.reload();
+  perdio=true;
+  jugando=false;
+  document.getElementById("gameOver").style.display="flex";
 }
 
 function ganar(){
-  terminado=true;
+  gano=true;
   jugando=false;
   document.getElementById("final").style.display="flex";
 }
 
 function loop(){
-  if(!jugando||terminado)return;
+  if(!jugando||perdio||gano)return;
 
   frame++;
   fondo();
@@ -362,34 +325,34 @@ function loop(){
     jugador.saltando=false;
   }
 
-  if(frame%78===0){
-    crearObstaculo();
-  }
+  if(frame%68===0)crearObstaculo();
 
-  obstaculos.forEach(o=>{
+  for(let i=0;i<obstaculos.length;i++){
+    const o=obstaculos[i];
     o.x-=velocidad;
-    obstaculo(o);
+    dibujarObstaculo(o);
+
+    if(colision(jugador,o)){
+      perder();
+      return;
+    }
 
     if(!o.pasado&&o.x+o.ancho<jugador.x){
       o.pasado=true;
       completados++;
-      velocidad+=0.18;
+      velocidad+=0.16;
     }
-
-    if(colision(jugador,o)){
-      perder();
-    }
-  });
+  }
 
   obstaculos=obstaculos.filter(o=>o.x>-100);
 
   muneco();
 
   ctx.fillStyle="#111";
-  ctx.font="bold 25px Arial";
-  ctx.fillText("Obstáculos: "+completados+" / 20",25,42);
+  ctx.font="bold 22px Arial";
+  ctx.fillText("Nivel: "+completados+" / "+META,25,42);
 
-  if(completados>=20){
+  if(completados>=META){
     ganar();
     return;
   }
@@ -397,10 +360,10 @@ function loop(){
   requestAnimationFrame(loop);
 }
 
-document.getElementById("btnAbrir").addEventListener("click",()=>{
-  document.getElementById("sobre").style.display="none";
+document.getElementById("btnAbrir").onclick=()=>{
+  document.getElementById("cartaWrap").style.display="none";
   document.getElementById("imagenFinal").style.display="block";
-});
+};
 </script>
 
 </body>
