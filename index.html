@@ -18,6 +18,7 @@ canvas{display:block;width:100vw;height:100vh;touch-action:none}
   display:flex;justify-content:center;align-items:center;
   flex-direction:column;text-align:center;padding:25px;color:white;
 }
+
 #inicio{background:linear-gradient(135deg,#4f46e5,#06b6d4,#22c55e)}
 #inicio h1{font-size:clamp(38px,8vw,76px);margin:0 0 18px}
 #inicio p{font-size:21px;max-width:650px;line-height:1.4}
@@ -27,58 +28,98 @@ button{
   padding:17px 34px;border-radius:999px;font-size:22px;
   background:#ffdd00;color:#111;box-shadow:0 10px 25px rgba(0,0,0,.3);
 }
+
 #gameOver{display:none;background:rgba(0,0,0,.88)}
 #final{display:none;background:linear-gradient(135deg,#111827,#1e293b)}
 
 .carta-wrap{
-  margin-top:30px;
-  width:280px;height:190px;position:relative;
-  display:flex;justify-content:center;align-items:center;
+  margin-top:25px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:22px;
 }
 
 .sobre{
-  width:280px;height:180px;position:relative;
-  background:#f8fafc;border-radius:14px;
-  box-shadow:0 18px 45px rgba(0,0,0,.45);
+  width:300px;
+  height:200px;
+  position:relative;
+  background:#fff3c4;
+  border:4px solid #b88922;
+  border-radius:14px;
   overflow:hidden;
-  border:3px solid #e2e8f0;
+  box-shadow:0 18px 45px rgba(0,0,0,.45);
+}
+
+.sobre::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(35deg, transparent 49%, #b88922 50%, transparent 51%),
+    linear-gradient(-35deg, transparent 49%, #b88922 50%, transparent 51%);
+  z-index:3;
 }
 
 .sobre .solapa{
-  position:absolute;left:0;top:0;width:100%;height:100%;
-  background:#e2e8f0;
-  clip-path:polygon(0 0,50% 58%,100% 0);
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:110px;
+  background:#ffe08a;
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  border-bottom:3px solid #b88922;
+  z-index:4;
 }
 
 .sobre .lado-izq{
-  position:absolute;left:0;bottom:0;width:100%;height:100%;
-  background:#f1f5f9;
-  clip-path:polygon(0 0,50% 55%,0 100%);
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:55%;
+  height:100%;
+  background:#ffe9a8;
+  clip-path:polygon(0 0,100% 50%,0 100%);
+  z-index:2;
 }
 
 .sobre .lado-der{
-  position:absolute;right:0;bottom:0;width:100%;height:100%;
-  background:#cbd5e1;
-  clip-path:polygon(100% 0,50% 55%,100% 100%);
+  position:absolute;
+  right:0;
+  bottom:0;
+  width:55%;
+  height:100%;
+  background:#ffd970;
+  clip-path:polygon(100% 0,0 50%,100% 100%);
+  z-index:2;
 }
 
 .sobre .frente{
-  position:absolute;left:0;bottom:0;width:100%;height:100%;
-  background:#ffffff;
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:100%;
+  height:100%;
+  background:#fff8df;
   clip-path:polygon(0 100%,50% 45%,100% 100%);
+  z-index:5;
 }
 
 #btnAbrir{
-  position:absolute;z-index:5;margin:0;
-  top:50%;left:50%;transform:translate(-50%,-50%);
-  background:#111827;color:white;font-size:20px;
-  padding:13px 30px;
+  position:static;
+  transform:none;
+  margin:0;
+  background:#ffdd00;
+  color:#111;
 }
 
 #imagenFinal{
   display:none;
-  max-width:88vw;max-height:65vh;
-  border-radius:22px;margin-top:20px;
+  max-width:88vw;
+  max-height:70vh;
+  border-radius:22px;
+  margin-top:20px;
   box-shadow:0 0 35px rgba(255,255,255,.35);
 }
 </style>
@@ -92,14 +133,14 @@ button{
   <h1>RUNNER CHALLENGE</h1>
   <p>
     Toca la pantalla o presiona espacio para saltar.
-    Evita los obstáculos y completa el recorrido para pasar de nivel.
+    Evita los obstáculos, recoge monedas y completa el recorrido para pasar de nivel.
   </p>
   <button id="btnInicio">Comenzar ahora</button>
 </div>
 
 <div id="gameOver" class="screen">
   <h1>GAME OVER</h1>
-  <p>Chocaste con un obstáculo.</p>
+  <p>No tienes monedas para revivir.</p>
   <button id="btnReintentar">Intentar de nuevo</button>
 </div>
 
@@ -117,7 +158,7 @@ button{
     <button id="btnAbrir">Abrir</button>
   </div>
 
-  <img id="imagenFinal" src="sorpresa.jpg" alt="Carta">
+  <img id="imagenFinal" src="carta.jpg" alt="Carta">
 </div>
 
 <script>
@@ -127,6 +168,9 @@ const ctx=canvas.getContext("2d");
 let W,H,suelo;
 let frame,velocidad,gravedad,completados,jugando,perdio,gano;
 let obstaculos=[];
+let monedas=[];
+let monedasJugador=0;
+let invencible=0;
 
 const META=20;
 
@@ -146,13 +190,16 @@ addEventListener("resize",resize);
 
 function resetear(){
   frame=0;
-  velocidad=10.2;
-  gravedad=1.08;
+  velocidad=10.8;
+  gravedad=1.1;
   completados=0;
+  monedasJugador=0;
+  invencible=0;
   jugando=false;
   perdio=false;
   gano=false;
   obstaculos=[];
+  monedas=[];
   jugador.y=suelo-jugador.alto;
   jugador.vy=0;
   jugador.saltando=false;
@@ -178,7 +225,7 @@ function saltar(e){
   if(e)e.preventDefault();
   if(!jugando||perdio||gano)return;
   if(!jugador.saltando){
-    jugador.vy=-19.5;
+    jugador.vy=-19.2;
     jugador.saltando=true;
   }
 }
@@ -189,14 +236,23 @@ addEventListener("keydown",e=>{
 });
 
 function crearObstaculo(){
-  const alto=42+Math.random()*22;
+  const alto=45+Math.random()*24;
   obstaculos.push({
     x:W+80,
     y:suelo-alto,
-    ancho:34+Math.random()*10,
+    ancho:36+Math.random()*12,
     alto:alto,
     pasado:false,
     color:["#ef4444","#f97316","#8b5cf6","#06b6d4"][Math.floor(Math.random()*4)]
+  });
+}
+
+function crearMoneda(){
+  monedas.push({
+    x:W+80,
+    y:suelo-105-Math.random()*70,
+    r:12,
+    tomada:false
   });
 }
 
@@ -231,6 +287,9 @@ function nube(x,y){
 
 function muneco(){
   const x=jugador.x,y=jugador.y;
+
+  ctx.save();
+  if(invencible>0) ctx.globalAlpha = frame%10<5 ? .45 : 1;
 
   ctx.fillStyle="#facc15";
   ctx.beginPath();
@@ -279,6 +338,8 @@ function muneco(){
   ctx.beginPath();
   ctx.arc(x+25,y+14,2.5,0,Math.PI*2);
   ctx.fill();
+
+  ctx.restore();
 }
 
 function dibujarObstaculo(o){
@@ -288,7 +349,20 @@ function dibujarObstaculo(o){
   ctx.fillRect(o.x+5,o.y+5,o.ancho-10,7);
 }
 
-function colision(a,b){
+function dibujarMoneda(m){
+  ctx.fillStyle="#facc15";
+  ctx.beginPath();
+  ctx.arc(m.x,m.y,m.r,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle="#fff";
+  ctx.font="bold 14px Arial";
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.fillText("$",m.x,m.y+1);
+}
+
+function colisionRect(a,b){
   const m=5;
   return(
     a.x+m<b.x+b.ancho &&
@@ -298,7 +372,30 @@ function colision(a,b){
   );
 }
 
+function colisionMoneda(a,m){
+  return(
+    a.x < m.x + m.r &&
+    a.x + a.ancho > m.x - m.r &&
+    a.y < m.y + m.r &&
+    a.y + a.alto > m.y - m.r
+  );
+}
+
+function revivir(){
+  monedasJugador--;
+  invencible=120;
+  obstaculos = obstaculos.filter(o => o.x < jugador.x - 80 || o.x > jugador.x + 180);
+  jugador.y=suelo-jugador.alto;
+  jugador.vy=0;
+  jugador.saltando=false;
+}
+
 function perder(){
+  if(monedasJugador>0){
+    revivir();
+    return;
+  }
+
   perdio=true;
   jugando=false;
   document.getElementById("gameOver").style.display="flex";
@@ -314,6 +411,8 @@ function loop(){
   if(!jugando||perdio||gano)return;
 
   frame++;
+  if(invencible>0) invencible--;
+
   fondo();
 
   jugador.vy+=gravedad;
@@ -325,14 +424,28 @@ function loop(){
     jugador.saltando=false;
   }
 
-  if(frame%68===0)crearObstaculo();
+  if(frame%60===0)crearObstaculo();
+  if(frame%95===0)crearMoneda();
+
+  for(let i=0;i<monedas.length;i++){
+    const m=monedas[i];
+    m.x-=velocidad;
+    dibujarMoneda(m);
+
+    if(!m.tomada && colisionMoneda(jugador,m)){
+      m.tomada=true;
+      monedasJugador++;
+    }
+  }
+
+  monedas=monedas.filter(m=>m.x>-50 && !m.tomada);
 
   for(let i=0;i<obstaculos.length;i++){
     const o=obstaculos[i];
     o.x-=velocidad;
     dibujarObstaculo(o);
 
-    if(colision(jugador,o)){
+    if(invencible<=0 && colisionRect(jugador,o)){
       perder();
       return;
     }
@@ -340,7 +453,7 @@ function loop(){
     if(!o.pasado&&o.x+o.ancho<jugador.x){
       o.pasado=true;
       completados++;
-      velocidad+=0.16;
+      velocidad+=0.18;
     }
   }
 
@@ -350,7 +463,9 @@ function loop(){
 
   ctx.fillStyle="#111";
   ctx.font="bold 22px Arial";
+  ctx.textAlign="left";
   ctx.fillText("Nivel: "+completados+" / "+META,25,42);
+  ctx.fillText("Monedas: "+monedasJugador,25,72);
 
   if(completados>=META){
     ganar();
