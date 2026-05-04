@@ -39,8 +39,18 @@ html, body {
 }
 
 #finalScreen {
+  position: fixed;
+  inset: 0;
   display: none;
-  background: radial-gradient(circle at top, #00e5ff, #111428 70%);
+  justify-content: center;
+  align-items: center;
+  background: black;
+}
+
+#finalScreen img {
+  width: 100vw;
+  height: 100vh;
+  object-fit: cover;
 }
 
 h1 {
@@ -97,15 +107,7 @@ button {
 </div>
 
 <div id="finalScreen">
-  <h1>¡Excelente!</h1>
-  <p>Acabas de desbloquear un próximo nivel.</p>
-  <p>Abre la carta y mira las nuevas indicaciones.</p>
-
-  <button id="openCardBtn">Abrir carta</button>
-
-  <div id="cardBox">
-    <img src="carta.jpg" alt="Carta futurista">
-  </div>
+  <img src="carta.jpg">
 </div>
 
 <script>
