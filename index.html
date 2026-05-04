@@ -2,14 +2,16 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Neon Runner</title>
 
 <style>
 * { box-sizing: border-box; }
 
-body {
+html, body {
   margin: 0;
+  width: 100%;
+  height: 100%;
   overflow: hidden;
   font-family: Arial, sans-serif;
   background: #080818;
@@ -23,7 +25,6 @@ body {
   touch-action: none;
 }
 
-/* Pantallas */
 #startScreen, #finalScreen {
   position: fixed;
   inset: 0;
@@ -43,33 +44,32 @@ body {
 }
 
 h1 {
-  font-size: clamp(40px, 8vw, 80px);
+  font-size: clamp(38px, 8vw, 82px);
+  margin: 0;
   text-shadow: 0 0 20px #00e5ff;
 }
 
 p {
-  font-size: clamp(18px, 3vw, 24px);
-  max-width: 600px;
+  font-size: clamp(17px, 3vw, 24px);
+  max-width: 650px;
 }
 
-/* Botón */
 button {
-  margin-top: 20px;
-  padding: 15px 30px;
+  margin-top: 18px;
+  padding: 15px 28px;
   border: none;
   border-radius: 999px;
-  font-size: 18px;
-  cursor: pointer;
   background: linear-gradient(90deg, #ffcc00, #ff3d81, #00e5ff);
   color: #111;
+  font-size: 19px;
   font-weight: bold;
-  box-shadow: 0 0 25px rgba(0,229,255,.7);
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(0,229,255,.6);
 }
 
-/* Carta futurista */
 #cardBox {
   display: none;
-  margin-top: 20px;
+  margin-top: 18px;
 }
 
 #cardBox img {
@@ -91,9 +91,9 @@ button {
 
 <div id="startScreen">
   <h1>NEON RUNNER</h1>
-  <p>Esquiva obstáculos y recolecta monedas.</p>
-  <p>Toca la pantalla o presiona ESPACIO</p>
-  <button onclick="startGame()">Iniciar</button>
+  <p>Salta los obstáculos, recoge monedas y llega al final para desbloquear el próximo nivel.</p>
+  <p>PC: ESPACIO / ↑ | Celular: toca la pantalla</p>
+  <button id="startBtn">Iniciar juego</button>
 </div>
 
 <div id="finalScreen">
@@ -104,7 +104,7 @@ button {
   <button id="openCardBtn">Abrir carta</button>
 
   <div id="cardBox">
-    <img src="carta.jpg">
+    <img src="carta.jpg" alt="Carta futurista">
   </div>
 </div>
 
@@ -112,130 +112,468 @@ button {
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-let W = canvas.width = window.innerWidth;
-let H = canvas.height = window.innerHeight;
-let ground = H * 0.8;
+let W, H, groundY;
 
-let running = false;
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  groundY = H * 0.78;
+}
+resize();
+window.addEventListener("resize", resize);
+
+let gameStarted = false;
+let gameOver = false;
+let won = false;
+
 let score = 0;
-let coins = 0;
+let coinsCount = 0;
 let speed = 7;
+let frame = 0;
 
-const player = {x:80,y:ground-50,w:40,h:50,vy:0,jump:false};
+const WIN_SCORE = 25;
+
+const player = {
+  x: 90,
+  y: 0,
+  w: 48,
+  h: 58,
+  vy: 0,
+  jumping: false
+};
+
+player.y = groundY - player.h;
+
 let obstacles = [];
-let items = [];
+let coins = [];
+let particles = [];
 
-function startGame(){
-  document.getElementById("startScreen").style.display="none";
-  running = true;
+const colors = {
+  cyan: "#00e5ff",
+  pink: "#ff3d81",
+  yellow: "#ffcc00",
+  purple: "#8b5cf6",
+  green: "#00ff99"
+};
+
+function rand(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function startGame() {
+  document.getElementById("startScreen").style.display = "none";
+  gameStarted = true;
   loop();
 }
 
-function jump(){
-  if(!player.jump){
-    player.vy = -15;
-    player.jump = true;
+document.getElementById("startBtn").addEventListener("click", startGame);
+
+document.getElementById("openCardBtn").addEventListener("click", () => {
+  document.getElementById("cardBox").style.display = "block";
+  document.getElementById("openCardBtn").style.display = "none";
+});
+
+function jump(e) {
+  if (e) e.preventDefault();
+
+  if (!gameStarted) {
+    startGame();
+    return;
+  }
+
+  if (gameOver && !won) {
+    restart();
+    return;
+  }
+
+  if (!player.jumping && !gameOver) {
+    player.vy = -18;
+    player.jumping = true;
+    createParticles(player.x + 20, player.y + player.h, colors.cyan, 12);
   }
 }
 
-window.addEventListener("pointerdown", jump);
-window.addEventListener("keydown", e=>{
-  if(e.code==="Space") jump();
+window.addEventListener("pointerdown", jump, { passive: false });
+
+window.addEventListener("keydown", e => {
+  if (e.code === "Space" || e.code === "ArrowUp") {
+    e.preventDefault();
+    jump(e);
+  }
 });
 
-function loop(){
-  if(!running) return;
+function createObstacle() {
+  const type = Math.random() < 0.5 ? "block" : "spike";
 
-  ctx.clearRect(0,0,W,H);
+  obstacles.push({
+    x: W + 80,
+    y: groundY - 50,
+    w: type === "block" ? 44 : 54,
+    h: type === "block" ? 50 : 45,
+    type,
+    color: Math.random() < 0.5 ? colors.pink : colors.purple,
+    passed: false
+  });
+}
 
-  // gravedad
-  player.vy += 0.8;
-  player.y += player.vy;
+function createCoin() {
+  coins.push({
+    x: W + 80,
+    y: groundY - rand(110, 180),
+    r: 13,
+    taken: false,
+    angle: 0
+  });
+}
 
-  if(player.y >= ground-player.h){
-    player.y = ground-player.h;
-    player.vy = 0;
-    player.jump = false;
+function createParticles(x, y, color, amount) {
+  for (let i = 0; i < amount; i++) {
+    particles.push({
+      x,
+      y,
+      vx: rand(-4, 4),
+      vy: rand(-5, 2),
+      life: 35,
+      color
+    });
+  }
+}
+
+function drawBackground() {
+  const gradient = ctx.createLinearGradient(0, 0, 0, H);
+  gradient.addColorStop(0, "#121242");
+  gradient.addColorStop(0.55, "#18182f");
+  gradient.addColorStop(1, "#050511");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, W, H);
+
+  for (let i = 0; i < 70; i++) {
+    const x = (i * 97 + frame * 0.25) % W;
+    const y = (i * 53) % (H * 0.55);
+    ctx.fillStyle = i % 3 === 0 ? colors.cyan : "#ffffff";
+    ctx.globalAlpha = 0.25;
+    ctx.fillRect(x, y, 2, 2);
   }
 
-  // generar obstáculos
-  if(Math.random()<0.02){
-    obstacles.push({x:W,y:ground-40,w:30,h:40});
-  }
+  ctx.globalAlpha = 1;
+  drawCity();
+}
 
-  // generar monedas
-  if(Math.random()<0.015){
-    items.push({x:W,y:ground-100,r:10});
-  }
+function drawCity() {
+  for (let i = 0; i < 18; i++) {
+    const bw = 70;
+    const bh = 90 + (i % 5) * 28;
+    const x = ((i * 95) - frame * 1.4) % (W + 120) - 80;
+    const y = groundY - bh;
 
-  // dibujar suelo
-  ctx.strokeStyle="#00e5ff";
-  ctx.beginPath();
-  ctx.moveTo(0,ground);
-  ctx.lineTo(W,ground);
-  ctx.stroke();
+    ctx.fillStyle = "#11172f";
+    ctx.fillRect(x, y, bw, bh);
 
-  // jugador
-  ctx.fillStyle="#fff";
-  ctx.fillRect(player.x,player.y,player.w,player.h);
+    ctx.fillStyle = i % 2 === 0 ? colors.cyan : colors.pink;
+    ctx.globalAlpha = 0.75;
 
-  // obstáculos
-  obstacles.forEach(o=>{
-    o.x -= speed;
-    ctx.fillStyle="#ff3d81";
-    ctx.fillRect(o.x,o.y,o.w,o.h);
-
-    if(collide(player,o)){
-      if(coins>0){
-        coins--;
-        obstacles=[];
-      }else{
-        running=false;
+    for (let wx = x + 12; wx < x + bw - 10; wx += 22) {
+      for (let wy = y + 18; wy < groundY - 12; wy += 26) {
+        ctx.fillRect(wx, wy, 7, 10);
       }
     }
-  });
 
-  // monedas
-  items.forEach(c=>{
-    c.x -= speed;
-    ctx.fillStyle="#ffcc00";
+    ctx.globalAlpha = 1;
+  }
+}
+
+function drawGround() {
+  ctx.fillStyle = "#0d1028";
+  ctx.fillRect(0, groundY, W, H - groundY);
+
+  ctx.strokeStyle = colors.cyan;
+  ctx.lineWidth = 4;
+  ctx.shadowColor = colors.cyan;
+  ctx.shadowBlur = 18;
+
+  ctx.beginPath();
+  ctx.moveTo(0, groundY);
+  ctx.lineTo(W, groundY);
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+
+  for (let i = 0; i < 40; i++) {
+    const x = ((i * 80) - frame * speed) % W;
+    ctx.strokeStyle = i % 2 === 0 ? colors.pink : colors.yellow;
+    ctx.globalAlpha = 0.45;
     ctx.beginPath();
-    ctx.arc(c.x,c.y,c.r,0,Math.PI*2);
+    ctx.moveTo(x, groundY + 25);
+    ctx.lineTo(x + 35, groundY + 25);
+    ctx.stroke();
+  }
+
+  ctx.globalAlpha = 1;
+}
+
+function drawPlayer() {
+  const x = player.x;
+  const y = player.y;
+
+  ctx.save();
+  ctx.shadowColor = colors.cyan;
+  ctx.shadowBlur = 20;
+
+  ctx.fillStyle = "#ffffff";
+  roundRect(x, y + 8, player.w, player.h - 8, 12);
+  ctx.fill();
+
+  ctx.fillStyle = colors.cyan;
+  roundRect(x + 9, y + 17, 30, 15, 6);
+  ctx.fill();
+
+  ctx.fillStyle = "#111";
+  ctx.fillRect(x + 17, y + 22, 5, 5);
+  ctx.fillRect(x + 29, y + 22, 5, 5);
+
+  ctx.fillStyle = colors.yellow;
+  ctx.fillRect(x + 12, y + 45, 8, 15);
+  ctx.fillRect(x + 30, y + 45, 8, 15);
+
+  ctx.fillStyle = colors.pink;
+  ctx.fillRect(x + 16, y, 16, 10);
+
+  ctx.restore();
+}
+
+function drawObstacle(o) {
+  ctx.save();
+  ctx.shadowColor = o.color;
+  ctx.shadowBlur = 20;
+  ctx.fillStyle = o.color;
+
+  if (o.type === "block") {
+    roundRect(o.x, o.y, o.w, o.h, 10);
     ctx.fill();
 
-    if(dist(player,c)<30){
-      coins++;
+    ctx.fillStyle = "#fff";
+    ctx.globalAlpha = 0.5;
+    ctx.fillRect(o.x + 10, o.y + 10, o.w - 20, 6);
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(o.x, o.y + o.h);
+    ctx.lineTo(o.x + o.w / 2, o.y);
+    ctx.lineTo(o.x + o.w, o.y + o.h);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = "#fff";
+    ctx.globalAlpha = 0.45;
+    ctx.beginPath();
+    ctx.moveTo(o.x + o.w / 2, o.y + 10);
+    ctx.lineTo(o.x + o.w / 2 - 8, o.y + o.h - 8);
+    ctx.lineTo(o.x + o.w / 2 + 8, o.y + o.h - 8);
+    ctx.fill();
+  }
+
+  ctx.restore();
+  ctx.globalAlpha = 1;
+}
+
+function drawCoin(c) {
+  c.angle += 0.12;
+
+  ctx.save();
+  ctx.translate(c.x, c.y);
+  ctx.scale(Math.abs(Math.cos(c.angle)) + 0.25, 1);
+
+  ctx.shadowColor = colors.yellow;
+  ctx.shadowBlur = 20;
+  ctx.fillStyle = colors.yellow;
+
+  ctx.beginPath();
+  ctx.arc(0, 0, c.r, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#fff";
+  ctx.font = "16px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("$", 0, 1);
+
+  ctx.restore();
+}
+
+function drawParticles() {
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.18;
+    p.life--;
+
+    ctx.globalAlpha = Math.max(p.life / 35, 0);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x, p.y, 5, 5);
+  });
+
+  ctx.globalAlpha = 1;
+  particles = particles.filter(p => p.life > 0);
+}
+
+function drawHUD() {
+  ctx.fillStyle = "white";
+  ctx.font = "bold 22px Arial";
+  ctx.textAlign = "left";
+  ctx.fillText("Puntos: " + score, 24, 38);
+  ctx.fillText("Monedas: " + coinsCount, 24, 68);
+
+  ctx.textAlign = "right";
+  ctx.fillText("Meta: " + WIN_SCORE, W - 24, 38);
+}
+
+function updatePlayer() {
+  player.vy += 0.85;
+  player.y += player.vy;
+
+  if (player.y >= groundY - player.h) {
+    player.y = groundY - player.h;
+    player.vy = 0;
+    player.jumping = false;
+  }
+}
+
+function updateObjects() {
+  if (frame % 85 === 0) createObstacle();
+  if (frame % 120 === 0) createCoin();
+
+  obstacles.forEach(o => {
+    o.x -= speed;
+
+    if (collision(player, o)) {
+      endGame();
+    }
+
+    if (!o.passed && o.x + o.w < player.x) {
+      o.passed = true;
       score++;
-      c.x=-100;
+      speed += 0.18;
+
+      if (score >= WIN_SCORE) winGame();
     }
   });
 
-  // HUD
-  ctx.fillStyle="white";
-  ctx.fillText("Puntos: "+score,20,30);
-  ctx.fillText("Monedas: "+coins,20,60);
+  coins.forEach(c => {
+    c.x -= speed;
 
-  // ganar
-  if(score>=20){
-    running=false;
-    document.getElementById("finalScreen").style.display="flex";
+    const coinBox = {
+      x: c.x - c.r,
+      y: c.y - c.r,
+      w: c.r * 2,
+      h: c.r * 2
+    };
+
+    if (!c.taken && collision(player, coinBox)) {
+      c.taken = true;
+      coinsCount++;
+      createParticles(c.x, c.y, colors.yellow, 18);
+    }
+  });
+
+  obstacles = obstacles.filter(o => o.x > -100);
+  coins = coins.filter(c => c.x > -100 && !c.taken);
+}
+
+function endGame() {
+  if (coinsCount > 0) {
+    coinsCount--;
+
+    createParticles(player.x, player.y, colors.green, 35);
+
+    player.x = 90;
+    player.y = groundY - player.h;
+    player.vy = 0;
+    player.jumping = false;
+
+    obstacles = obstacles.filter(o => o.x < player.x - 150 || o.x > player.x + 250);
+
+    return;
   }
+
+  gameOver = true;
+
+  ctx.fillStyle = "rgba(0,0,0,.65)";
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.font = "bold 46px Arial";
+  ctx.fillText("GAME OVER", W / 2, H / 2 - 35);
+
+  ctx.font = "22px Arial";
+  ctx.fillText("Sin monedas para continuar", W / 2, H / 2 + 10);
+  ctx.fillText("Toca o presiona ESPACIO para reiniciar", W / 2, H / 2 + 45);
+}
+
+function winGame() {
+  won = true;
+  gameOver = true;
+  document.getElementById("finalScreen").style.display = "flex";
+}
+
+function restart() {
+  score = 0;
+  coinsCount = 0;
+  speed = 7;
+  frame = 0;
+  gameOver = false;
+  won = false;
+  obstacles = [];
+  coins = [];
+  particles = [];
+  player.y = groundY - player.h;
+  player.vy = 0;
+  player.jumping = false;
+  loop();
+}
+
+function collision(a, b) {
+  return (
+    a.x < b.x + b.w &&
+    a.x + a.w > b.x &&
+    a.y < b.y + b.h &&
+    a.y + a.h > b.y
+  );
+}
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function loop() {
+  if (!gameStarted || gameOver) return;
+
+  frame++;
+
+  drawBackground();
+  drawGround();
+
+  updatePlayer();
+  updateObjects();
+
+  obstacles.forEach(drawObstacle);
+  coins.forEach(drawCoin);
+
+  drawPlayer();
+  drawParticles();
+  drawHUD();
 
   requestAnimationFrame(loop);
 }
-
-function collide(a,b){
-  return a.x<b.x+b.w && a.x+a.w>b.x && a.y<b.y+b.h && a.y+a.h>b.y;
-}
-
-function dist(a,b){
-  return Math.hypot(a.x-b.x,a.y-b.y);
-}
-
-// botón carta
-document.getElementById("openCardBtn").onclick = ()=>{
-  document.getElementById("cardBox").style.display="block";
-};
 </script>
 
 </body>
