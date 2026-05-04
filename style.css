@@ -1,1 +1,53 @@
-jj
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(135deg, #ffd1dc, #ffe6f0);
+  text-align: center;
+  overflow: hidden;
+}
+
+canvas {
+  display: none;
+  margin: 60px auto 0;
+  background: #fff;
+  border: 3px solid #e91e63;
+  border-radius: 12px;
+}
+
+.screen {
+  margin: 80px auto;
+  max-width: 600px;
+  background: white;
+  padding: 35px;
+  border-radius: 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+.hidden {
+  display: none;
+}
+
+h1, h2 {
+  color: #e91e63;
+}
+
+button {
+  background: #e91e63;
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 30px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #c2185b;
+}
+
+.final img {
+  margin-top: 20px;
+  max-width: 90%;
+  max-height: 350px;
+  border-radius: 20px;
+}
