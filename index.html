@@ -1,145 +1,82 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Juego Sorpresa</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Neon Runner Sorpresa</title>
 
 <style>
-*{box-sizing:border-box}
-
-html,body{
-  margin:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  font-family:Arial,sans-serif;
-  background:#111;
+* {
+  box-sizing: border-box;
 }
 
-canvas{
-  display:block;
-  width:100vw;
-  height:100vh;
-  touch-action:none;
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background: #080818;
+  color: white;
 }
 
-.screen{
-  position:fixed;
-  inset:0;
-  z-index:10;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  text-align:center;
-  padding:25px;
-  color:white;
+#game {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  touch-action: none;
 }
 
-#inicio{
-  background:linear-gradient(135deg,#4f46e5,#06b6d4,#22c55e);
+#startScreen,
+#finalScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  padding: 25px;
+  background: radial-gradient(circle at top, #273cff, #080818 65%);
 }
 
-#inicio h1{
-  font-size:clamp(42px,8vw,80px);
-  margin:0 0 15px;
+#finalScreen {
+  display: none;
+  background: radial-gradient(circle at top, #00e5ff, #111428 70%);
 }
 
-#inicio p{
-  font-size:20px;
-  max-width:650px;
+h1 {
+  font-size: clamp(38px, 8vw, 82px);
+  margin: 0;
+  text-shadow: 0 0 20px #00e5ff;
 }
 
-button{
-  border:none;
-  cursor:pointer;
-  font-weight:bold;
+p {
+  font-size: clamp(17px, 3vw, 24px);
+  max-width: 650px;
 }
 
-#btnInicio{
-  margin-top:25px;
-  padding:18px 34px;
-  border-radius:999px;
-  font-size:22px;
-  background:#ffdd00;
-  color:#111;
-  box-shadow:0 10px 25px rgba(0,0,0,.3);
+button {
+  margin-top: 18px;
+  padding: 15px 28px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffcc00, #ff3d81, #00e5ff);
+  color: #111;
+  font-size: 19px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(0,229,255,.6);
 }
 
-#final{
-  display:none;
-  background:linear-gradient(135deg,#111827,#1e293b);
-}
-
-#final h1{
-  font-size:clamp(30px,6vw,58px);
-  margin-bottom:10px;
-}
-
-#final p{
-  font-size:22px;
-  max-width:700px;
-}
-
-.sobre{
-  width:260px;
-  height:170px;
-  background:#facc15;
-  margin-top:25px;
-  position:relative;
-  border-radius:10px;
-  box-shadow:0 15px 35px rgba(0,0,0,.45);
-  animation:flotar 1.8s infinite ease-in-out;
-}
-
-.sobre:before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(135deg,transparent 49%,#eab308 50%);
-  clip-path:polygon(0 0,50% 55%,100% 0,100% 100%,0 100%);
-  border-radius:10px;
-}
-
-.sobre:after{
-  content:"";
-  position:absolute;
-  left:0;
-  top:0;
-  width:100%;
-  height:100%;
-  background:#fde047;
-  clip-path:polygon(0 0,50% 58%,100% 0,50% 45%);
-  border-radius:10px;
-  transform-origin:top;
-}
-
-#btnAbrir{
-  position:absolute;
-  left:50%;
-  top:50%;
-  transform:translate(-50%,-35%);
-  z-index:3;
-  padding:13px 26px;
-  border-radius:999px;
-  font-size:20px;
-  background:white;
-  color:#111;
-}
-
-#imagenFinal{
-  display:none;
-  max-width:88vw;
-  max-height:65vh;
-  border-radius:22px;
-  margin-top:20px;
-  box-shadow:0 0 35px rgba(255,255,255,.35);
-}
-
-@keyframes flotar{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-12px)}
+#finalScreen img {
+  margin-top: 20px;
+  max-width: 85vw;
+  max-height: 48vh;
+  border-radius: 24px;
+  border: 4px solid white;
+  box-shadow: 0 0 35px rgba(255,255,255,.7);
 }
 </style>
 </head>
@@ -148,259 +85,474 @@ button{
 
 <canvas id="game"></canvas>
 
-<div id="inicio" class="screen">
-  <h1>RUNNER CHALLENGE</h1>
-  <p>Salta los obstáculos tocando la pantalla o presionando espacio. Completa los 20 obstáculos para desbloquear la sorpresa.</p>
-  <button id="btnInicio">Comenzar ahora</button>
+<div id="startScreen">
+  <h1>NEON RUNNER</h1>
+  <p>Salta los obstáculos, recoge energía y llega al final para desbloquear la sorpresa.</p>
+  <p>PC: ESPACIO / ↑ &nbsp; | &nbsp; Celular: toca la pantalla</p>
+  <button id="startBtn">Iniciar juego</button>
 </div>
 
-<div id="final" class="screen">
-  <h1>¡Felicidades!</h1>
-  <p>Tienes esta carta. Ábrela.</p>
+<div id="finalScreen">
+  <h1>¡Lo lograste!</h1>
+  <p>Tengo una sorpresa para ti...</p>
 
-  <div class="sobre" id="sobre">
-    <button id="btnAbrir">Abrir</button>
-  </div>
+  <!-- Cambia esta imagen por tu imagen final -->
+  <img src="sorpresa.jpg" alt="Sorpresa final">
 
-  <img id="imagenFinal" src="sorpresa.jpg" alt="Carta sorpresa">
+  <button onclick="location.reload()">Jugar otra vez</button>
 </div>
 
 <script>
-const canvas=document.getElementById("game");
-const ctx=canvas.getContext("2d");
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-let W,H,suelo;
+let W, H, groundY;
 
-function resize(){
-  W=canvas.width=innerWidth;
-  H=canvas.height=innerHeight;
-  suelo=H*0.78;
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  groundY = H * 0.78;
 }
 resize();
-addEventListener("resize",resize);
+window.addEventListener("resize", resize);
 
-let frame=0;
-let velocidad=9;
-let gravedad=1.05;
-let completados=0;
-let jugando=false;
-let terminado=false;
+let gameStarted = false;
+let gameOver = false;
+let won = false;
 
-const jugador={
-  x:100,
-  y:0,
-  ancho:46,
-  alto:86,
-  vy:0,
-  saltando:false
+let score = 0;
+let energy = 0;
+let speed = 7;
+let frame = 0;
+
+const WIN_SCORE = 25;
+
+const player = {
+  x: 90,
+  y: 0,
+  w: 48,
+  h: 58,
+  vy: 0,
+  jumping: false
 };
 
-jugador.y=suelo-jugador.alto;
+player.y = groundY - player.h;
 
-let obstaculos=[];
+let obstacles = [];
+let coins = [];
+let particles = [];
 
-function iniciar(){
-  document.getElementById("inicio").style.display="none";
-  jugando=true;
+const colors = {
+  cyan: "#00e5ff",
+  pink: "#ff3d81",
+  yellow: "#ffcc00",
+  purple: "#8b5cf6",
+  green: "#00ff99"
+};
+
+function rand(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function startGame() {
+  document.getElementById("startScreen").style.display = "none";
+  gameStarted = true;
   loop();
 }
 
-document.getElementById("btnInicio").addEventListener("click",iniciar);
+document.getElementById("startBtn").addEventListener("click", startGame);
 
-function saltar(e){
-  if(e)e.preventDefault();
-  if(!jugando||terminado)return;
+function jump(e) {
+  if (e) e.preventDefault();
 
-  if(!jugador.saltando){
-    jugador.vy=-21;
-    jugador.saltando=true;
-  }
-}
-
-addEventListener("pointerdown",saltar,{passive:false});
-
-addEventListener("keydown",e=>{
-  if(e.code==="Space"||e.code==="ArrowUp"){
-    saltar(e);
-  }
-});
-
-function crearObstaculo(){
-  const alto=50+Math.random()*35;
-  obstaculos.push({
-    x:W+80,
-    y:suelo-alto,
-    ancho:38+Math.random()*18,
-    alto:alto,
-    pasado:false,
-    color:["#ef4444","#f97316","#8b5cf6","#06b6d4"][Math.floor(Math.random()*4)]
-  });
-}
-
-function fondo(){
-  const g=ctx.createLinearGradient(0,0,0,H);
-  g.addColorStop(0,"#60a5fa");
-  g.addColorStop(.55,"#93c5fd");
-  g.addColorStop(1,"#22c55e");
-  ctx.fillStyle=g;
-  ctx.fillRect(0,0,W,H);
-
-  ctx.fillStyle="rgba(255,255,255,.8)";
-  for(let i=0;i<6;i++){
-    let x=(i*230-frame*1.1)%(W+250)-120;
-    let y=70+(i%3)*55;
-    nube(x,y);
-  }
-
-  ctx.fillStyle="#16a34a";
-  ctx.fillRect(0,suelo,W,H-suelo);
-
-  ctx.fillStyle="#15803d";
-  ctx.fillRect(0,suelo,W,10);
-}
-
-function nube(x,y){
-  ctx.beginPath();
-  ctx.arc(x,y,25,0,Math.PI*2);
-  ctx.arc(x+30,y-12,33,0,Math.PI*2);
-  ctx.arc(x+65,y,25,0,Math.PI*2);
-  ctx.fill();
-}
-
-function muneco(){
-  const x=jugador.x;
-  const y=jugador.y;
-
-  ctx.fillStyle="#facc15";
-  ctx.beginPath();
-  ctx.arc(x+23,y+18,17,0,Math.PI*2);
-  ctx.fill();
-
-  ctx.fillStyle="#111";
-  ctx.beginPath();
-  ctx.arc(x+23,y+9,18,Math.PI,Math.PI*2);
-  ctx.fill();
-
-  ctx.fillStyle="#2563eb";
-  ctx.fillRect(x+8,y+36,30,34);
-
-  ctx.strokeStyle="#facc15";
-  ctx.lineWidth=7;
-  ctx.lineCap="round";
-  ctx.beginPath();
-
-  if(frame%16<8){
-    ctx.moveTo(x+10,y+43); ctx.lineTo(x-8,y+58);
-    ctx.moveTo(x+36,y+43); ctx.lineTo(x+54,y+55);
-  }else{
-    ctx.moveTo(x+10,y+43); ctx.lineTo(x-7,y+50);
-    ctx.moveTo(x+36,y+43); ctx.lineTo(x+53,y+63);
-  }
-  ctx.stroke();
-
-  ctx.strokeStyle="#111";
-  ctx.lineWidth=8;
-  ctx.beginPath();
-
-  if(jugador.saltando){
-    ctx.moveTo(x+16,y+69); ctx.lineTo(x+4,y+85);
-    ctx.moveTo(x+31,y+69); ctx.lineTo(x+45,y+85);
-  }else if(frame%16<8){
-    ctx.moveTo(x+16,y+69); ctx.lineTo(x+4,y+88);
-    ctx.moveTo(x+31,y+69); ctx.lineTo(x+47,y+82);
-  }else{
-    ctx.moveTo(x+16,y+69); ctx.lineTo(x,y+80);
-    ctx.moveTo(x+31,y+69); ctx.lineTo(x+42,y+88);
-  }
-  ctx.stroke();
-
-  ctx.fillStyle="#000";
-  ctx.beginPath();
-  ctx.arc(x+31,y+18,3,0,Math.PI*2);
-  ctx.fill();
-}
-
-function obstaculo(o){
-  ctx.fillStyle=o.color;
-  ctx.fillRect(o.x,o.y,o.ancho,o.alto);
-
-  ctx.fillStyle="rgba(255,255,255,.35)";
-  ctx.fillRect(o.x+6,o.y+6,o.ancho-12,8);
-}
-
-function colision(a,b){
-  return(
-    a.x<b.x+b.ancho &&
-    a.x+a.ancho>b.x &&
-    a.y<b.y+b.alto &&
-    a.y+a.alto>b.y
-  );
-}
-
-function perder(){
-  location.reload();
-}
-
-function ganar(){
-  terminado=true;
-  jugando=false;
-  document.getElementById("final").style.display="flex";
-}
-
-function loop(){
-  if(!jugando||terminado)return;
-
-  frame++;
-  fondo();
-
-  jugador.vy+=gravedad;
-  jugador.y+=jugador.vy;
-
-  if(jugador.y>=suelo-jugador.alto){
-    jugador.y=suelo-jugador.alto;
-    jugador.vy=0;
-    jugador.saltando=false;
-  }
-
-  if(frame%78===0){
-    crearObstaculo();
-  }
-
-  obstaculos.forEach(o=>{
-    o.x-=velocidad;
-    obstaculo(o);
-
-    if(!o.pasado&&o.x+o.ancho<jugador.x){
-      o.pasado=true;
-      completados++;
-      velocidad+=0.18;
-    }
-
-    if(colision(jugador,o)){
-      perder();
-    }
-  });
-
-  obstaculos=obstaculos.filter(o=>o.x>-100);
-
-  muneco();
-
-  ctx.fillStyle="#111";
-  ctx.font="bold 25px Arial";
-  ctx.fillText("Obstáculos: "+completados+" / 20",25,42);
-
-  if(completados>=20){
-    ganar();
+  if (!gameStarted) {
+    startGame();
     return;
   }
 
-  requestAnimationFrame(loop);
+  if (gameOver && !won) {
+    restart();
+    return;
+  }
+
+  if (!player.jumping && !gameOver) {
+    player.vy = -18;
+    player.jumping = true;
+    createParticles(player.x + 20, player.y + player.h, colors.cyan, 12);
+  }
 }
 
-document.getElementById("btnAbrir").addEventListener("click",()=>{
-  document.getElementById("sobre").style.display="none";
-  document.getElementById("imagenFinal").style.display="block";
+window.addEventListener("pointerdown", jump, { passive: false });
+
+window.addEventListener("keydown", e => {
+  if (e.code === "Space" || e.code === "ArrowUp") {
+    e.preventDefault();
+    jump(e);
+  }
 });
+
+function createObstacle() {
+  const type = Math.random() < 0.5 ? "block" : "spike";
+
+  obstacles.push({
+    x: W + 80,
+    y: groundY - 50,
+    w: type === "block" ? 44 : 54,
+    h: type === "block" ? 50 : 45,
+    type,
+    color: Math.random() < 0.5 ? colors.pink : colors.purple
+  });
+}
+
+function createCoin() {
+  coins.push({
+    x: W + 80,
+    y: groundY - rand(110, 180),
+    r: 13,
+    taken: false,
+    angle: 0
+  });
+}
+
+function createParticles(x, y, color, amount) {
+  for (let i = 0; i < amount; i++) {
+    particles.push({
+      x,
+      y,
+      vx: rand(-4, 4),
+      vy: rand(-5, 2),
+      life: 35,
+      color
+    });
+  }
+}
+
+function drawBackground() {
+  const gradient = ctx.createLinearGradient(0, 0, 0, H);
+  gradient.addColorStop(0, "#121242");
+  gradient.addColorStop(0.55, "#18182f");
+  gradient.addColorStop(1, "#050511");
+  ctx.fillStyle = gradient;
+  ctx.fillRect(0, 0, W, H);
+
+  for (let i = 0; i < 70; i++) {
+    const x = (i * 97 + frame * 0.25) % W;
+    const y = (i * 53) % (H * 0.55);
+    ctx.fillStyle = i % 3 === 0 ? colors.cyan : "#ffffff";
+    ctx.globalAlpha = 0.25;
+    ctx.fillRect(x, y, 2, 2);
+  }
+  ctx.globalAlpha = 1;
+
+  drawCity();
+}
+
+function drawCity() {
+  for (let i = 0; i < 18; i++) {
+    const bw = 70;
+    const bh = 90 + (i % 5) * 28;
+    const x = ((i * 95) - frame * 1.4) % (W + 120) - 80;
+    const y = groundY - bh;
+
+    ctx.fillStyle = "#11172f";
+    ctx.fillRect(x, y, bw, bh);
+
+    ctx.fillStyle = i % 2 === 0 ? colors.cyan : colors.pink;
+    ctx.globalAlpha = 0.75;
+
+    for (let wx = x + 12; wx < x + bw - 10; wx += 22) {
+      for (let wy = y + 18; wy < groundY - 12; wy += 26) {
+        ctx.fillRect(wx, wy, 7, 10);
+      }
+    }
+
+    ctx.globalAlpha = 1;
+  }
+}
+
+function drawGround() {
+  ctx.fillStyle = "#0d1028";
+  ctx.fillRect(0, groundY, W, H - groundY);
+
+  ctx.strokeStyle = colors.cyan;
+  ctx.lineWidth = 4;
+  ctx.shadowColor = colors.cyan;
+  ctx.shadowBlur = 18;
+
+  ctx.beginPath();
+  ctx.moveTo(0, groundY);
+  ctx.lineTo(W, groundY);
+  ctx.stroke();
+
+  ctx.shadowBlur = 0;
+
+  for (let i = 0; i < 40; i++) {
+    const x = ((i * 80) - frame * speed) % W;
+    ctx.strokeStyle = i % 2 === 0 ? colors.pink : colors.yellow;
+    ctx.globalAlpha = 0.45;
+    ctx.beginPath();
+    ctx.moveTo(x, groundY + 25);
+    ctx.lineTo(x + 35, groundY + 25);
+    ctx.stroke();
+  }
+
+  ctx.globalAlpha = 1;
+}
+
+function drawPlayer() {
+  const x = player.x;
+  const y = player.y;
+
+  ctx.save();
+  ctx.shadowColor = colors.cyan;
+  ctx.shadowBlur = 20;
+
+  ctx.fillStyle = "#ffffff";
+  roundRect(x, y + 8, player.w, player.h - 8, 12);
+  ctx.fill();
+
+  ctx.fillStyle = colors.cyan;
+  roundRect(x + 9, y + 17, 30, 15, 6);
+  ctx.fill();
+
+  ctx.fillStyle = "#111";
+  ctx.fillRect(x + 17, y + 22, 5, 5);
+  ctx.fillRect(x + 29, y + 22, 5, 5);
+
+  ctx.fillStyle = colors.yellow;
+  ctx.fillRect(x + 12, y + 45, 8, 15);
+  ctx.fillRect(x + 30, y + 45, 8, 15);
+
+  ctx.fillStyle = colors.pink;
+  ctx.fillRect(x + 16, y, 16, 10);
+
+  ctx.restore();
+}
+
+function drawObstacle(o) {
+  ctx.save();
+  ctx.shadowColor = o.color;
+  ctx.shadowBlur = 20;
+  ctx.fillStyle = o.color;
+
+  if (o.type === "block") {
+    roundRect(o.x, o.y, o.w, o.h, 10);
+    ctx.fill();
+
+    ctx.fillStyle = "#fff";
+    ctx.globalAlpha = 0.5;
+    ctx.fillRect(o.x + 10, o.y + 10, o.w - 20, 6);
+  } else {
+    ctx.beginPath();
+    ctx.moveTo(o.x, o.y + o.h);
+    ctx.lineTo(o.x + o.w / 2, o.y);
+    ctx.lineTo(o.x + o.w, o.y + o.h);
+    ctx.closePath();
+    ctx.fill();
+
+    ctx.fillStyle = "#fff";
+    ctx.globalAlpha = 0.45;
+    ctx.beginPath();
+    ctx.moveTo(o.x + o.w / 2, o.y + 10);
+    ctx.lineTo(o.x + o.w / 2 - 8, o.y + o.h - 8);
+    ctx.lineTo(o.x + o.w / 2 + 8, o.y + o.h - 8);
+    ctx.fill();
+  }
+
+  ctx.restore();
+  ctx.globalAlpha = 1;
+}
+
+function drawCoin(c) {
+  c.angle += 0.12;
+
+  ctx.save();
+  ctx.translate(c.x, c.y);
+  ctx.scale(Math.abs(Math.cos(c.angle)) + 0.25, 1);
+
+  ctx.shadowColor = colors.yellow;
+  ctx.shadowBlur = 20;
+  ctx.fillStyle = colors.yellow;
+
+  ctx.beginPath();
+  ctx.arc(0, 0, c.r, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#fff";
+  ctx.font = "16px Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("★", 0, 1);
+
+  ctx.restore();
+}
+
+function drawParticles() {
+  particles.forEach(p => {
+    p.x += p.vx;
+    p.y += p.vy;
+    p.vy += 0.18;
+    p.life--;
+
+    ctx.globalAlpha = Math.max(p.life / 35, 0);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(p.x, p.y, 5, 5);
+  });
+
+  ctx.globalAlpha = 1;
+  particles = particles.filter(p => p.life > 0);
+}
+
+function drawHUD() {
+  ctx.fillStyle = "white";
+  ctx.font = "bold 22px Arial";
+  ctx.textAlign = "left";
+  ctx.fillText("Puntos: " + score, 24, 38);
+  ctx.fillText("Energía: " + energy, 24, 68);
+
+  ctx.textAlign = "right";
+  ctx.fillText("Meta: " + WIN_SCORE, W - 24, 38);
+}
+
+function updatePlayer() {
+  player.vy += 0.85;
+  player.y += player.vy;
+
+  if (player.y >= groundY - player.h) {
+    player.y = groundY - player.h;
+    player.vy = 0;
+    player.jumping = false;
+  }
+}
+
+function updateObjects() {
+  if (frame % 85 === 0) createObstacle();
+  if (frame % 120 === 0) createCoin();
+
+  obstacles.forEach(o => {
+    o.x -= speed;
+
+    if (collision(player, o)) {
+      endGame();
+    }
+
+    if (!o.passed && o.x + o.w < player.x) {
+      o.passed = true;
+      score++;
+      speed += 0.18;
+
+      if (score >= WIN_SCORE) {
+        winGame();
+      }
+    }
+  });
+
+  coins.forEach(c => {
+    c.x -= speed;
+
+    const coinBox = {
+      x: c.x - c.r,
+      y: c.y - c.r,
+      w: c.r * 2,
+      h: c.r * 2
+    };
+
+    if (!c.taken && collision(player, coinBox)) {
+      c.taken = true;
+      energy++;
+      score++;
+      createParticles(c.x, c.y, colors.yellow, 18);
+
+      if (score >= WIN_SCORE) {
+        winGame();
+      }
+    }
+  });
+
+  obstacles = obstacles.filter(o => o.x > -100);
+  coins = coins.filter(c => c.x > -100 && !c.taken);
+}
+
+function endGame() {
+  gameOver = true;
+
+  ctx.fillStyle = "rgba(0,0,0,.6)";
+  ctx.fillRect(0, 0, W, H);
+
+  ctx.fillStyle = "white";
+  ctx.textAlign = "center";
+  ctx.font = "bold 46px Arial";
+  ctx.fillText("GAME OVER", W / 2, H / 2 - 30);
+
+  ctx.font = "22px Arial";
+  ctx.fillText("Toca la pantalla o presiona ESPACIO para reiniciar", W / 2, H / 2 + 15);
+}
+
+function winGame() {
+  won = true;
+  gameOver = true;
+  document.getElementById("finalScreen").style.display = "flex";
+}
+
+function restart() {
+  score = 0;
+  energy = 0;
+  speed = 7;
+  frame = 0;
+  gameOver = false;
+  won = false;
+  obstacles = [];
+  coins = [];
+  particles = [];
+  player.y = groundY - player.h;
+  player.vy = 0;
+  player.jumping = false;
+  loop();
+}
+
+function collision(a, b) {
+  return (
+    a.x < b.x + b.w &&
+    a.x + a.w > b.x &&
+    a.y < b.y + b.h &&
+    a.y + a.h > b.y
+  );
+}
+
+function roundRect(x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y);
+  ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r);
+  ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h);
+  ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r);
+  ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function loop() {
+  if (!gameStarted || gameOver) return;
+
+  frame++;
+
+  drawBackground();
+  drawGround();
+
+  updatePlayer();
+  updateObjects();
+
+  obstacles.forEach(drawObstacle);
+  coins.forEach(drawCoin);
+
+  drawPlayer();
+  drawParticles();
+  drawHUD();
+
+  requestAnimationFrame(loop);
+}
 </script>
 
 </body>
