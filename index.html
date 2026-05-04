@@ -3,12 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>Neon Runner Sorpresa</title>
+<title>Neon Runner</title>
 
 <style>
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
 html, body {
   margin: 0;
@@ -27,8 +25,7 @@ html, body {
   touch-action: none;
 }
 
-#startScreen,
-#finalScreen {
+#startScreen, #finalScreen {
   position: fixed;
   inset: 0;
   z-index: 10;
@@ -70,10 +67,14 @@ button {
   box-shadow: 0 0 25px rgba(0,229,255,.6);
 }
 
-#finalScreen img {
-  margin-top: 20px;
+#cardBox {
+  display: none;
+  margin-top: 18px;
+}
+
+#cardBox img {
   max-width: 85vw;
-  max-height: 48vh;
+  max-height: 55vh;
   border-radius: 24px;
   border: 4px solid white;
   box-shadow: 0 0 35px rgba(255,255,255,.7);
@@ -87,17 +88,20 @@ button {
 
 <div id="startScreen">
   <h1>NEON RUNNER</h1>
-  <p>Salta los obstáculos, recoge energía y llega al final para desbloquear la sorpresa.</p>
-  <p>PC: ESPACIO / ↑ &nbsp; | &nbsp; Celular: toca la pantalla</p>
+  <p>Salta los obstáculos, recoge monedas y llega al final para desbloquear la sorpresa.</p>
+  <p>PC: ESPACIO / ↑ | Celular: toca la pantalla</p>
   <button id="startBtn">Iniciar juego</button>
 </div>
 
 <div id="finalScreen">
   <h1>¡Lo lograste!</h1>
-  <p>Tengo una sorpresa para ti...</p>
+  <p>Tienes una carta desbloqueada.</p>
 
-  <!-- Cambia esta imagen por tu imagen final -->
-  <img src="sorpresa.jpg" alt="Sorpresa final">
+  <button id="openCardBtn">Abrir carta</button>
+
+  <div id="cardBox">
+    <img src="carta.jpg" alt="Carta sorpresa">
+  </div>
 
   <button onclick="location.reload()">Jugar otra vez</button>
 </div>
@@ -121,7 +125,7 @@ let gameOver = false;
 let won = false;
 
 let score = 0;
-let energy = 0;
+let coinsCount = 0;
 let speed = 7;
 let frame = 0;
 
@@ -162,6 +166,10 @@ function startGame() {
 
 document.getElementById("startBtn").addEventListener("click", startGame);
 
+document.getElementById("openCardBtn").addEventListener("click", () => {
+  document.getElementById("cardBox").style.display = "block";
+});
+
 function jump(e) {
   if (e) e.preventDefault();
 
@@ -200,7 +208,8 @@ function createObstacle() {
     w: type === "block" ? 44 : 54,
     h: type === "block" ? 50 : 45,
     type,
-    color: Math.random() < 0.5 ? colors.pink : colors.purple
+    color: Math.random() < 0.5 ? colors.pink : colors.purple,
+    passed: false
   });
 }
 
@@ -278,25 +287,11 @@ function drawGround() {
   ctx.lineWidth = 4;
   ctx.shadowColor = colors.cyan;
   ctx.shadowBlur = 18;
-
   ctx.beginPath();
   ctx.moveTo(0, groundY);
   ctx.lineTo(W, groundY);
   ctx.stroke();
-
   ctx.shadowBlur = 0;
-
-  for (let i = 0; i < 40; i++) {
-    const x = ((i * 80) - frame * speed) % W;
-    ctx.strokeStyle = i % 2 === 0 ? colors.pink : colors.yellow;
-    ctx.globalAlpha = 0.45;
-    ctx.beginPath();
-    ctx.moveTo(x, groundY + 25);
-    ctx.lineTo(x + 35, groundY + 25);
-    ctx.stroke();
-  }
-
-  ctx.globalAlpha = 1;
 }
 
 function drawPlayer() {
@@ -338,10 +333,6 @@ function drawObstacle(o) {
   if (o.type === "block") {
     roundRect(o.x, o.y, o.w, o.h, 10);
     ctx.fill();
-
-    ctx.fillStyle = "#fff";
-    ctx.globalAlpha = 0.5;
-    ctx.fillRect(o.x + 10, o.y + 10, o.w - 20, 6);
   } else {
     ctx.beginPath();
     ctx.moveTo(o.x, o.y + o.h);
@@ -349,18 +340,9 @@ function drawObstacle(o) {
     ctx.lineTo(o.x + o.w, o.y + o.h);
     ctx.closePath();
     ctx.fill();
-
-    ctx.fillStyle = "#fff";
-    ctx.globalAlpha = 0.45;
-    ctx.beginPath();
-    ctx.moveTo(o.x + o.w / 2, o.y + 10);
-    ctx.lineTo(o.x + o.w / 2 - 8, o.y + o.h - 8);
-    ctx.lineTo(o.x + o.w / 2 + 8, o.y + o.h - 8);
-    ctx.fill();
   }
 
   ctx.restore();
-  ctx.globalAlpha = 1;
 }
 
 function drawCoin(c) {
@@ -382,7 +364,7 @@ function drawCoin(c) {
   ctx.font = "16px Arial";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("★", 0, 1);
+  ctx.fillText("$", 0, 1);
 
   ctx.restore();
 }
@@ -408,7 +390,7 @@ function drawHUD() {
   ctx.font = "bold 22px Arial";
   ctx.textAlign = "left";
   ctx.fillText("Puntos: " + score, 24, 38);
-  ctx.fillText("Energía: " + energy, 24, 68);
+  ctx.fillText("Monedas: " + coinsCount, 24, 68);
 
   ctx.textAlign = "right";
   ctx.fillText("Meta: " + WIN_SCORE, W - 24, 38);
@@ -441,9 +423,7 @@ function updateObjects() {
       score++;
       speed += 0.18;
 
-      if (score >= WIN_SCORE) {
-        winGame();
-      }
+      if (score >= WIN_SCORE) winGame();
     }
   });
 
@@ -459,13 +439,8 @@ function updateObjects() {
 
     if (!c.taken && collision(player, coinBox)) {
       c.taken = true;
-      energy++;
-      score++;
+      coinsCount++;
       createParticles(c.x, c.y, colors.yellow, 18);
-
-      if (score >= WIN_SCORE) {
-        winGame();
-      }
     }
   });
 
@@ -474,18 +449,34 @@ function updateObjects() {
 }
 
 function endGame() {
+  if (coinsCount > 0) {
+    coinsCount--;
+
+    createParticles(player.x, player.y, colors.green, 35);
+
+    player.x = 90;
+    player.y = groundY - player.h;
+    player.vy = 0;
+    player.jumping = false;
+
+    obstacles = obstacles.filter(o => o.x < player.x - 150 || o.x > player.x + 250);
+
+    return;
+  }
+
   gameOver = true;
 
-  ctx.fillStyle = "rgba(0,0,0,.6)";
+  ctx.fillStyle = "rgba(0,0,0,.65)";
   ctx.fillRect(0, 0, W, H);
 
   ctx.fillStyle = "white";
   ctx.textAlign = "center";
   ctx.font = "bold 46px Arial";
-  ctx.fillText("GAME OVER", W / 2, H / 2 - 30);
+  ctx.fillText("GAME OVER", W / 2, H / 2 - 35);
 
   ctx.font = "22px Arial";
-  ctx.fillText("Toca la pantalla o presiona ESPACIO para reiniciar", W / 2, H / 2 + 15);
+  ctx.fillText("Sin monedas para continuar", W / 2, H / 2 + 10);
+  ctx.fillText("Toca o presiona ESPACIO para reiniciar", W / 2, H / 2 + 45);
 }
 
 function winGame() {
@@ -496,7 +487,7 @@ function winGame() {
 
 function restart() {
   score = 0;
-  energy = 0;
+  coinsCount = 0;
   speed = 7;
   frame = 0;
   gameOver = false;
