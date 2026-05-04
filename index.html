@@ -41,12 +41,12 @@
     }
 
     #finalScreen {
-      top: 10%;
+      top: 8%;
     }
 
     #finalScreen img {
       max-width: 80%;
-      max-height: 70vh;
+      max-height: 75vh;
       margin-top: 20px;
     }
   </style>
@@ -66,8 +66,6 @@
 
 <div id="finalScreen" class="screen hidden">
   <p>Has desbloqueado algo...</p>
-
-  <!-- Coloca tu imagen en la carpeta assets con el nombre carta.jpg -->
   <img src="assets/carta.jpg" alt="Carta">
 </div>
 
@@ -82,6 +80,9 @@ const finalScreen = document.getElementById("finalScreen");
 let dino, obstacles, clouds, score, speed, gravity, gameRunning, started;
 let animationId;
 let groundX = 0;
+let jumps = 0;
+let maxJumps = 20;
+let lastTouch = 0;
 
 function resetGame() {
   dino = {
@@ -98,21 +99,25 @@ function resetGame() {
   score = 0;
   speed = 6;
   gravity = 1;
+  jumps = 0;
   gameRunning = true;
   started = true;
 }
 
 function startGame() {
   resetGame();
+
   startScreen.classList.add("hidden");
   gameOverScreen.classList.add("hidden");
   finalScreen.classList.add("hidden");
+
   canvas.style.display = "block";
+
+  cancelAnimationFrame(animationId);
   loop();
 }
 
 function restartGame() {
-  cancelAnimationFrame(animationId);
   startGame();
 }
 
@@ -120,11 +125,18 @@ function jump() {
   if (gameRunning && !dino.jumping) {
     dino.velocityY = -17;
     dino.jumping = true;
+    jumps++;
+
+    if (jumps >= maxJumps) {
+      winGame();
+    }
   }
 }
 
 document.addEventListener("keydown", function(e) {
   if (e.code === "Space") {
+    e.preventDefault();
+
     if (!started) {
       startGame();
     } else if (gameRunning) {
@@ -133,21 +145,33 @@ document.addEventListener("keydown", function(e) {
   }
 });
 
-document.addEventListener("mousedown", function() {
+document.addEventListener("mousedown", function(e) {
+  e.preventDefault();
+
+  const now = Date.now();
+  if (now - lastTouch < 350) return;
+  lastTouch = now;
+
   if (!started) {
     startGame();
-  } else {
+  } else if (gameRunning) {
     jump();
   }
 });
 
-document.addEventListener("touchstart", function() {
+document.addEventListener("touchstart", function(e) {
+  e.preventDefault();
+
+  const now = Date.now();
+  if (now - lastTouch < 350) return;
+  lastTouch = now;
+
   if (!started) {
     startGame();
-  } else {
+  } else if (gameRunning) {
     jump();
   }
-});
+}, { passive: false });
 
 function createObstacle() {
   const random = Math.random();
@@ -222,10 +246,6 @@ function update() {
       loseGame();
     }
   }
-
-  if (score >= 2500) {
-    winGame();
-  }
 }
 
 function loseGame() {
@@ -237,6 +257,7 @@ function loseGame() {
 function winGame() {
   gameRunning = false;
   canvas.style.display = "none";
+  gameOverScreen.classList.add("hidden");
   finalScreen.classList.remove("hidden");
   cancelAnimationFrame(animationId);
 }
@@ -244,23 +265,13 @@ function winGame() {
 function drawDino() {
   ctx.fillStyle = "#555";
 
-  // cuerpo
   ctx.fillRect(dino.x + 8, dino.y + 12, 26, 28);
-
-  // cabeza
   ctx.fillRect(dino.x + 26, dino.y, 18, 18);
-
-  // boca
   ctx.fillRect(dino.x + 36, dino.y + 12, 12, 6);
-
-  // pata
   ctx.fillRect(dino.x + 10, dino.y + 38, 8, 10);
   ctx.fillRect(dino.x + 26, dino.y + 38, 8, 10);
-
-  // cola
   ctx.fillRect(dino.x, dino.y + 24, 12, 8);
 
-  // ojo
   ctx.fillStyle = "#f7f7f7";
   ctx.fillRect(dino.x + 36, dino.y + 5, 3, 3);
 }
@@ -269,10 +280,8 @@ function drawCactus(ob) {
   ctx.fillStyle = "#555";
 
   ctx.fillRect(ob.x + ob.width / 2 - 4, ob.y, 8, ob.height);
-
   ctx.fillRect(ob.x, ob.y + 14, 8, 22);
   ctx.fillRect(ob.x + ob.width - 8, ob.y + 8, 8, 26);
-
   ctx.fillRect(ob.x + 4, ob.y + 14, 10, 6);
   ctx.fillRect(ob.x + ob.width - 14, ob.y + 8, 10, 6);
 }
@@ -319,6 +328,7 @@ function drawScore() {
   let puntos = ("00000" + score).slice(-5);
 
   ctx.fillText(hi + "  " + puntos, 560, 30);
+  ctx.fillText("SALTOS " + jumps + "/20", 30, 30);
 }
 
 function draw() {
@@ -342,7 +352,6 @@ function loop() {
   animationId = requestAnimationFrame(loop);
 }
 
-// pantalla inicial con canvas visible
 canvas.style.display = "block";
 started = false;
 drawGround();
