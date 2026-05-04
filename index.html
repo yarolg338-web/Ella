@@ -6,84 +6,81 @@
 <title>Neon Runner</title>
 
 <style>
-.futuristic-card {
-  width: 260px;
-  height: 360px;
-  border-radius: 28px;
-  border: 3px solid #00e5ff;
-  background:
-    linear-gradient(135deg, rgba(0,229,255,.35), rgba(139,92,246,.25)),
-    radial-gradient(circle at top, rgba(255,255,255,.3), transparent 45%),
-    #07111f;
-  box-shadow:
-    0 0 25px #00e5ff,
-    0 0 60px rgba(139,92,246,.8);
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  background: #080818;
+  color: white;
+}
+
+#game {
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  touch-action: none;
+}
+
+#startScreen, #finalScreen {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 14px;
-  position: relative;
-  overflow: hidden;
-  animation: floatCard 2.4s ease-in-out infinite;
+  flex-direction: column;
+  text-align: center;
+  padding: 25px;
+  background: radial-gradient(circle at top, #273cff, #080818 65%);
 }
 
-.card-shine {
-  position: absolute;
-  width: 80px;
-  height: 520px;
-  background: rgba(255,255,255,.35);
-  transform: rotate(25deg);
-  animation: shineMove 2.5s infinite;
+#finalScreen {
+  display: none;
+  background: radial-gradient(circle at top, #00e5ff, #111428 70%);
 }
 
-.card-icon {
-  font-size: 70px;
-  color: #00e5ff;
-  text-shadow: 0 0 25px #00e5ff;
+h1 {
+  font-size: clamp(38px, 8vw, 82px);
+  margin: 0;
+  text-shadow: 0 0 20px #00e5ff;
 }
 
-.card-title {
+p {
+  font-size: clamp(17px, 3vw, 24px);
+  max-width: 650px;
+}
+
+button {
+  margin-top: 18px;
+  padding: 15px 28px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #ffcc00, #ff3d81, #00e5ff);
+  color: #111;
+  font-size: 19px;
   font-weight: bold;
-  letter-spacing: 2px;
-  font-size: 18px;
-}
-
-.card-subtitle {
-  font-size: 14px;
-  opacity: .8;
-}
-
-@keyframes floatCard {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-12px); }
-}
-
-@keyframes shineMove {
-  from { left: -120px; }
-  to { left: 330px; }
+  cursor: pointer;
+  box-shadow: 0 0 25px rgba(0,229,255,.6);
 }
 
 #cardBox {
   display: none;
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at center, #020617, #000);
-  justify-content: center;
-  align-items: center;
-  z-index: 50;
+  margin-top: 18px;
 }
 
 #cardBox img {
-  width: 90vw;
-  max-width: 520px;
-  max-height: 90vh;
-  border-radius: 25px;
-  border: 3px solid #00e5ff;
+  max-width: 85vw;
+  max-height: 58vh;
+  border-radius: 28px;
+  border: 4px solid #00e5ff;
   box-shadow:
     0 0 20px #00e5ff,
-    0 0 50px #8b5cf6,
-    0 0 90px rgba(0,229,255,.8);
+    0 0 45px #8b5cf6,
+    0 0 80px rgba(0,229,255,.7);
 }
 </style>
 </head>
@@ -94,23 +91,20 @@
 
 <div id="startScreen">
   <h1>NEON RUNNER</h1>
-  <p>jj Salta los obstáculos, recoge monedas y llega al final para desbloquear el próximo nivel.</p>
+  <p>Salta los obstáculos, recoge monedas y llega al final para desbloquear el próximo nivel.</p>
   <p>PC: ESPACIO / ↑ | Celular: toca la pantalla</p>
   <button id="startBtn">Iniciar juego</button>
 </div>
 
 <div id="finalScreen">
-  <div class="futuristic-card">
-    <div class="card-shine"></div>
-    <div class="card-icon">▣</div>
-    <div class="card-title">NIVEL DESBLOQUEADO</div>
-    <div class="card-subtitle">Archivo secreto disponible</div>
-  </div>
+  <h1>¡Excelente!</h1>
+  <p>Acabas de desbloquear un próximo nivel.</p>
+  <p>Abre la carta y mira las nuevas indicaciones.</p>
 
   <button id="openCardBtn">Abrir carta</button>
 
   <div id="cardBox">
-    <img src="carta.jpg" alt="Carta">
+    <img src="carta.jpg" alt="Carta futurista">
   </div>
 </div>
 
@@ -175,7 +169,8 @@ function startGame() {
 document.getElementById("startBtn").addEventListener("click", startGame);
 
 document.getElementById("openCardBtn").addEventListener("click", () => {
-  document.getElementById("cardBox").style.display = "flex";
+  document.getElementById("cardBox").style.display = "block";
+  document.getElementById("openCardBtn").style.display = "none";
 });
 
 function jump(e) {
