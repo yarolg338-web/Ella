@@ -2,75 +2,131 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Sin conexión</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dino Run</title>
 
 <style>
+  * {
+    box-sizing: border-box;
+  }
+
   body {
     margin: 0;
-    background: #f7f7f7;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #eef3f8, #ffffff);
     font-family: monospace;
-    overflow: hidden;
     color: #555;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .game-wrapper {
+    width: 95%;
+    max-width: 850px;
+    background: #f7f7f7;
+    border: 2px solid #ddd;
+    border-radius: 18px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.12);
+    padding: 18px;
+    position: relative;
   }
 
   canvas {
     display: block;
-    margin: 45px auto 0;
+    width: 100%;
+    height: auto;
     background: #f7f7f7;
     touch-action: manipulation;
   }
 
   .screen {
     position: absolute;
-    width: 100%;
-    top: 38%;
+    inset: 18px;
+    background: rgba(247,247,247,0.94);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
-    color: #555;
-    font-size: 18px;
-    font-family: monospace;
+    z-index: 10;
   }
 
   .hidden {
     display: none;
   }
 
-  button {
-    background: none;
-    border: 1px solid #555;
-    padding: 8px 18px;
-    font-family: monospace;
-    cursor: pointer;
-    color: #555;
+  .panel {
+    border: 2px solid #555;
+    border-radius: 14px;
+    padding: 24px;
+    max-width: 420px;
+    background: #f7f7f7;
   }
 
-  #finalScreen {
-    top: 8%;
+  h1 {
+    margin: 0 0 10px;
+    font-size: 28px;
+  }
+
+  p {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+
+  button {
+    margin-top: 12px;
+    background: #555;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    font-family: monospace;
+    font-size: 15px;
+    cursor: pointer;
   }
 
   #finalScreen img {
-    max-width: 85%;
-    max-height: 75vh;
-    margin-top: 20px;
+    max-width: 90%;
+    max-height: 70vh;
+    border-radius: 12px;
+    margin-top: 15px;
   }
 </style>
 </head>
 
 <body>
 
-<div id="startScreen" class="screen">
-  <p>Presiona ESPACIO para comenzar</p>
-</div>
+<div class="game-wrapper">
 
-<canvas id="gameCanvas" width="800" height="260"></canvas>
+  <canvas id="gameCanvas" width="800" height="300"></canvas>
 
-<div id="gameOverScreen" class="screen hidden">
-  <p>GAME OVER</p>
-  <button onclick="restartGame()">Reintentar</button>
-</div>
+  <div id="startScreen" class="screen">
+    <div class="panel">
+      <h1>DINO RUN</h1>
+      <p>Salta los cactus y llega al final.</p>
+      <p><b>Celular:</b> toca el juego para saltar.</p>
+      <p><b>Computadora:</b> presiona ESPACIO.</p>
+      <button onclick="startGame()">COMENZAR</button>
+    </div>
+  </div>
 
-<div id="finalScreen" class="screen hidden">
-  <p>Has desbloqueado algo...</p>
-  <img src="assets/carta.jpg" alt="Carta">
+  <div id="gameOverScreen" class="screen hidden">
+    <div class="panel">
+      <h1>GAME OVER</h1>
+      <p>Inténtalo otra vez.</p>
+      <button onclick="restartGame()">REINTENTAR</button>
+    </div>
+  </div>
+
+  <div id="finalScreen" class="screen hidden">
+    <div class="panel">
+      <h1>DESBLOQUEADO</h1>
+      <p>Has llegado al final.</p>
+      <img src="assets/carta.jpg" alt="Carta">
+    </div>
+  </div>
+
 </div>
 
 <script>
@@ -94,13 +150,12 @@ let animationId = null;
 
 let jumps = 0;
 const maxJumps = 20;
-
 let canJump = true;
 
 function resetGame() {
   dino = {
     x: 65,
-    y: 178,
+    y: 210,
     width: 44,
     height: 48,
     velocityY: 0,
@@ -126,8 +181,6 @@ function startGame() {
   gameOverScreen.classList.add("hidden");
   finalScreen.classList.add("hidden");
 
-  canvas.style.display = "block";
-
   cancelAnimationFrame(animationId);
   loop();
 }
@@ -137,11 +190,9 @@ function restartGame() {
 }
 
 function jump() {
-  if (!gameRunning) return;
-  if (!canJump) return;
-  if (dino.jumping) return;
+  if (!gameRunning || !canJump || dino.jumping) return;
 
-  dino.velocityY = -17;
+  dino.velocityY = -18;
   dino.jumping = true;
   canJump = false;
 
@@ -159,16 +210,13 @@ document.addEventListener("keydown", function(e) {
 
   if (!started) {
     startGame();
-    return;
+  } else {
+    jump();
   }
-
-  jump();
 });
 
 document.addEventListener("keyup", function(e) {
-  if (e.code === "Space") {
-    canJump = true;
-  }
+  if (e.code === "Space") canJump = true;
 });
 
 canvas.addEventListener("pointerdown", function(e) {
@@ -176,10 +224,9 @@ canvas.addEventListener("pointerdown", function(e) {
 
   if (!started) {
     startGame();
-    return;
+  } else {
+    jump();
   }
-
-  jump();
 });
 
 canvas.addEventListener("pointerup", function() {
@@ -209,7 +256,7 @@ function createObstacle() {
 
   obstacles.push({
     x: canvas.width + 30,
-    y: 226 - height,
+    y: 258 - height,
     width,
     height
   });
@@ -218,30 +265,29 @@ function createObstacle() {
 function createCloud() {
   clouds.push({
     x: canvas.width + 30,
-    y: 40 + Math.random() * 55
+    y: 55 + Math.random() * 50
   });
 }
 
 function update() {
   score++;
-
-  speed = 6 + score / 400;
+  speed = 6 + score / 420;
   groundX -= speed;
 
   dino.y += dino.velocityY;
   dino.velocityY += gravity;
 
-  if (dino.y >= 178) {
-    dino.y = 178;
+  if (dino.y >= 210) {
+    dino.y = 210;
     dino.velocityY = 0;
     dino.jumping = false;
   }
 
-  if (score % Math.max(50, Math.floor(100 - speed * 5)) === 0) {
+  if (score % Math.max(50, Math.floor(105 - speed * 5)) === 0) {
     createObstacle();
   }
 
-  if (score % 180 === 0) {
+  if (score % 170 === 0) {
     createCloud();
   }
 
@@ -271,8 +317,6 @@ function loseGame() {
 
 function winGame() {
   gameRunning = false;
-  canvas.style.display = "none";
-  gameOverScreen.classList.add("hidden");
   finalScreen.classList.remove("hidden");
   cancelAnimationFrame(animationId);
 }
@@ -306,8 +350,8 @@ function drawGround() {
   ctx.lineWidth = 2;
 
   ctx.beginPath();
-  ctx.moveTo(0, 226);
-  ctx.lineTo(canvas.width, 226);
+  ctx.moveTo(0, 258);
+  ctx.lineTo(canvas.width, 258);
   ctx.stroke();
 
   ctx.fillStyle = "#555";
@@ -316,13 +360,13 @@ function drawGround() {
     let x = (i + groundX) % canvas.width;
     if (x < 0) x += canvas.width;
 
-    ctx.fillRect(x, 236, 8, 2);
-    ctx.fillRect(x + 18, 242, 4, 2);
+    ctx.fillRect(x, 268, 8, 2);
+    ctx.fillRect(x + 18, 274, 4, 2);
   }
 }
 
 function drawClouds() {
-  ctx.strokeStyle = "#ccc";
+  ctx.strokeStyle = "#bbb";
   ctx.lineWidth = 2;
 
   clouds.forEach(cloud => {
@@ -343,12 +387,13 @@ function drawScore() {
   const hi = "HI 002005";
   const puntos = ("00000" + score).slice(-5);
 
-  ctx.fillText(hi + "  " + puntos, 555, 30);
-  ctx.fillText("SALTOS " + jumps + "/20", 30, 30);
+  ctx.fillText("SALTOS " + jumps + "/20", 30, 35);
+  ctx.fillText(hi + "  " + puntos, 555, 35);
 }
 
 function drawStartScene() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  drawClouds();
   drawGround();
   drawDino();
   drawScore();
@@ -375,7 +420,7 @@ function loop() {
 
 dino = {
   x: 65,
-  y: 178,
+  y: 210,
   width: 44,
   height: 48,
   velocityY: 0,
