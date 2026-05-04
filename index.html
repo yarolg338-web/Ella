@@ -2,37 +2,32 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Corriendo hacia ti 💖</title>
+  <title>Sin conexión</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <div id="startScreen" class="screen">
-    <h1>Corriendo hacia ti 💖</h1>
-    <p>Presiona espacio o toca la pantalla para saltar.</p>
-    <button onclick="startGame()">Empezar</button>
-  </div>
+<div id="startScreen" class="screen">
+  <h1>Sin conexión</h1>
+  <p>Presiona espacio para comenzar</p>
+  <button onclick="startGame()">Jugar</button>
+</div>
 
-  <canvas id="gameCanvas" width="800" height="260"></canvas>
+<canvas id="gameCanvas" width="800" height="260"></canvas>
 
-  <div id="gameOverScreen" class="screen hidden">
-    <h2>Ups 💔</h2>
-    <p>No importa cuántas veces caiga, siempre volvería a correr hacia ti.</p>
-    <button onclick="restartGame()">Intentar otra vez</button>
-  </div>
+<div id="gameOverScreen" class="screen hidden">
+  <h2>Game Over</h2>
+  <button onclick="restartGame()">Reintentar</button>
+</div>
 
-  <div id="finalScreen" class="screen hidden final">
-    <h1>Lo lograste, mi amor 💖</h1>
+<div id="finalScreen" class="screen hidden">
+  <h1>Has desbloqueado algo</h1>
 
-    <p>Así como en este juego, yo siempre quiero avanzar contigo.</p>
-    <p>Saltaría cualquier obstáculo por verte sonreír.</p>
-    <p>Gracias por ser esa persona tan especial en mi vida.</p>
+  <!-- CAMBIA SOLO ESTO SI ES PNG -->
+  <img src="assets/carta.jpg" alt="Sorpresa" class="final-img">
 
-    <img src="assets/final.jpg" alt="Sorpresa para ti">
+</div>
 
-    <h2>Te quiero muchísimo 💕</h2>
-  </div>
-
-  <script src="game.js"></script>
+<script src="game.js"></script>
 </body>
 </html>
